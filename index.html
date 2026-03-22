@@ -1,1 +1,933 @@
-auralayer_landing.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraLayer.ai — Layer your tools. Unlock your vision.</title>
+<meta name="description" content="AuraLayer is the AI orchestration platform where you blend the tools you love — by influence — to get personalized guidance and custom app blueprints shaped entirely around you.">
+<meta property="og:title" content="AuraLayer.ai — Layer your tools. Unlock your vision.">
+<meta property="og:description" content="Blend Claude, Canva, Notion and more by weighted influence. Get personalized AI guidance and app blueprints built around your exact tool DNA.">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Syne:wght@400;500;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ag:#C9A84C;--agl:#E8C96B;--agd:#8B6F0A;
+  --ink:#08080D;--ink2:#0F0F18;
+  --surface:rgba(255,255,255,0.03);
+  --border:rgba(201,168,76,0.15);
+  --border-h:rgba(201,168,76,0.4);
+  --at:#F0EDE4;--am:rgba(240,237,228,0.5);--as:rgba(240,237,228,0.25);
+  --fh:'Syne',sans-serif;
+  --fs:'Cormorant Garamond',serif;
+  --fb:'DM Sans',sans-serif;
+}
+
+html{scroll-behavior:smooth;}
+body{background:var(--ink);color:var(--at);font-family:var(--fb);overflow-x:hidden;min-height:100vh;}
+
+/* ── GRAIN OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.6;
+}
+
+/* ── AMBIENT GLOW ── */
+.ambient{position:fixed;pointer-events:none;z-index:0;}
+.ambient-1{top:-20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%);border-radius:50%;}
+.ambient-2{bottom:-10%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(139,111,212,0.05) 0%,transparent 70%);border-radius:50%;}
+.ambient-3{top:40%;left:-10%;width:350px;height:350px;background:radial-gradient(circle,rgba(78,158,143,0.04) 0%,transparent 70%);border-radius:50%;}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 2rem;
+  background:rgba(8,8,13,0.8);
+  backdrop-filter:blur(20px);
+  border-bottom:0.5px solid rgba(201,168,76,0.08);
+  animation:fadeDown 0.6s ease;
+}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+
+.nav-brand{font-family:var(--fh);font-weight:800;font-size:20px;letter-spacing:-0.02em;display:flex;align-items:baseline;gap:0;text-decoration:none;}
+.nav-brand .aura{background:linear-gradient(135deg,var(--agl),var(--ag));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-brand .layer{color:#fff;}
+.nav-brand .dot{font-size:12px;font-weight:500;color:var(--ag);opacity:0.7;margin-left:1px;}
+.nav-brand .beta{-webkit-text-fill-color:rgba(240,237,228,0.3);font-size:10px;font-weight:400;margin-left:8px;letter-spacing:0.1em;border:0.5px solid rgba(240,237,228,0.15);padding:2px 7px;border-radius:20px;}
+
+.nav-links{display:flex;align-items:center;gap:2rem;}
+.nav-link{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--am);text-decoration:none;transition:color 0.2s;}
+.nav-link:hover{color:var(--ag);}
+.nav-cta{font-family:var(--fh);font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:8px 18px;border-radius:8px;border:0.5px solid var(--border-h);background:rgba(201,168,76,0.08);color:var(--ag);text-decoration:none;transition:all 0.2s;}
+.nav-cta:hover{background:rgba(201,168,76,0.16);transform:translateY(-1px);}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:8rem 2rem 4rem;
+}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--fh);font-size:9px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--ag);
+  border:0.5px solid var(--border);
+  padding:6px 14px;border-radius:20px;
+  background:rgba(201,168,76,0.06);
+  margin-bottom:2rem;
+  animation:fadeUp 0.7s 0.2s ease both;
+}
+.eyebrow-dot{width:5px;height:5px;border-radius:50%;background:var(--ag);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);}}
+
+.hero-title{
+  font-family:var(--fs);
+  font-size:clamp(3rem,8vw,6.5rem);
+  font-weight:300;
+  line-height:1.05;
+  letter-spacing:-0.01em;
+  color:var(--at);
+  margin-bottom:0.5rem;
+  animation:fadeUp 0.7s 0.35s ease both;
+}
+.hero-title em{
+  font-style:italic;
+  color:var(--ag);
+}
+.hero-title .line2{
+  display:block;
+  font-size:clamp(2.5rem,7vw,5.5rem);
+  color:rgba(240,237,228,0.5);
+  font-weight:300;
+  white-space:nowrap;
+}
+
+.hero-wordmark{
+  font-family:var(--fh);
+  font-size:clamp(2rem,5vw,3.5rem);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  margin-bottom:2rem;
+  animation:fadeUp 0.7s 0.5s ease both;
+}
+.hero-wordmark .aura{background:linear-gradient(135deg,var(--agl),var(--ag));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-wordmark .layer{color:#fff;}
+.hero-wordmark .dot{font-size:1.2rem;font-weight:500;color:var(--ag);opacity:0.6;}
+
+.hero-sub{
+  font-family:var(--fs);
+  font-size:clamp(1.1rem,2.5vw,1.5rem);
+  font-style:italic;
+  font-weight:300;
+  color:var(--am);
+  max-width:560px;
+  margin:0 auto 3rem;
+  line-height:1.6;
+  animation:fadeUp 0.7s 0.6s ease both;
+}
+
+.hero-actions{
+  display:flex;flex-direction:column;align-items:center;gap:1rem;
+  animation:fadeUp 0.7s 0.75s ease both;
+}
+.hero-actions-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--fh);font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;
+  padding:16px 32px;
+  border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--agl) 0%,var(--ag) 60%,var(--agd) 100%);
+  color:#08080D;cursor:pointer;text-decoration:none;
+  transition:all 0.25s;
+  box-shadow:0 0 0 0 rgba(201,168,76,0);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,168,76,0.3);}
+.btn-primary:active{transform:scale(0.98);}
+
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  padding:15px 24px;
+  border-radius:12px;
+  border:0.5px solid var(--border-h);
+  background:rgba(201,168,76,0.05);
+  color:var(--ag);cursor:pointer;text-decoration:none;
+  transition:all 0.2s;
+}
+.btn-secondary:hover{background:rgba(201,168,76,0.12);transform:translateY(-1px);}
+
+.hero-note{font-size:11px;color:var(--as);letter-spacing:0.06em;}
+.hero-note strong{color:var(--am);}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  animation:fadeUp 0.7s 1.2s ease both;
+  opacity:0.4;
+}
+.scroll-hint-line{width:0.5px;height:32px;background:linear-gradient(to bottom,var(--ag),transparent);}
+.scroll-hint-text{font-family:var(--fh);font-size:8px;letter-spacing:0.2em;color:var(--am);text-transform:uppercase;}
+
+/* ── TOOL MATRIX PREVIEW ── */
+.matrix-preview{
+  position:relative;z-index:1;
+  padding:1rem 2rem 5rem;
+  display:flex;justify-content:center;
+}
+.matrix-preview-inner{
+  width:100%;max-width:480px;
+  display:flex;flex-direction:column;gap:0;
+  animation:fadeUp 0.8s 0.9s ease both;
+}
+.preview-label{
+  font-family:var(--fh);font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--ag);text-align:center;margin-bottom:1.5rem;opacity:0.7;
+}
+.preview-arrow{display:flex;justify-content:center;margin-bottom:10px;opacity:0.5;}
+.preview-slot{
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:border-color 0.3s;
+}
+.preview-slot:hover{border-color:var(--border-h);}
+.preview-slot-left{display:flex;align-items:center;gap:12px;}
+.preview-slot-emoji{font-size:24px;}
+.preview-slot-name{font-family:var(--fh);font-size:16px;font-weight:800;color:#fff;}
+.preview-slot-cat{font-size:9px;color:var(--am);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px;}
+.preview-slot-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.preview-slot-pct{font-family:var(--fh);font-size:28px;font-weight:800;color:var(--ag);line-height:1;}
+.preview-slot-bar{width:80px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
+.preview-slot-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--ag),var(--agl));}
+.preview-connector{display:flex;justify-content:center;align-items:center;height:28px;position:relative;}
+.preview-connector::before,.preview-connector::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:0.5px;height:10px;background:linear-gradient(to bottom,rgba(201,168,76,0.3),transparent);}
+.preview-connector::before{top:0;}
+.preview-connector::after{bottom:0;background:linear-gradient(to top,rgba(201,168,76,0.3),transparent);}
+.preview-mult{width:22px;height:22px;border-radius:50%;background:rgba(201,168,76,0.08);border:0.5px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:12px;font-weight:800;color:var(--ag);opacity:0.7;z-index:1;}
+
+/* ── DIVIDER ── */
+.divider{
+  width:100%;max-width:600px;margin:0 auto;
+  height:0.5px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);
+  position:relative;z-index:1;
+}
+
+/* ── SECTION ── */
+section{position:relative;z-index:1;padding:5rem 2rem;}
+.section-inner{max-width:900px;margin:0 auto;}
+.section-eyebrow{font-family:var(--fh);font-size:8px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--ag);margin-bottom:1rem;opacity:0.8;}
+.section-title{font-family:var(--fs);font-size:clamp(2rem,4vw,3rem);font-weight:300;color:var(--at);line-height:1.2;margin-bottom:1.25rem;}
+.section-title em{font-style:italic;color:var(--ag);}
+.section-sub{font-size:14px;color:var(--am);line-height:1.8;max-width:520px;}
+
+/* ── HOW IT WORKS ── */
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin-top:3rem;}
+.how-card{
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:16px;
+  padding:1.75rem;
+  transition:border-color 0.3s,transform 0.3s;
+  position:relative;overflow:hidden;
+}
+.how-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent);}
+.how-card:hover{border-color:var(--border-h);transform:translateY(-3px);}
+.how-step{font-family:var(--fh);font-size:8px;font-weight:700;letter-spacing:0.2em;color:var(--ag);text-transform:uppercase;margin-bottom:1rem;opacity:0.7;}
+.how-icon{font-size:32px;margin-bottom:1rem;display:block;}
+.how-title{font-family:var(--fh);font-size:15px;font-weight:800;color:var(--at);margin-bottom:0.5rem;letter-spacing:-0.01em;}
+.how-desc{font-size:12px;color:var(--am);line-height:1.7;}
+
+/* ── FEATURES ── */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:3rem;}
+.feature-card{
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:12px;
+  padding:1.25rem;
+  transition:all 0.2s;
+}
+.feature-card:hover{border-color:var(--border-h);}
+.feature-icon{font-size:20px;margin-bottom:10px;display:block;}
+.feature-title{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--at);margin-bottom:5px;letter-spacing:0.02em;}
+.feature-desc{font-size:11px;color:var(--am);line-height:1.6;}
+
+/* ── MODES ── */
+.modes-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem;}
+.mode-card{
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:16px;
+  padding:2rem;
+  transition:all 0.3s;
+  position:relative;overflow:hidden;
+}
+.mode-card::after{content:'';position:absolute;inset:0;border-radius:16px;border:0.5px solid transparent;transition:border-color 0.3s;}
+.mode-card:hover{transform:translateY(-2px);}
+.mode-card:hover::after{border-color:var(--border-h);}
+.mode-card-label{font-family:var(--fh);font-size:8px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--ag);margin-bottom:10px;opacity:0.7;}
+.mode-card-title{font-family:var(--fs);font-size:1.8rem;font-weight:400;color:var(--at);margin-bottom:0.75rem;line-height:1.2;}
+.mode-card-title em{font-style:italic;color:var(--ag);}
+.mode-card-desc{font-size:12px;color:var(--am);line-height:1.7;margin-bottom:1.25rem;}
+.mode-card-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.mode-tag{font-size:9px;font-weight:700;letter-spacing:0.05em;padding:3px 9px;border-radius:20px;border:0.5px solid var(--border);color:var(--am);font-family:var(--fh);}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-top:3rem;}
+.price-card{
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  border-radius:16px;
+  padding:2rem;
+  transition:all 0.3s;
+  position:relative;
+}
+.price-card:hover{border-color:var(--border-h);transform:translateY(-2px);}
+.price-card.featured{border-color:rgba(201,168,76,0.4);}
+.price-card.featured::before{content:'Most Popular';position:absolute;top:-1px;left:50%;transform:translateX(-50%);font-family:var(--fh);font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:linear-gradient(135deg,var(--agl),var(--ag));color:#08080D;padding:4px 14px;border-radius:0 0 8px 8px;}
+.price-tier{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--ag);margin-bottom:6px;}
+.price-amount{font-family:var(--fh);font-size:3rem;font-weight:800;color:var(--at);letter-spacing:-0.03em;line-height:1;}
+.price-period{font-size:13px;color:var(--am);font-weight:400;margin-left:2px;}
+.price-desc{font-size:11px;color:var(--am);margin:10px 0 1.25rem;line-height:1.6;}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:1.75rem;}
+.price-features li{font-size:11px;color:rgba(240,237,228,0.75);display:flex;align-items:flex-start;gap:7px;line-height:1.5;}
+.price-features li::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--ag);flex-shrink:0;margin-top:5px;}
+.price-btn{
+  width:100%;padding:12px;border-radius:10px;border:none;
+  font-family:var(--fh);font-size:10px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;
+  cursor:pointer;text-decoration:none;display:block;text-align:center;
+  transition:all 0.2s;
+}
+.price-btn.gold{background:linear-gradient(135deg,var(--agl),var(--ag),var(--agd));color:#08080D;}
+.price-btn.gold:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.25);}
+.price-btn.outline{background:transparent;border:0.5px solid var(--border-h);color:var(--ag);}
+.price-btn.outline:hover{background:rgba(201,168,76,0.08);}
+
+/* ── AFFILIATE STRIP ── */
+.aff-strip{
+  position:relative;z-index:1;
+  margin:0 2rem;
+  background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(139,111,212,0.04));
+  border:0.5px solid rgba(201,168,76,0.2);
+  border-radius:16px;
+  padding:2.5rem 3rem;
+  display:flex;align-items:center;justify-content:space-between;gap:2rem;
+  flex-wrap:wrap;
+}
+.aff-strip-left{}
+.aff-strip-eyebrow{font-family:var(--fh);font-size:8px;font-weight:700;letter-spacing:0.2em;color:var(--ag);text-transform:uppercase;margin-bottom:8px;opacity:0.8;}
+.aff-strip-title{font-family:var(--fs);font-size:2rem;font-weight:300;color:var(--at);line-height:1.2;margin-bottom:8px;}
+.aff-strip-title em{font-style:italic;color:var(--ag);}
+.aff-strip-desc{font-size:12px;color:var(--am);line-height:1.7;max-width:480px;}
+.aff-strip-stats{display:flex;gap:2rem;flex-wrap:wrap;}
+.aff-stat{text-align:center;}
+.aff-stat-val{font-family:var(--fh);font-size:2rem;font-weight:800;color:var(--ag);letter-spacing:-0.02em;display:block;}
+.aff-stat-label{font-size:10px;color:var(--am);letter-spacing:0.06em;display:block;margin-top:2px;}
+
+/* ── TESTIMONIAL / BETA STRIP ── */
+.beta-strip{
+  position:relative;z-index:1;
+  text-align:center;
+  padding:5rem 2rem;
+}
+.beta-inner{max-width:600px;margin:0 auto;}
+.beta-quote{
+  font-family:var(--fs);
+  font-size:clamp(1.3rem,3vw,2rem);
+  font-style:italic;
+  font-weight:300;
+  color:var(--at);
+  line-height:1.5;
+  margin-bottom:2rem;
+}
+.beta-quote em{color:var(--ag);}
+.beta-cta-title{font-family:var(--fh);font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--ag);margin-bottom:1.5rem;opacity:0.7;}
+
+/* ── BETA FORM ── */
+.beta-form{
+  display:flex;gap:8px;max-width:440px;margin:0 auto 1rem;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.beta-input{
+  flex:1;min-width:200px;
+  background:#fff;
+  border:0.5px solid var(--border);
+  border-radius:10px;
+  padding:13px 16px;
+  font-family:var(--fb);font-size:13px;color:#111;
+  outline:none;transition:border-color 0.2s;
+}
+.beta-input::placeholder{color:#999;}
+.beta-input:focus{border-color:var(--ag);}
+.beta-submit{
+  font-family:var(--fh);font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;
+  padding:13px 22px;border-radius:10px;border:none;
+  background:linear-gradient(135deg,var(--agl),var(--ag),var(--agd));
+  color:#08080D;cursor:pointer;white-space:nowrap;
+  transition:all 0.2s;
+}
+.beta-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,0.25);}
+.beta-form-note{font-size:11px;color:var(--as);}
+.beta-form-note strong{color:var(--am);}
+.beta-success{display:none;text-align:center;padding:1rem;background:rgba(78,158,143,0.1);border:0.5px solid rgba(78,158,143,0.3);border-radius:10px;max-width:440px;margin:0 auto;}
+.beta-success-title{font-family:var(--fh);font-size:12px;font-weight:700;color:#4E9E8F;margin-bottom:4px;}
+.beta-success-sub{font-size:11px;color:var(--am);}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:1;
+  border-top:0.5px solid var(--border);
+  padding:2.5rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1rem;
+}
+.footer-brand{font-family:var(--fh);font-weight:800;font-size:16px;letter-spacing:-0.02em;}
+.footer-brand .aura{background:linear-gradient(135deg,var(--agl),var(--ag));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.footer-brand .layer{color:#fff;}
+.footer-brand .dot{font-size:10px;font-weight:500;color:var(--ag);opacity:0.6;}
+.footer-tagline{font-family:var(--fs);font-size:13px;font-style:italic;color:var(--as);}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-link{font-family:var(--fh);font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--as);text-decoration:none;transition:color 0.2s;}
+.footer-link:hover{color:var(--ag);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  nav{padding:1rem 1.25rem;}
+  .nav-links{display:none;}
+  .hero{padding:7rem 1.25rem 3rem;}
+  section{padding:3.5rem 1.25rem;}
+  .modes-wrap{grid-template-columns:1fr;}
+  .aff-strip{flex-direction:column;padding:2rem 1.5rem;margin:0 1.25rem;}
+  .aff-strip-stats{justify-content:center;}
+  footer{flex-direction:column;align-items:flex-start;}
+  .beta-form{flex-direction:column;}
+  .beta-input{min-width:100%;}
+  .beta-submit{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div class="ambient"><div class="ambient-1"></div></div>
+<div class="ambient"><div class="ambient-2"></div></div>
+<div class="ambient"><div class="ambient-3"></div></div>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-brand">
+    <span class="aura">Aura</span><span class="layer">Layer</span><span class="dot">.ai</span>
+    <span class="beta">BETA</span>
+  </a>
+  <div class="nav-links">
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="#modes" class="nav-link">Modes</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="#affiliate" class="nav-link">Affiliate</a>
+  </div>
+  <a href="app.html" class="nav-cta">Enter App →</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="top">
+  <div class="hero-eyebrow">
+    <span class="eyebrow-dot"></span>
+    Now in Beta — Limited Early Access
+  </div>
+
+  <h1 class="hero-title">
+    The AI platform that thinks<br>
+    <em>exactly like you do.</em>
+    <span class="line2">Because you built it&nbsp;that&nbsp;way.</span>
+  </h1>
+
+  <div class="hero-wordmark">
+    <span class="aura">Aura</span><span class="layer">Layer</span><span class="dot">.ai</span>
+  </div>
+
+  <p class="hero-sub">
+    Blend the AI tools you already love — by weighted influence — and receive guidance, strategies, and app blueprints shaped entirely around your creative DNA.
+  </p>
+
+  <div class="hero-actions">
+    <div class="hero-actions-row">
+      <a href="app.html" class="btn-primary">
+        ✦ Activate Your Aura
+      </a>
+      <a href="#how" class="btn-secondary">
+        See how it works ↓
+      </a>
+    </div>
+    <p class="hero-note">Beta access is <strong>free to try</strong> · No credit card required</p>
+  </div>
+
+  <div class="scroll-hint">
+    <span class="scroll-hint-text">Scroll</span>
+    <div class="scroll-hint-line"></div>
+  </div>
+</section>
+
+<!-- ── MATRIX PREVIEW (INTERACTIVE) ── -->
+<style>
+.preview-slot-slider-row{padding:0 16px 14px;display:flex;align-items:center;gap:10px;}
+.preview-slider{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:rgba(255,255,255,0.08);outline:none;cursor:pointer;accent-color:#C9A84C;}
+.preview-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#C9A84C;cursor:grab;border:2px solid #08080D;box-shadow:0 0 0 2px rgba(201,168,76,0.3);}
+.preview-slider::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.2);}
+.preview-slider:disabled{opacity:0.3;cursor:not-allowed;}
+.preview-lock-btn{width:26px;height:26px;border-radius:7px;border:1px solid rgba(255,255,255,0.12);background:transparent;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.preview-lock-btn:hover{border-color:rgba(201,168,76,0.5);background:rgba(201,168,76,0.08);}
+.preview-lock-btn.locked{border-color:rgba(201,168,76,0.7);background:rgba(201,168,76,0.14);}
+.preview-pie-row{display:flex;gap:1px;height:8px;border-radius:4px;overflow:hidden;margin-bottom:8px;}
+.preview-pie-seg{height:100%;transition:flex 0.25s ease;}
+.preview-blend-card{margin-top:1.25rem;background:rgba(255,255,255,0.03);border:0.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:1rem 1.25rem;}
+.preview-blend-label{font-family:'Syne',sans-serif;font-size:8px;font-weight:700;letter-spacing:0.15em;color:#C9A84C;text-transform:uppercase;margin-bottom:8px;opacity:0.7;}
+.preview-blend-text{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;color:rgba(240,237,228,0.75);line-height:1.6;transition:opacity 0.3s;}
+.preview-interact-hint{text-align:center;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.12em;color:rgba(201,168,76,0.4);text-transform:uppercase;margin-bottom:12px;animation:hintPulse 2.5s ease-in-out infinite;}
+@keyframes hintPulse{0%,100%{opacity:0.4;}50%{opacity:0.8;}}
+</style>
+
+<div class="matrix-preview">
+  <div class="matrix-preview-inner">
+    <div class="preview-label">Try it — drag the sliders</div>
+    <div class="preview-interact-hint">↕ Drag any slider to blend your tools</div>
+    <div class="preview-arrow">
+      <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+        <line x1="11" y1="24" x2="11" y2="3" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/>
+        <polyline points="3,10 11,2 19,10" fill="none" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Claude -->
+    <div class="preview-slot" id="pslot-claude">
+      <div class="preview-slot-left">
+        <span class="preview-slot-emoji">🟠</span>
+        <div><div class="preview-slot-name">Claude</div><div class="preview-slot-cat">AI Reasoning</div></div>
+      </div>
+      <div class="preview-slot-right">
+        <div class="preview-slot-pct" id="pct-claude">35%</div>
+        <button class="preview-lock-btn" id="plk-claude" onclick="previewToggleLock('claude')" title="Lock this percentage">🔓</button>
+      </div>
+    </div>
+    <div class="preview-slot-slider-row">
+      <input type="range" class="preview-slider" id="psl-claude" min="1" max="97" step="1" value="35" oninput="previewSlide('claude',this.value)">
+    </div>
+
+    <div class="preview-connector"><div class="preview-mult">×</div></div>
+
+    <!-- Canva -->
+    <div class="preview-slot" id="pslot-canva">
+      <div class="preview-slot-left">
+        <span class="preview-slot-emoji">🎨</span>
+        <div><div class="preview-slot-name">Canva</div><div class="preview-slot-cat">Design</div></div>
+      </div>
+      <div class="preview-slot-right">
+        <div class="preview-slot-pct" id="pct-canva">30%</div>
+        <button class="preview-lock-btn" id="plk-canva" onclick="previewToggleLock('canva')" title="Lock this percentage">🔓</button>
+      </div>
+    </div>
+    <div class="preview-slot-slider-row">
+      <input type="range" class="preview-slider" id="psl-canva" min="1" max="97" step="1" value="30" oninput="previewSlide('canva',this.value)">
+    </div>
+
+    <div class="preview-connector"><div class="preview-mult">×</div></div>
+
+    <!-- Notion -->
+    <div class="preview-slot" id="pslot-notion">
+      <div class="preview-slot-left">
+        <span class="preview-slot-emoji">📝</span>
+        <div><div class="preview-slot-name">Notion</div><div class="preview-slot-cat">Productivity</div></div>
+      </div>
+      <div class="preview-slot-right">
+        <div class="preview-slot-pct" id="pct-notion">20%</div>
+        <button class="preview-lock-btn" id="plk-notion" onclick="previewToggleLock('notion')" title="Lock this percentage">🔓</button>
+      </div>
+    </div>
+    <div class="preview-slot-slider-row">
+      <input type="range" class="preview-slider" id="psl-notion" min="1" max="97" step="1" value="20" oninput="previewSlide('notion',this.value)">
+    </div>
+
+    <div class="preview-connector"><div class="preview-mult">×</div></div>
+
+    <!-- Perplexity -->
+    <div class="preview-slot" id="pslot-perp">
+      <div class="preview-slot-left">
+        <span class="preview-slot-emoji">🟣</span>
+        <div><div class="preview-slot-name">Perplexity</div><div class="preview-slot-cat">AI Research</div></div>
+      </div>
+      <div class="preview-slot-right">
+        <div class="preview-slot-pct" id="pct-perp">15%</div>
+        <button class="preview-lock-btn" id="plk-perp" onclick="previewToggleLock('perp')" title="Lock this percentage">🔓</button>
+      </div>
+    </div>
+    <div class="preview-slot-slider-row">
+      <input type="range" class="preview-slider" id="psl-perp" min="1" max="97" step="1" value="15" oninput="previewSlide('perp',this.value)">
+    </div>
+
+    <!-- Pie distribution bar -->
+    <div class="preview-pie-row" id="preview-pie">
+      <div class="preview-pie-seg" style="flex:35;background:#C9A84C;"></div>
+      <div class="preview-pie-seg" style="flex:30;background:#8B6FD4;"></div>
+      <div class="preview-pie-seg" style="flex:20;background:#4E9E8F;"></div>
+      <div class="preview-pie-seg" style="flex:15;background:#C97B4C;"></div>
+    </div>
+
+    <!-- Live blend description -->
+    <div class="preview-blend-card">
+      <div class="preview-blend-label">Your blend generates →</div>
+      <div class="preview-blend-text" id="preview-blend-text">A strategy weighted toward reasoning, visual communication, organization, and research — built entirely around your tool DNA.</div>
+    </div>
+
+    <!-- CTA hint -->
+    <div style="text-align:center;margin-top:1.25rem;">
+      <a href="app.html" class="btn-primary" style="display:inline-flex;font-size:11px;padding:13px 26px;">
+        ✦ Use your own tools in the app →
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">How it works</div>
+    <h2 class="section-title reveal">Three steps to your <em>personal AI layer.</em></h2>
+    <p class="section-sub reveal">No prompting expertise required. No generic outputs. Just your tools, your weights, your results.</p>
+
+    <div class="how-grid">
+      <div class="how-card reveal">
+        <div class="how-step">Step 01</div>
+        <span class="how-icon">✍️</span>
+        <div class="how-title">Describe who you are</div>
+        <div class="how-desc">Tell AuraLayer who you are, what you want to accomplish, or the app you want to build. The more specific, the more personal your output.</div>
+      </div>
+      <div class="how-card reveal">
+        <div class="how-step">Step 02</div>
+        <span class="how-icon">⚡</span>
+        <div class="how-title">Select your tools & set influence</div>
+        <div class="how-desc">Choose up to 5 AI tools from the matrix. Assign each one a weighted percentage — 35% Claude, 25% Canva, 20% Notion. Lock percentages you want to protect.</div>
+      </div>
+      <div class="how-card reveal">
+        <div class="how-step">Step 03</div>
+        <span class="how-icon">✦</span>
+        <div class="how-title">Activate your Aura</div>
+        <div class="how-desc">AuraLayer interprets your blend and generates a fully personalized output — guidance, opportunities, workflows, or a complete app blueprint — shaped by your exact tool DNA.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── TWO MODES ── -->
+<section id="modes">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Two powerful modes</div>
+    <h2 class="section-title reveal">Guidance for who you are.<br><em>Blueprints for what you'll build.</em></h2>
+
+    <div class="modes-wrap">
+      <div class="mode-card reveal">
+        <div class="mode-card-label">Mode 01</div>
+        <div class="mode-card-title">Aura<br><em>Guidance</em></div>
+        <div class="mode-card-desc">Tell AuraLayer who you are and what you want to accomplish. Your weighted tool blend shapes every recommendation, workflow, and next step — making advice feel like it was written specifically for you.</div>
+        <div class="mode-card-tags">
+          <span class="mode-tag">Opportunities</span>
+          <span class="mode-tag">Recommendations</span>
+          <span class="mode-tag">Next steps</span>
+          <span class="mode-tag">Tool workflow</span>
+        </div>
+      </div>
+      <div class="mode-card reveal">
+        <div class="mode-card-label">Mode 02</div>
+        <div class="mode-card-title">AURA<br><em>APP</em></div>
+        <div class="mode-card-desc">Describe a hobby, passion, problem, or idea. Choose your tool blend. AuraLayer generates a custom app concept — name ideas, features, monetization, MVP roadmap — shaped by the DNA of the tools you selected.</div>
+        <div class="mode-card-tags">
+          <span class="mode-tag">App concepts</span>
+          <span class="mode-tag">MVP roadmap</span>
+          <span class="mode-tag">Monetization</span>
+          <span class="mode-tag">Go-to-market</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── FEATURES ── -->
+<section>
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Everything included</div>
+    <h2 class="section-title reveal">Built for creators who <em>think in tools.</em></h2>
+    <div class="features-grid">
+      <div class="feature-card reveal"><span class="feature-icon">🔒</span><div class="feature-title">Lock any percentage</div><div class="feature-desc">Pin a tool's influence and let the others redistribute proportionally around it.</div></div>
+      <div class="feature-card reveal"><span class="feature-icon">📋</span><div class="feature-title">Quick templates</div><div class="feature-desc">Start instantly with Freelance Creative, E-commerce, Content Creator, Startup, and Educator presets.</div></div>
+      <div class="feature-card reveal"><span class="feature-icon">↺</span><div class="feature-title">Iterate & refine</div><div class="feature-desc">Adjust your blend and refine results without starting over. Evolve your output in real time.</div></div>
+      <div class="feature-card reveal"><span class="feature-icon">↗</span><div class="feature-title">Share your Aura</div><div class="feature-desc">Generate a shareable link showing your tool blend — your creative DNA, visible to the world.</div></div>
+      <div class="feature-card reveal"><span class="feature-icon">⬡</span><div class="feature-title">Save & workspace</div><div class="feature-desc">Save every session to your personal workspace. Reload, compare, and build on past readings.</div></div>
+      <div class="feature-card reveal"><span class="feature-icon">🌍</span><div class="feature-title">32 languages</div><div class="feature-desc">Generate results in English, Spanish, French, Japanese, Arabic, Hindi and 26 more languages.</div></div>
+      <div class="feature-card reveal"><span class="feature-icon">↓</span><div class="feature-title">Export results</div><div class="feature-desc">Download your Aura Reading or App Blueprint as a formatted document to keep or share.</div></div>
+      <div class="feature-card reveal"><span class="feature-icon">📎</span><div class="feature-title">Upload a brief</div><div class="feature-desc">Upload a business plan or product brief and AuraLayer factors it directly into your output. Visionary tier.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── PRICING ── -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Simple pricing</div>
+    <h2 class="section-title reveal">Start free. Scale as you <em>grow.</em></h2>
+    <p class="section-sub reveal">Beta access is free to try. No credit card required to get started.</p>
+
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="price-tier">Starter</div>
+        <div class="price-amount">$9<span class="price-period">/month</span></div>
+        <div class="price-desc">Everything you need to start layering your tools and unlocking personalized AI guidance.</div>
+        <ul class="price-features">
+          <li>Aura Guidance mode</li>
+          <li>Up to 3 tools in your matrix</li>
+          <li>5 saved sessions</li>
+          <li>Export & share results</li>
+          <li>10 generations per day</li>
+          <li>32 language support</li>
+        </ul>
+        <a href="app.html" class="price-btn outline">Start Free Beta →</a>
+      </div>
+
+      <div class="price-card featured reveal">
+        <div class="price-tier">Pro</div>
+        <div class="price-amount">$39<span class="price-period">/month</span></div>
+        <div class="price-desc">For creators and entrepreneurs who want the full power of their tool blend.</div>
+        <ul class="price-features">
+          <li>Both Guidance + AURA APP modes</li>
+          <li>Up to 6 tools in your matrix</li>
+          <li>Unlimited saved sessions</li>
+          <li>Side-by-side comparison</li>
+          <li>Template library</li>
+          <li>Tool recommendations</li>
+          <li>Advanced workflows</li>
+          <li>30 generations per day</li>
+        </ul>
+        <a href="app.html" class="price-btn gold">Get Pro Access →</a>
+      </div>
+
+      <div class="price-card reveal">
+        <div class="price-tier">Visionary</div>
+        <div class="price-amount">$92<span class="price-period">/month</span></div>
+        <div class="price-desc">The full AuraLayer platform for founders building something real.</div>
+        <ul class="price-features">
+          <li>Everything in Pro</li>
+          <li>Full AURA APP blueprint mode</li>
+          <li>Upload business briefs & plans</li>
+          <li>Collaboration mode</li>
+          <li>API access</li>
+          <li>Weekly Aura Pulse emails</li>
+          <li>Priority support</li>
+          <li>Unlimited generations</li>
+        </ul>
+        <a href="app.html" class="price-btn outline">Go Visionary →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── AFFILIATE ── -->
+<div class="aff-strip reveal" id="affiliate">
+  <div class="aff-strip-left">
+    <div class="aff-strip-eyebrow">Partner Program</div>
+    <div class="aff-strip-title">Earn <em>50–60%</em> for<br>a full 12 months.</div>
+    <div class="aff-strip-desc">AuraLayer's affiliate program pays one of the highest commissions in SaaS — 50% for Standard affiliates, up to 60% for Ambassadors — for a full year on every subscriber you refer. No cap. No expiry on referrals. Automatic tier upgrades as you grow.</div>
+  </div>
+  <div class="aff-strip-stats">
+    <div class="aff-stat"><span class="aff-stat-val">50%</span><span class="aff-stat-label">Base commission</span></div>
+    <div class="aff-stat"><span class="aff-stat-val">12mo</span><span class="aff-stat-label">Commission duration</span></div>
+    <div class="aff-stat"><span class="aff-stat-val">60%</span><span class="aff-stat-label">Ambassador tier</span></div>
+  </div>
+</div>
+
+<!-- ── BETA CTA ── -->
+<div class="beta-strip">
+  <div class="beta-inner">
+    <div class="beta-quote">
+      "Design your own AI-powered app concept by <em>blending the DNA of the tools you love.</em>"
+    </div>
+    <div class="beta-cta-title">Join the Beta — Free to start</div>
+    <form class="beta-form" onsubmit="handleBetaSubmit(event)">
+      <input class="beta-input" type="email" placeholder="Your email address" required id="beta-email">
+      <button class="beta-submit" type="submit">Get Beta Access →</button>
+    </form>
+    <div class="beta-success" id="beta-success">
+      <div class="beta-success-title">You're on the list ✓</div>
+      <div class="beta-success-sub">Check your inbox — your beta access link is on its way.</div>
+    </div>
+    <p class="beta-form-note">No credit card · <strong>Free beta access</strong> · Cancel anytime</p>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div>
+    <div class="footer-brand"><span class="aura">Aura</span><span class="layer">Layer</span><span class="dot">.ai</span></div>
+    <div class="footer-tagline">Layer your tools. Unlock your vision.</div>
+  </div>
+  <div class="footer-links">
+    <a href="#how" class="footer-link">How it works</a>
+    <a href="#pricing" class="footer-link">Pricing</a>
+    <a href="#affiliate" class="footer-link">Affiliate</a>
+    <a href="app.html" class="footer-link">Enter App</a>
+  </div>
+  <div style="font-size:10px;color:var(--as);">© 2026 AuraLayer.ai · All rights reserved</div>
+</footer>
+
+<script>
+// ── SCROLL REVEAL ──
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// ── INTERACTIVE PREVIEW MATRIX ──
+const TOOLS_P={
+  claude:{pct:35,locked:false,color:'#C9A84C',dim:'Analytical depth'},
+  canva:{pct:30,locked:false,color:'#8B6FD4',dim:'Visual expression'},
+  notion:{pct:20,locked:false,color:'#4E9E8F',dim:'Organizational flow'},
+  perp:{pct:15,locked:false,color:'#C97B4C',dim:'Research intelligence'},
+};
+
+const BLEND_TEXTS={
+  high_claude:['deep strategic reasoning','analytical frameworks','logic-driven strategy'],
+  high_canva:['visual storytelling','design-led thinking','brand and aesthetic direction'],
+  high_notion:['structured workflows','organized systems','productivity architecture'],
+  high_perp:['research-backed insights','data-informed decisions','knowledge synthesis'],
+};
+
+function getBlendText(){
+  const t=TOOLS_P;
+  const dominant=Object.entries(t).sort((a,b)=>b[1].pct-a[1].pct);
+  const top=dominant[0];const second=dominant[1];
+  const dims={
+    claude:['deep reasoning','analytical strategy','logic-driven guidance'],
+    canva:['visual communication','design thinking','creative expression'],
+    notion:['organized systems','structured workflows','productivity architecture'],
+    perp:['research intelligence','data-backed insights','knowledge synthesis'],
+  };
+  const d1=dims[top[0]][Math.floor(Math.random()*3)];
+  const d2=dims[second[0]][Math.floor(Math.random()*3)];
+  return `A strategy weighted toward ${d1} (${top[1].pct}%) and ${d2} (${second[1].pct}%) — shaped entirely by your tool DNA.`;
+}
+
+function previewToggleLock(id){
+  const t=TOOLS_P[id];
+  const unlocked=Object.entries(TOOLS_P).filter(([k])=>k!==id&&!TOOLS_P[k].locked);
+  if(!t.locked&&unlocked.length===0){return;}
+  t.locked=!t.locked;
+  const btn=document.getElementById('plk-'+id);
+  const slider=document.getElementById('psl-'+id);
+  const slot=document.getElementById('pslot-'+id);
+  btn.textContent=t.locked?'🔒':'🔓';
+  btn.classList.toggle('locked',t.locked);
+  slider.disabled=t.locked;
+  slot.style.background=t.locked?'rgba(201,168,76,0.04)':'rgba(255,255,255,0.04)';
+  slot.style.borderColor=t.locked?'rgba(201,168,76,0.5)':'var(--border)';
+}
+
+function previewSlide(id,rawVal){
+  const t=TOOLS_P[id];
+  if(t.locked)return;
+  let newVal=Math.max(1,Math.min(97,parseInt(rawVal)));
+
+  const flexibles=Object.entries(TOOLS_P).filter(([k])=>k!==id&&!TOOLS_P[k].locked);
+  if(!flexibles.length){t.pct=newVal;previewUpdateAll();return;}
+
+  const lockedTotal=Object.values(TOOLS_P).filter(x=>x.locked).reduce((a,x)=>a+x.pct,0);
+  const maxForThis=100-lockedTotal-flexibles.length;
+  newVal=Math.min(newVal,maxForThis);newVal=Math.max(1,newVal);
+  t.pct=newVal;
+
+  const remaining=100-lockedTotal-newVal;
+  const flexTotal=flexibles.reduce((a,[,v])=>a+v.pct,0);
+
+  if(flexTotal===0){
+    const base=Math.floor(remaining/flexibles.length);
+    const rem=remaining-base*flexibles.length;
+    flexibles.forEach(([k],i)=>{TOOLS_P[k].pct=base+(i===0?rem:0);});
+  } else {
+    let assigned=0;
+    flexibles.forEach(([k,v],i)=>{
+      if(i===flexibles.length-1){TOOLS_P[k].pct=Math.max(1,remaining-assigned);}
+      else{TOOLS_P[k].pct=Math.max(1,Math.round((v.pct/flexTotal)*remaining));assigned+=TOOLS_P[k].pct;}
+    });
+  }
+
+  // ensure exactly 100
+  let sum=Object.values(TOOLS_P).reduce((a,v)=>a+v.pct,0);
+  if(sum!==100){
+    const adj=flexibles[flexibles.length-1];
+    if(adj){TOOLS_P[adj[0]].pct+=100-sum;}
+  }
+  previewUpdateAll();
+}
+
+function previewUpdateAll(){
+  Object.entries(TOOLS_P).forEach(([id,t])=>{
+    const pctEl=document.getElementById('pct-'+id);
+    const slEl=document.getElementById('psl-'+id);
+    if(pctEl)pctEl.textContent=t.pct+'%';
+    if(slEl&&!t.locked)slEl.value=t.pct;
+  });
+  // update pie
+  const pie=document.getElementById('preview-pie');
+  if(pie){
+    const segs=pie.querySelectorAll('.preview-pie-seg');
+    const ids=Object.keys(TOOLS_P);
+    segs.forEach((seg,i)=>{seg.style.flex=TOOLS_P[ids[i]].pct;});
+  }
+  // update blend text with debounce
+  clearTimeout(window._blendTimer);
+  window._blendTimer=setTimeout(()=>{
+    const el=document.getElementById('preview-blend-text');
+    if(el){el.style.opacity='0';setTimeout(()=>{el.textContent=getBlendText();el.style.opacity='1';},200);}
+  },400);
+}
+
+// ── BETA FORM ──
+function handleBetaSubmit(e){
+  e.preventDefault();
+  document.querySelector('.beta-form').style.display='none';
+  document.getElementById('beta-success').style.display='block';
+}
+
+// ── SMOOTH SCROLL ──
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const href=a.getAttribute('href');
+    if(href==='#')return;
+    e.preventDefault();
+    const target=document.querySelector(href);
+    if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+</script>
+</body>
+</html>
