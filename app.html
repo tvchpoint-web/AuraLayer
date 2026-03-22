@@ -1550,8 +1550,31 @@ async function activate(isRefine){
     const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:sys,messages:[{role:'user',content:umsg}]})});
     const data=await res.json();
     clearInterval(lv);document.getElementById('loadstate').style.display='none';document.getElementById('actbtn').disabled=false;
+    // Debug: log full response
+    console.log('API response:', JSON.stringify(data));
+    
+    // Check for API-level errors
+    if(data.error){
+      showErr('API Error: '+( data.error.message||JSON.stringify(data.error)));return;
+    }
+    
     const raw=data.content?.[0]?.text||'';
-    let parsed;try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch{showErr('Could not parse response. Please try again.');return;}
+    console.log('Raw text:', raw);
+    
+    let parsed;
+    try{
+      parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    }catch(e){
+      console.error('Parse error:', e, 'Raw:', raw);
+      // Try to extract JSON from the raw text
+      const jsonMatch=raw.match(/\{[\s\S]*\}/);
+      if(jsonMatch){
+        try{parsed=JSON.parse(jsonMatch[0]);}
+        catch{showErr('Could not parse response. Raw: '+raw.substring(0,100));return;}
+      } else {
+        showErr('Could not parse response. Raw: '+raw.substring(0,100));return;
+      }
+    }
     lastResult=parsed;lastPrompt=prompt;
     if(sbsMode){renderSBS(parsed,sbsRunB);}else{renderResults(parsed);}
     document.getElementById('refine-btn').style.display='block';
