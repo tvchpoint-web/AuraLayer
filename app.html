@@ -1547,7 +1547,7 @@ async function activate(isRefine){
     :`App idea: "${prompt}"\n\nTool DNA (totalling 100%): ${toolsStr}${fileNote}${refineNote}\n\nGenerate a custom app blueprint.`;
 
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:sys,messages:[{role:'user',content:umsg}]})});
+    const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:sys,messages:[{role:'user',content:umsg}]})});
     const data=await res.json();
     clearInterval(lv);document.getElementById('loadstate').style.display='none';document.getElementById('actbtn').disabled=false;
     const raw=data.content?.[0]?.text||'';
