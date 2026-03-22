@@ -3,22 +3,3 @@
     { "source": "/app", "destination": "/app.html" }
   ]
 }
-{
-  "cleanUrls": true,
-  "trailingSlash": false
-}
-```
-
-This tells Vercel that `app.html` is accessible at `/app`.
-
----
-
-**Actually the simplest fix of all:**
-
-In GitHub, edit your `index.html` and change every link from:
-```
-href="app.html"
-```
-to:
-```
-href="/app.html"
