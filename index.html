@@ -7,12 +7,8 @@
 <meta name="description" content="AuraLayer is the AI orchestration platform where you blend the tools you love — by influence — to get personalized guidance and custom app blueprints shaped entirely around you.">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Syne:wght@400;500;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* ── SHARED ── */
-#landing-view{display:block;}
-#app-view{display:none !important;}
-#app-view.active{display:block !important;}
-
-/* ── LANDING STYLES ── */
+#landing-view { display: block; }
+#app-view { display: none; }
 
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -425,8 +421,6 @@ footer{
   .beta-submit{width:100%;}
 }
 
-
-/* ── APP STYLES ── */
 
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -952,7 +946,6 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
 </head>
 <body>
 
-<!-- ══ LANDING PAGE ══ -->
 <div id="landing-view">
 
 
@@ -1451,20 +1444,13 @@ function handleBetaSubmit(e){
 }
 
 // ── SMOOTH SCROLL ──
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener('click',e=>{
-    const href=a.getAttribute('href');
-    if(!href||href==='#'||href.startsWith('javascript'))return;
-    e.preventDefault();
-    const target=document.querySelector(href);
-    if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+// smooth scroll disabled
   });
 });
 </script>
 
 </div>
 
-<!-- ══ APP ══ -->
 <div id="app-view">
 
 
@@ -2939,31 +2925,30 @@ function getDimNote(){
 function openP(){document.getElementById('pmodal').classList.add('open');}
 function closeP(){document.getElementById('pmodal').classList.remove('open');}
 
-try{renderStack();}catch(e){console.log('Init deferred',e);}
+renderStack();
 </script>
 
 </div>
 
 <script>
-// ── VIEW SWITCHER ──
-function enterApp(){
-  document.getElementById('landing-view').style.display='none';
-  var appView=document.getElementById('app-view');
-  appView.classList.add('active'); appView.style.display='block';
-  window.scrollTo(0,0);
-  // Re-initialize app now that DOM is visible
-  try{renderStack();}catch(e){}
-  try{showRecommendations();}catch(e){}
-  try{setMode(mode);}catch(e){}
+// ══ VIEW SWITCHER — must be defined first ══
+function enterApp() {
+  document.getElementById('landing-view').style.display = 'none';
+  document.getElementById('app-view').style.display = 'block';
+  window.scrollTo(0, 0);
+  setTimeout(function() {
+    try { renderStack(); } catch(e) {}
+    try { showRecommendations(); } catch(e) {}
+  }, 100);
 }
 
-function goHome(){
-  document.getElementById('app-view').style.display='none';
-  document.getElementById('landing-view').style.display='block';
-  window.scrollTo(0,0);
+function goHome() {
+  document.getElementById('app-view').style.display = 'none';
+  document.getElementById('landing-view').style.display = 'block';
+  window.scrollTo(0, 0);
 }
 
-// ── LANDING SCRIPTS ──
+// ══ LANDING SCRIPTS ══
 
 // ── SCROLL REVEAL ──
 const observer=new IntersectionObserver(entries=>{
@@ -3082,19 +3067,12 @@ function handleBetaSubmit(e){
   document.getElementById('beta-success').style.display='block';
 }
 
-// ── SMOOTH SCROLL ──
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener('click',e=>{
-    const href=a.getAttribute('href');
-    if(!href||href==='#'||href.startsWith('javascript'))return;
-    e.preventDefault();
-    const target=document.querySelector(href);
-    if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+// smooth scroll removed
   });
 });
 
 
-// ── APP SCRIPTS ──
+// ══ APP SCRIPTS ══
 
 // ── DATA ──
 const TOOLS=[
@@ -3894,6 +3872,9 @@ function closeP(){document.getElementById('pmodal').classList.remove('open');}
 
 renderStack();
 
+
+// ══ SAFE NAV LINKS (no hijacking) ══
+// smooth scroll handled safely above
 </script>
 </body>
 </html>
