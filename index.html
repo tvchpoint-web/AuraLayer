@@ -972,7 +972,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
     <a href="#pricing" class="nav-link">Pricing</a>
     <a href="#affiliate" class="nav-link">Affiliate</a>
   </div>
-  <a href="#" onclick="enterApp();return false;" class="nav-cta">Enter App →</a>
+  <a href="javascript:void(0)" onclick="enterApp()" class="nav-cta">Enter App →</a>
 </nav>
 
 <!-- ── HERO ── -->
@@ -998,7 +998,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
 
   <div class="hero-actions">
     <div class="hero-actions-row">
-      <a href="#" onclick="enterApp();return false;" class="btn-primary">
+      <a href="javascript:void(0)" onclick="enterApp()" class="btn-primary">
         ✦ Activate Your Aura
       </a>
       <a href="#how" class="btn-secondary">
@@ -1126,7 +1126,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
 
     <!-- CTA hint -->
     <div style="text-align:center;margin-top:1.25rem;">
-      <a href="#" onclick="enterApp();return false;" class="btn-primary" style="display:inline-flex;font-size:11px;padding:13px 26px;">
+      <a href="javascript:void(0)" onclick="enterApp()" class="btn-primary" style="display:inline-flex;font-size:11px;padding:13px 26px;">
         ✦ Use your own tools in the app →
       </a>
     </div>
@@ -1242,7 +1242,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
           <li>10 generations per day</li>
           <li>32 language support</li>
         </ul>
-        <a href="#" onclick="enterApp();return false;" class="price-btn outline">Start Free Beta →</a>
+        <a href="javascript:void(0)" onclick="enterApp()" class="price-btn outline">Start Free Beta →</a>
       </div>
 
       <div class="price-card featured reveal">
@@ -1259,7 +1259,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
           <li>Advanced workflows</li>
           <li>30 generations per day</li>
         </ul>
-        <a href="#" onclick="enterApp();return false;" class="price-btn gold">Get Pro Access →</a>
+        <a href="javascript:void(0)" onclick="enterApp()" class="price-btn gold">Get Pro Access →</a>
       </div>
 
       <div class="price-card reveal">
@@ -1276,7 +1276,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
           <li>Priority support</li>
           <li>Unlimited generations</li>
         </ul>
-        <a href="#" onclick="enterApp();return false;" class="price-btn outline">Go Visionary →</a>
+        <a href="javascript:void(0)" onclick="enterApp()" class="price-btn outline">Go Visionary →</a>
       </div>
     </div>
   </div>
@@ -1327,7 +1327,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
     <a href="#how" class="footer-link">How it works</a>
     <a href="#pricing" class="footer-link">Pricing</a>
     <a href="#affiliate" class="footer-link">Affiliate</a>
-    <a href="#" onclick="enterApp();return false;" class="footer-link">Enter App</a>
+    <a href="javascript:void(0)" onclick="enterApp()" class="footer-link">Enter App</a>
   </div>
   <div style="font-size:10px;color:var(--as);">© 2026 AuraLayer.ai · All rights reserved</div>
 </footer>
@@ -1454,7 +1454,7 @@ function handleBetaSubmit(e){
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',e=>{
     const href=a.getAttribute('href');
-    if(href==='#')return;
+    if(!href||href==='#'||href.startsWith('javascript'))return;
     e.preventDefault();
     const target=document.querySelector(href);
     if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
@@ -3086,7 +3086,7 @@ function handleBetaSubmit(e){
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',e=>{
     const href=a.getAttribute('href');
-    if(href==='#')return;
+    if(!href||href==='#'||href.startsWith('javascript'))return;
     e.preventDefault();
     const target=document.querySelector(href);
     if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
