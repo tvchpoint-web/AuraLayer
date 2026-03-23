@@ -236,21 +236,21 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
 /* results */
 .results{display:none;margin-top:1rem;}
 .results-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem;flex-wrap:wrap;gap:8px;}
-.results-title{font-family:var(--fh);font-size:15px;font-weight:800;background:linear-gradient(135deg,var(--agl),var(--ag));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.results-title{font-family:var(--fh);font-size:17px;font-weight:800;background:linear-gradient(135deg,var(--agl),var(--ag));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .results-actions{display:flex;gap:6px;flex-wrap:wrap;}
-.result-action-btn{font-size:10px;color:var(--am);cursor:pointer;border:0.5px solid var(--ab);padding:4px 10px;border-radius:6px;font-family:var(--fh);background:transparent;transition:all 0.2s;font-weight:700;}
+.result-action-btn{font-size:12px;color:var(--am);cursor:pointer;border:0.5px solid var(--ab);padding:4px 10px;border-radius:6px;font-family:var(--fh);background:transparent;transition:all 0.2s;font-weight:700;}
 .result-action-btn:hover{border-color:var(--abh);color:var(--ag);}
 .result-action-btn.save{border-color:rgba(201,168,76,0.4);color:var(--ag);}
 .result-action-btn.share{border-color:rgba(139,111,212,0.4);color:#8B6FD4;}
 .rsec{background:rgba(255,255,255,0.03);border:0.5px solid var(--ab);border-radius:11px;padding:12px 14px;margin-bottom:8px;animation:fadeIn 0.4s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
-.rsec-title{font-family:var(--fh);font-size:9px;font-weight:700;letter-spacing:0.15em;color:var(--ag);text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:5px;}
+.rsec-title{font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:0.15em;color:var(--ag);text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:5px;}
 .rdot{width:4px;height:4px;border-radius:50%;background:var(--ag);}
-.rcontent{font-size:12px;line-height:1.7;color:rgba(240,237,228,0.85);}
+.rcontent{font-size:14px;line-height:1.7;color:rgba(240,237,228,0.85);}
 .rchips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
-.rchip{font-size:10px;padding:3px 9px;border-radius:20px;border:0.5px solid var(--ab);color:var(--ag);background:rgba(201,168,76,0.07);font-family:var(--fh);font-weight:700;}
+.rchip{font-size:12px;padding:3px 9px;border-radius:20px;border:0.5px solid var(--ab);color:var(--ag);background:rgba(201,168,76,0.07);font-family:var(--fh);font-weight:700;}
 .refine-bar{background:rgba(201,168,76,0.06);border:0.5px solid var(--ab);border-radius:10px;padding:12px 14px;margin-top:1rem;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-.refine-text{font-size:11px;color:var(--am);}
+.refine-text{font-size:13px;color:var(--am);}
 .refine-text strong{color:var(--ag);}
 
 /* ── DIMENSION PANEL ── */
@@ -1612,7 +1612,7 @@ function renderResults(data){
 
 function secHTML(t,c){return`<div class="rsec"><div class="rsec-title"><div class="rdot"></div>${t}</div><div class="rcontent">${c||''}</div></div>`;}
 function chipsHTML(t,arr){if(!Array.isArray(arr))return'';return`<div class="rsec"><div class="rsec-title"><div class="rdot"></div>${t}</div><div class="rchips">${arr.map(i=>`<div class="rchip">${i}</div>`).join('')}</div></div>`;}
-function orderedHTML(t,arr){if(!Array.isArray(arr))return'';return`<div class="rsec"><div class="rsec-title"><div class="rdot"></div>${t}</div>${arr.map((s,i)=>`<div class="rcontent" style="margin-bottom:5px;"><strong style="color:var(--ag);font-family:var(--fh);">${i+1}.</strong> ${s}</div>`).join('')}</div>`;}
+function orderedHTML(t,arr){if(!Array.isArray(arr))return'';return`<div class="rsec"><div class="rsec-title"><div class="rdot"></div>${t}</div>${arr.map((s,i)=>`<div class="rcontent" style="margin-bottom:5px;font-size:14px;"><strong style="color:var(--ag);font-family:var(--fh);">${i+1}.</strong> ${s}</div>`).join('')}</div>`;}
 
 function clearResults(){
   document.getElementById('results').style.display='none';
