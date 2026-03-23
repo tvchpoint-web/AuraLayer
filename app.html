@@ -653,7 +653,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
           </div>
         </div>
       </div>
-      <div class="tier-badge" onclick="openP()">STARTER ▾</div>
+      <div class="tier-badge" id="tier-badge-text" onclick="openP()">STARTER ▾</div>
     </div>
   </div>
 
@@ -1383,7 +1383,13 @@ function addTool(id){
   const t=TOOLS.find(t=>t.id===id);
   if(!t||sel.find(s=>s.id===id))return;
   sel.push({...t,pct:0,locked:false});
-  normalize();renderStack();
+  normalize();// Detect return from Stripe payment
+if(window.location.search.includes('paid=true')||window.location.search.includes('success=true')){
+  sessionStorage.setItem('auralayer_paid','true');
+  const badge=document.getElementById('tier-badge-text');
+  if(badge)badge.textContent='PRO ▾';
+}
+renderStack();
   document.getElementById('tsearch').value='';
   document.getElementById('errmsg').style.display='none';
   showRecommendations();
@@ -1604,10 +1610,17 @@ function renderResults(data){
     document.getElementById('results-body').innerHTML=`${chipsHTML('App Name Ideas',data.app_name_ideas)}${secHTML('Concept',data.app_summary)}${secHTML('Target User',data.target_user)}${secHTML('Problem Solved',data.problem_solved)}${chipsHTML('Key Features',data.key_features)}${chipsHTML('Monetization',data.monetization_options)}${secHTML('Positioning',data.positioning)}${orderedHTML('MVP Roadmap',data.mvp_roadmap)}`;
   }
   document.getElementById('refine-bar').style.display='flex';
-  // Option 1 — post-result affiliate prompt (shows after a short delay for impact)
+  // Option 1 — post-result affiliate prompt
+  // Only show for paid tier users (not free/trial)
+  generationCount++;
   const affPrompt=document.getElementById('aff-prompt');
   affPrompt.style.display='none';
-  setTimeout(()=>{ affPrompt.style.display='flex'; },1200);
+  const tierBadge=document.getElementById('tier-badge-text');
+  const currentTier=tierBadge?tierBadge.textContent.trim():'STARTER';
+  const isPaid=currentTier!=='STARTER'||sessionStorage.getItem('auralayer_paid')==='true';
+  if(isPaid){
+    setTimeout(()=>{ affPrompt.style.display='flex'; },1200);
+  }
 }
 
 function secHTML(t,c){return`<div class="rsec"><div class="rsec-title"><div class="rdot"></div>${t}</div><div class="rcontent">${c||''}</div></div>`;}
