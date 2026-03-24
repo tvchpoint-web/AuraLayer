@@ -1,6 +1,12 @@
 {
   "rewrites": [
-    { "source": "/app",  "destination": "/app.html" },
-    { "source": "/deck", "destination": "/auralayer_pitch_deck.html" }
+    {
+      "source": "/app",
+      "destination": "/app.html"
+    },
+    {
+      "source": "/deck",
+      "destination": "/auralayer_pitch_deck.html"
+    }
   ]
 }
