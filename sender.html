@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraLayer · Resend 50</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #08080D; color: #F0EDE4; min-height: 100vh; padding: 32px 16px; }
+  .container { max-width: 720px; margin: 0 auto; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .logo { font-size: 20px; font-weight: 700; }
+  .logo span { color: #C9A84C; }
+  .badges { display: flex; gap: 8px; }
+  .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: rgba(201,168,76,0.15); color: #C9A84C; border: 1px solid rgba(201,168,76,0.3); }
+  .badge.red { background: rgba(226,75,74,0.15); color: #E24B4A; border-color: rgba(226,75,74,0.3); }
+  .panel { background: #111116; border: 1px solid #222228; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+  .draft-list { max-height: 280px; overflow-y: auto; }
+  .draft-item { padding: 10px 16px; border-bottom: 1px solid #1a1a20; cursor: pointer; transition: background 0.1s; }
+  .draft-item:last-child { border-bottom: none; }
+  .draft-item:hover { background: #16161c; }
+  .draft-item.selected { background: rgba(201,168,76,0.08); border-left: 3px solid #C9A84C; }
+  .draft-item.sent { opacity: 0.35; pointer-events: none; }
+  .draft-to { font-size: 11px; color: #555; margin-bottom: 2px; }
+  .draft-subj { font-size: 12px; color: #F0EDE4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sent-tag { font-size: 9px; background: rgba(29,158,117,0.2); color: #1D9E75; padding: 1px 5px; border-radius: 8px; margin-left: 5px; }
+  .compose { padding: 20px; }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 11px; color: #555; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .field input, .field textarea { width: 100%; font-size: 13px; color: #F0EDE4; background: #08080D; border: 1px solid #222228; border-radius: 8px; padding: 8px 11px; outline: none; transition: border-color 0.15s; font-family: Arial, sans-serif; }
+  .field input:focus, .field textarea:focus { border-color: #C9A84C; }
+  .field textarea { min-height: 200px; resize: vertical; line-height: 1.6; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .send-btn { width: 100%; padding: 11px; font-size: 14px; font-weight: 600; background: #C9A84C; color: #08080D; border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.15s; margin-top: 4px; }
+  .send-btn:hover { opacity: 0.88; }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .status { margin-top: 10px; padding: 9px 13px; border-radius: 8px; font-size: 13px; display: none; }
+  .status.success { background: rgba(29,158,117,0.15); color: #1D9E75; border: 1px solid rgba(29,158,117,0.3); display: block; }
+  .status.error { background: rgba(226,75,74,0.15); color: #E24B4A; border: 1px solid rgba(226,75,74,0.3); display: block; }
+  .status.loading { background: rgba(201,168,76,0.1); color: #C9A84C; border: 1px solid rgba(201,168,76,0.2); display: block; }
+  .divider { font-size: 11px; color: #444; padding: 9px 16px; background: #0d0d12; border-bottom: 1px solid #1a1a20; display: flex; justify-content: space-between; }
+  .progress { font-size: 11px; color: #C9A84C; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">Aura<span>Layer</span></div>
+    <div class="badges">
+      <div class="badge red">Resend · Previously bounced</div>
+      <div class="badge" id="countBadge">50 emails</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="divider"><span>Select a draft to resend</span><span class="progress" id="progressText">0 / 50 sent</span></div>
+    <div class="draft-list" id="draftList"></div>
+  </div>
+  <div class="panel" id="composePanel" style="display:none">
+    <div class="divider"><span>Compose — all fields editable</span></div>
+    <div class="compose">
+      <div class="row2">
+        <div class="field"><label>To</label><input type="email" id="toField"></div>
+        <div class="field"><label>From name</label><input type="text" id="fromName" value="Manny A."></div>
+      </div>
+      <div class="field"><label>Subject</label><input type="text" id="subjectField"></div>
+      <div class="field"><label>Body</label><textarea id="bodyField"></textarea></div>
+      <button class="send-btn" id="sendBtn" onclick="sendEmail()">Send via Resend</button>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+</div>
+<script>
+const sentSet = new Set();
+let selectedIdx = null;
+
+const drafts = [
+  {to:'hello@futurepedia.io',subject:'The layer above every tool in your directory — Futurepedia TikTok affiliate',body:'Hey,\n\nFuturepedia is the largest AI tools directory — 400K TikTok followers who are actively discovering new AI tools will immediately see AuraLayer as the platform that ties every tool in their directory together.\n\nAuraLayer is an AI orchestration platform where users blend their tools by weighted influence — 40% Claude, 30% Notion, 30% Canva — and get output shaped around their exact tool DNA. Not another tool to add. The layer that makes every tool in Futurepedia work as one.\n\nBeta closes April 30th. 50% commission. Free trial.\n\nFull deck at https://auralayer.ai/deck — want to partner before the close?\n\nManny\nAuraLayer\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'podcast@lexfriedman.com',subject:'Guest pitch: AuraLayer.ai — AI orchestration, the infrastructure layer the stack is missing',body:'Hi Lex Friedman team,\n\nReaching out on behalf of the team behind AuraLayer.ai — a no-code AI tool orchestration platform launching May 1, 2026 that sits at the intersection of AI, productivity, and the future of how people work.\n\nThe pitch: most people using AI today are drowning in disconnected tools. AuraLayer is the orchestration layer that ties them together — no code required.\n\nWe think this would resonate with the Lex Fridman audience.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'kk@kk.org',subject:'The AI tool that adapts to the person — for Kevin Kelly\'s audience',body:'Hey Kevin,\n\nWired and your 500K Twitter following have been tracking how tools shape the future for decades — your audience understands better than most that the tools that win are the ones that adapt to the person, not the other way around.\n\nAuraLayer is an AI orchestration platform that blends your tools by weighted influence and generates output shaped entirely around you. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'lex@lexfridman.com',subject:'60-second host-read ready — AuraLayer x Lex Fridman Podcast',body:'Hey Lex,\n\nThe Lex Fridman Podcast reaches 10M+ listeners who care deeply about AI, technology, and the future — that\'s the most intellectually serious AI audience anywhere, and exactly who AuraLayer was built for.\n\nAuraLayer lets you blend your AI tools by weighted influence and get output shaped around your exact tool DNA. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'content@hubspot.com',subject:'Tool pitch for HubSpot Blog: AuraLayer.ai — AI workflow orchestration',body:'Hi HubSpot Blog team,\n\nPitching AuraLayer.ai as a strong fit for your marketing and sales tech readers — a no-code AI tool orchestration platform that helps teams unify their fragmented AI stack into one automated workflow layer.\n\nLaunching May 1, 2026. Beta pricing closes April 30th.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@producthunt.com',subject:'Upcoming PH launch: AuraLayer.ai — AI orchestration platform, May 1',body:'Hi Product Hunt Daily team,\n\nHeads up that AuraLayer.ai will be launching on Product Hunt on May 1, 2026 — a no-code AI tool orchestration platform that connects every AI subscription into one automated workflow layer.\n\nWould love to coordinate the launch day feature if possible.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@therundown.ai',subject:'Pitch: AuraLayer.ai — AI tool orchestration, beta closes April 30th',body:'Hi Rundown team,\n\nQuick pitch for something your readers are going to ask "why didn\'t this exist sooner" — AuraLayer.ai, an AI tool orchestration platform for people drowning in a fragmented AI stack.\n\nBeta closes April 30th. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hi@superhuman.ai',subject:'Tool pitch: AuraLayer.ai — AI orchestration for your readers, beta closes April 30th',body:'Hi Zain,\n\nQuick pitch for your 1.5M readers — AuraLayer.ai, a no-code AI tool orchestration platform that connects every AI subscription someone already has into a single automated workflow layer.\n\nBeta closes April 30th. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@thecreatoreconomyreport.com',subject:'Tool pitch: AuraLayer.ai — AI orchestration for creators, beta closes April 30th',body:'Hi Creator Economy Report team,\n\nPitching AuraLayer.ai for your creator-focused audience — a no-code AI tool orchestration platform built for exactly the people your newsletter serves: creators managing multiple AI subscriptions with no unified layer.\n\nBeta closes April 30th. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@aitoolreport.com',subject:'Tool submission: AuraLayer.ai — the AI workflow orchestration layer',body:'Hi AI Tool Report team,\n\nSubmitting AuraLayer.ai for your audience of AI tool enthusiasts — a no-code AI tool orchestration platform that connects every AI subscription a user has into a single automated workflow layer.\n\nBeta closes April 30th. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'news@venturebeat.com',subject:'Story tip: AuraLayer.ai — solving the enterprise AI fragmentation problem',body:'Hi VentureBeat editorial team,\n\nReaching out about AuraLayer.ai, a no-code AI tool orchestration platform launching May 1, 2026. It addresses the fragmented AI stack problem that\'s become one of the defining challenges in enterprise productivity.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@ycombinator.com',subject:'Startup introduction: AuraLayer.ai — AI orchestration SaaS, launching May 1',body:'Hi Y Combinator team,\n\nReaching out about AuraLayer.ai — a no-code AI tool orchestration platform launching May 1, 2026 that we believe belongs in the YC ecosystem conversation.\n\nSmall founding team, clear market gap, beta closing April 30th.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'lenny@lennysnewsletter.com',subject:'Tool spotlight pitch: AuraLayer.ai — AI orchestration for product teams',body:'Hi Lenny,\n\nBig fan of the newsletter. Pitching AuraLayer.ai as something your PM and founder audience will find immediately relevant — a no-code AI tool orchestration platform that turns fragmented AI stacks into unified workflows.\n\nLaunching May 1, 2026. Beta closes April 30th.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'partnerships@makenotion.com',subject:'Partner spotlight opportunity: AuraLayer.ai — AI orchestration for Notion users',body:'Hi Notion team,\n\nReaching out about a potential partner spotlight opportunity — AuraLayer.ai is a no-code AI tool orchestration platform that many Notion AI users will find immediately valuable. A significant portion of our users already use Notion as one of their core tools.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@workspaces.xyz',subject:'Tool pitch: AuraLayer.ai — the missing layer in every AI-forward workspace',body:'Hi Workspaces newsletter team,\n\nPitching AuraLayer.ai for your workspace and productivity audience — a no-code AI tool orchestration platform that turns a fragmented AI stack into one unified, automated workflow layer.\n\nLaunching May 1, 2026. Beta closes April 30th.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'matt@mattwolfe.com',subject:'Your YouTube audience is ready for the layer above all the tools',body:'Hey Matt,\n\n900K subscribers who hunt for the best AI tools every week — that\'s exactly who AuraLayer was built for. And I know you\'re already running the Future Tools newsletter, so your audience understands the fragmentation problem better than anyone.\n\nAuraLayer is the orchestration layer above all those tools. Blend them by weighted influence, get output shaped around your exact tool DNA.\n\nBeta closes April 30th. 50% affiliate commission.\n\nProduct: https://auralayer.ai\nAffiliate signup: https://auralayer-ai.getrewardful.com/signup\n\nManny\nsupport@auralayer.ai'},
+  {to:'hello@traction.substack.com',subject:'Growth story pitch: AuraLayer.ai — organic-first AI SaaS, launching May 1',body:'Hi Traction newsletter team,\n\nPitching AuraLayer.ai for your growth-focused audience — a no-code AI tool orchestration SaaS closing beta April 30th and officially launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'partnerships@beehiiv.com',subject:'Partnership inquiry: AuraLayer.ai — AI orchestration for newsletter creators',body:'Hi Beehiiv partnerships team,\n\nReaching out about a partnership opportunity for AuraLayer.ai — a no-code AI tool orchestration platform that your newsletter creator base will immediately connect with.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'matt@newsletteroperator.com',subject:'A natural fit for Newsletter Operator readers — 50% affiliate commission',body:'Hey Matt,\n\nThe Newsletter Operator is the go-to for serious newsletter builders — 30K readers who understand growth, monetization, and audience trust better than anyone. That\'s exactly why AuraLayer is a natural fit.\n\nAuraLayer is an AI orchestration platform launching May 1, 2026. 50% recurring affiliate commission for 12 months.\n\nProduct: https://auralayer.ai\nAffiliate signup: https://auralayer-ai.getrewardful.com/signup\n\nManny\nsupport@auralayer.ai'},
+  {to:'hello@theneurondaily.com',subject:'Tool pitch: AuraLayer.ai — orchestrate every AI tool, beta closes April 30th',body:'Hi Neuron team,\n\nPitching AuraLayer.ai for your 675K readers — a no-code AI tool orchestration platform built for the exact professionals you serve: people drowning in 6-10 AI subscriptions with no unified layer.\n\nBeta closes April 30th. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'tips@wired.com',subject:'Tips: AuraLayer.ai — the AI stack problem nobody\'s solved yet',body:'Hi Wired tips team,\n\nFlagging AuraLayer.ai for consideration — a no-code AI tool orchestration platform that tackles one of the defining tech behavior patterns of 2026: AI subscription stack sprawl.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'tips@morningbrew.com',subject:'Story tip: AuraLayer.ai — the AI stack problem every professional has',body:'Hi Morning Brew Tech team,\n\nFlagging AuraLayer.ai as a strong product story for your readers — a no-code AI tool orchestration platform solving one of the most relatable problems in business tech today.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@techpresso.news',subject:'Tool pitch: AuraLayer.ai — AI orchestration, launching May 1',body:'Hi Techpresso team,\n\nPitching AuraLayer.ai for your readers — a no-code AI tool orchestration platform that connects every AI subscription into one automated workflow layer.\n\nBeta closes April 30th. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'editorial@zapier.com',subject:'Tool pitch: AuraLayer.ai — AI orchestration for your automation-minded readers',body:'Hi Zapier editorial team,\n\nYour blog readers are exactly who AuraLayer.ai was built for — professionals already using Zapier and multiple AI tools who want a no-code layer that orchestrates everything together.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'matt@futuretools.io',subject:'Tool submission: AuraLayer.ai — AI workflow orchestration platform',body:'Hi FutureTools team,\n\nSubmitting AuraLayer.ai for directory consideration — a no-code AI tool orchestration platform that connects and automates across every AI subscription a user already has.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'submit@aiweekly.co',subject:'Tool pitch: AuraLayer.ai — AI workflow orchestration, launching May 1',body:'Hi AI Weekly team,\n\nPitching AuraLayer.ai for your readers — a no-code AI tool orchestration platform that connects every AI subscription into a single automated workflow layer.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@promptsdaily.com',subject:'Tool submission: AuraLayer.ai — orchestrate every AI tool in one layer',body:'Hi Prompts Daily team,\n\nSubmitting AuraLayer.ai for your audience — a no-code AI tool orchestration platform that connects every AI subscription a user has into a single automated workflow layer.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@aibreakfast.com',subject:'Pitch: AuraLayer.ai — AI orchestration platform, launching May 1',body:'Hi AI Breakfast team,\n\nPitching AuraLayer.ai for your curated AI digest — a no-code AI tool orchestration platform that solves one of the most widely felt problems in the AI space: tool fragmentation.\n\nLaunching May 1, 2026. Beta closes April 30th.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@aiweekly.co',subject:'Tool pitch: AuraLayer.ai — AI orchestration platform, launching May 1',body:'Hi AI Weekly team,\n\nPitching AuraLayer.ai for your weekly digest — a no-code AI tool orchestration platform that connects every AI subscription a user has into a single automated workflow layer.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@saastr.com',subject:'SaaS pitch: AuraLayer.ai — the orchestration layer for the AI stack',body:'Hi SaaStr team,\n\nPitching AuraLayer.ai for your SaaS founder and operator community — a no-code AI tool orchestration platform built for people who have already bought into the AI stack and now need it to work as one.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@nocodefounders.com',subject:'Tool pitch for No Code Founders: AuraLayer.ai — AI orchestration, no code required',body:'Hi No Code Founders team,\n\nPitching AuraLayer.ai for your no-code community — a no-code AI tool orchestration platform that lets non-technical founders and creators connect and automate across their entire AI stack.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'tips@howtogeek.com',subject:'Product feature pitch: AuraLayer.ai — the tool that connects your entire AI stack',body:'Hi How-To Geek team,\n\nPitching AuraLayer.ai for a product feature — a no-code AI tool orchestration platform that connects every AI subscription a user has into one automated workflow layer.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'editorial@digitalocean.com',subject:'Tool pitch for DigitalOcean community: AuraLayer.ai — AI orchestration platform',body:'Hi DigitalOcean editorial team,\n\nPitching AuraLayer.ai for your developer and builder audience — a no-code AI tool orchestration platform that connects and automates across every AI subscription a user already has.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@bigbrainai.com',subject:'Tool pitch: AuraLayer.ai — AI orchestration your readers will want',body:'Hi Big Brain team,\n\nPitching AuraLayer.ai — a no-code AI tool orchestration platform perfect for your audience of AI power users. It connects every AI subscription into one automated workflow layer.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@substack.com',subject:'Tool pitch: AuraLayer.ai — AI orchestration for Substack writers',body:'Hi Substack team,\n\nReaching out to flag AuraLayer.ai for your creator community — a no-code AI tool orchestration platform launching May 1, 2026 that many Substack writers will find directly useful.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'info@firstround.com',subject:'Startup introduction: AuraLayer.ai — no-code AI orchestration, launching May 1',body:'Hi First Round Capital team,\n\nIntroducing AuraLayer.ai — a no-code AI tool orchestration platform built for the consumer market, launching May 1, 2026. Small team of founders who felt something genuinely missing in the market and built it.\n\nDeck: https://auralayer.ai/deck\nProduct: https://auralayer.ai\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@starterstory.com',subject:'Founder story pitch: AuraLayer.ai — small team, big gap in the market, launching May 1',body:'Hi Starter Story team,\n\nPitching AuraLayer.ai as a founder story for your audience — a no-code AI tool orchestration platform closing beta April 30th and launching May 1, 2026. Small team, real market gap, built from zero.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'tips@appadvice.com',subject:'Review pitch: AuraLayer.ai — the AI app that makes all your other AI apps work together',body:'Hi AppAdvice team,\n\nPitching AuraLayer.ai for a product review — a no-code AI tool orchestration platform launching May 1, 2026 that connects every AI app subscription into one unified, automated workflow layer.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'tips@zdnet.com',subject:'Product review pitch: AuraLayer.ai — no-code AI orchestration, launching May 1',body:'Hi ZDNet team,\n\nPitching AuraLayer.ai for a product review or launch coverage — a no-code AI tool orchestration platform launching May 1, 2026 that connects every AI subscription into a single automated workflow layer.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'tips@lifehacker.com',subject:'Productivity tip pitch: AuraLayer.ai — connect all your AI tools in one layer',body:'Hi Lifehacker team,\n\nPitching AuraLayer.ai for a feature — the most practical AI productivity upgrade your readers probably haven\'t heard of yet: a no-code platform that connects every AI subscription into one automated layer.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'tips@digiday.com',subject:'Tool pitch: AuraLayer.ai — AI orchestration for media and marketing teams',body:'Hi Digiday team,\n\nPitching AuraLayer.ai for your media, marketing, and advertising audience — a no-code AI tool orchestration platform launching May 1, 2026 that is directly relevant to every media and marketing team managing multiple AI subscriptions.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@freelancersunion.org',subject:'Tool pitch: AuraLayer.ai — AI orchestration for freelancers',body:'Hi Freelancers Union team,\n\nPitching AuraLayer.ai for your freelancer community — a no-code AI tool orchestration platform that connects every AI subscription a freelancer has into one unified workflow layer.\n\nLaunching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hi@indiehackers.com',subject:'Milestone post pitch: AuraLayer.ai — beta closes April 30th, launching May 1',body:'Hi Indie Hackers team,\n\nReaching out about a potential milestone feature for AuraLayer.ai — a no-code AI tool orchestration platform closing beta on April 30th and officially launching May 1, 2026. Small founding team, organic growth, no VC funding.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@justinwelsh.me',subject:'Affiliate + tool pitch: AuraLayer.ai — 50% recurring, AI orchestration for solopreneurs',body:'Hi Justin Welsh team,\n\nReaching out about AuraLayer.ai — a no-code AI tool orchestration platform launching May 1, 2026 that we believe is a natural fit for your solopreneur and creator audience.\n\n50% recurring commission for 12 months. Free Pro access for you to try.\n\nProduct: https://auralayer.ai\nAffiliate signup: https://auralayer-ai.getrewardful.com/signup\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@thedankoe.com',subject:'Affiliate pitch: AuraLayer.ai — AI orchestration for the one-person business',body:'Hi Dan Koe team,\n\nReaching out about AuraLayer.ai — a no-code AI tool orchestration platform built for exactly the kind of autonomous, leverage-first operator Dan writes for.\n\n50% recurring commission for 12 months.\n\nProduct: https://auralayer.ai\nAffiliate signup: https://auralayer-ai.getrewardful.com/signup\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@sahilbloom.com',subject:'Affiliate pitch: AuraLayer.ai — the compounding AI stack layer, 50% recurring',body:'Hi Sahil Bloom team,\n\nReaching out about AuraLayer.ai — a no-code AI tool orchestration platform launching May 1, 2026 that resonates with the kind of leverage-first, compounding-systems thinking Sahil\'s audience loves.\n\n50% recurring commission for 12 months.\n\nProduct: https://auralayer.ai\nAffiliate signup: https://auralayer-ai.getrewardful.com/signup\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@contrarianthinker.com',subject:'Tool + affiliate pitch: AuraLayer.ai — AI orchestration for operators and builders',body:'Hi Codie Sanchez team,\n\nPitching AuraLayer.ai for Codie\'s audience of operators, entrepreneurs, and business builders — a no-code AI tool orchestration platform launching May 1, 2026.\n\n50% recurring commission for 12 months.\n\nProduct: https://auralayer.ai\nAffiliate signup: https://auralayer-ai.getrewardful.com/signup\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'},
+  {to:'hello@ycombinator.com',subject:'Launch coordination: AuraLayer.ai — May 1, 2026 launch on Product Hunt',body:'Hi Product Hunt team,\n\nReaching out ahead of our May 1, 2026 launch of AuraLayer.ai — a no-code AI tool orchestration platform that connects every AI subscription a user has into a single unified workflow layer.\n\nWould love to coordinate a featured placement for launch day.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai'}
+];
+
+function toHtml(text) {
+  var html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  html = html.replace(/(https?:\/\/[^\s]+)/g, function(url) {
+    var clean = url.replace(/[.,;:!?)]+$/, '');
+    var trail = url.slice(clean.length);
+    return '<a href="' + clean + '" style="color:#C9A84C;text-decoration:none">' + clean + '</a>' + trail;
+  });
+  html = '<p style="margin:0 0 14px">' + html.replace(/\n\n/g,'</p><p style="margin:0 0 14px">').replace(/\n/g,'<br>') + '</p>';
+  return '<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#111111;max-width:580px">' + html + '</div>';
+}
+
+function updateProgress() {
+  var sent = sentSet.size;
+  var total = drafts.length;
+  document.getElementById('progressText').textContent = sent + ' / ' + total + ' sent';
+  document.getElementById('countBadge').textContent = (total - sent) + ' remaining';
+}
+
+function renderList() {
+  document.getElementById('draftList').innerHTML = drafts.map(function(d,i) {
+    return '<div class="draft-item' + (selectedIdx===i?' selected':'') + (sentSet.has(i)?' sent':'') + '" onclick="selectDraft(' + i + ')">' +
+      '<div class="draft-to">' + d.to + (sentSet.has(i)?'<span class="sent-tag">sent</span>':'') + '</div>' +
+      '<div class="draft-subj">' + d.subject + '</div></div>';
+  }).join('');
+  updateProgress();
+}
+
+function selectDraft(i) {
+  if (sentSet.has(i)) return;
+  selectedIdx = i;
+  renderList();
+  var d = drafts[i];
+  document.getElementById('toField').value = d.to;
+  document.getElementById('subjectField').value = d.subject;
+  document.getElementById('bodyField').value = d.body;
+  document.getElementById('composePanel').style.display = 'block';
+  document.getElementById('status').style.display = 'none';
+  document.getElementById('sendBtn').textContent = 'Send via Resend';
+  document.getElementById('sendBtn').disabled = false;
+}
+
+async function sendEmail() {
+  var to = document.getElementById('toField').value.trim();
+  var subject = document.getElementById('subjectField').value.trim();
+  var plainBody = document.getElementById('bodyField').value.trim();
+  var fromName = document.getElementById('fromName').value.trim() || 'Manny A.';
+  if (!to || !subject || !plainBody) { showStatus('error','Please fill in all fields.'); return; }
+  var btn = document.getElementById('sendBtn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  showStatus('loading','Sending...');
+  try {
+    var res = await fetch('/api/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: to, subject: subject, fromName: fromName, html: toHtml(plainBody), text: plainBody })
+    });
+    var data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('success', 'Sent to ' + to);
+      sentSet.add(selectedIdx);
+      renderList();
+      btn.textContent = 'Sent!';
+      setTimeout(function() {
+        btn.disabled = false;
+        btn.textContent = 'Send via Resend';
+        document.getElementById('composePanel').style.display = 'none';
+      }, 2000);
+    } else {
+      showStatus('error', data.error || 'Send failed.');
+      btn.disabled = false; btn.textContent = 'Send via Resend';
+    }
+  } catch(e) {
+    showStatus('error', 'Error: ' + e.message);
+    btn.disabled = false; btn.textContent = 'Send via Resend';
+  }
+}
+
+function showStatus(type, msg) {
+  var el = document.getElementById('status');
+  el.className = 'status ' + type;
+  el.textContent = msg;
+}
+
+renderList();
+</script>
+</body>
+</html>
