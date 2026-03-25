@@ -1,0 +1,7 @@
+{
+  "routes": [
+    { "source": "/app", "destination": "/app.html" },
+    { "source": "/deck", "destination": "/auralayer_pitch_deck.html" },
+    { "source": "/sender", "destination": "/sender.html" }
+  ]
+}
