@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraLayer · Email Sender</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #08080D; color: #F0EDE4; min-height: 100vh; padding: 32px 16px; }
+  .container { max-width: 720px; margin: 0 auto; }
+  .header { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo span { color: #C9A84C; }
+  .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: rgba(201,168,76,0.15); color: #C9A84C; border: 1px solid rgba(201,168,76,0.3); }
+  .panel { background: #111116; border: 1px solid #222228; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+  .draft-list { max-height: 260px; overflow-y: auto; }
+  .draft-item { padding: 12px 16px; border-bottom: 1px solid #1a1a20; cursor: pointer; transition: background 0.1s; }
+  .draft-item:last-child { border-bottom: none; }
+  .draft-item:hover { background: #16161c; }
+  .draft-item.selected { background: rgba(201,168,76,0.08); border-left: 3px solid #C9A84C; }
+  .draft-item.sent { opacity: 0.4; }
+  .draft-to { font-size: 11px; color: #666; margin-bottom: 3px; }
+  .draft-subj { font-size: 13px; color: #F0EDE4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sent-tag { font-size: 10px; background: rgba(29,158,117,0.2); color: #1D9E75; padding: 1px 6px; border-radius: 10px; margin-left:6px; }
+  .compose { padding: 20px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 11px; color: #666; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .field input, .field textarea { width: 100%; font-size: 13px; color: #F0EDE4; background: #08080D; border: 1px solid #222228; border-radius: 8px; padding: 9px 12px; outline: none; transition: border-color 0.15s; }
+  .field input:focus, .field textarea:focus { border-color: #C9A84C; }
+  .field textarea { min-height: 220px; resize: vertical; line-height: 1.6; font-family: Arial, sans-serif; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .send-btn { width: 100%; padding: 12px; font-size: 15px; font-weight: 600; background: #C9A84C; color: #08080D; border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.15s; margin-top: 4px; letter-spacing: -0.2px; }
+  .send-btn:hover { opacity: 0.88; }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .status { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 13px; display: none; }
+  .status.success { background: rgba(29,158,117,0.15); color: #1D9E75; border: 1px solid rgba(29,158,117,0.3); display: block; }
+  .status.error { background: rgba(226,75,74,0.15); color: #E24B4A; border: 1px solid rgba(226,75,74,0.3); display: block; }
+  .status.loading { background: rgba(201,168,76,0.1); color: #C9A84C; border: 1px solid rgba(201,168,76,0.2); display: block; }
+  .divider { font-size: 11px; color: #444; padding: 10px 16px; background: #0d0d12; border-top: 1px solid #1a1a20; border-bottom: 1px solid #1a1a20; }
+  .empty-state { padding: 32px; text-align: center; color: #444; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">Aura<span>Layer</span></div>
+    <div class="badge">Email Sender · Resend</div>
+  </div>
+
+  <div class="panel">
+    <div class="divider">Select a draft</div>
+    <div class="draft-list" id="draftList">
+      <div class="empty-state">Select a draft below to compose</div>
+    </div>
+  </div>
+
+  <div class="panel" id="composePanel" style="display:none">
+    <div class="divider">Compose — all fields editable</div>
+    <div class="compose">
+      <div class="row2">
+        <div class="field">
+          <label>To</label>
+          <input type="email" id="toField" placeholder="recipient@example.com">
+        </div>
+        <div class="field">
+          <label>From name</label>
+          <input type="text" id="fromName" value="Manny A.">
+        </div>
+      </div>
+      <div class="field">
+        <label>Subject</label>
+        <input type="text" id="subjectField">
+      </div>
+      <div class="field">
+        <label>Body</label>
+        <textarea id="bodyField"></textarea>
+      </div>
+      <button class="send-btn" id="sendBtn" onclick="sendEmail()">Send via Resend →</button>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const sentSet = new Set();
+let selectedIdx = null;
+
+const drafts = [
+  {to:'founders@tldr.tech',subject:'Pitch for TLDR Founders: AuraLayer.ai — AI stack orchestration, launching May 1',body:`Hi TLDR Founders team,\n\nPitching AuraLayer.ai for your founders-focused edition — a no-code AI tool orchestration platform closing beta April 30th and launching May 1, 2026.\n\nThe founders angle: we're a small team who felt the gap and built the solution. Most founders today juggle 5–10 AI tools with no way to connect them. AuraLayer layers them into one automated workflow — no code required.\n\nBeta is live now at https://auralayer.ai/app. Deck at https://auralayer.ai/deck.\n\nBeta closes April 30th — would love a feature before launch.\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'hello@founderweekly.com',subject:'Pitch for Founder Weekly: AuraLayer.ai — small team, felt the gap, beta closes April 30th',body:`Hi Founder Weekly team,\n\nPitching AuraLayer.ai for your curated founder digest — a no-code AI tool orchestration platform closing beta April 30th and launching May 1, 2026.\n\nWorth featuring for your founder audience: a small team who felt something genuinely missing in the AI stack and built the fix. Layer your tools, unlock your vision.\n\nProduct: https://auralayer.ai\nApp: https://auralayer.ai/app\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'editor@saasmag.com',subject:'Feature pitch: AuraLayer.ai — small team, felt the gap, launching May 1',body:`Hi SaaS Mag team,\n\nReaching out about featuring AuraLayer.ai — a no-code AI tool orchestration SaaS launching May 1, 2026.\n\nPricing: Starter $9/mo, Pro $39/mo, Visionary $92/mo — beta pricing closes April 30th.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'hibt@npr.org',subject:'Guest pitch: AuraLayer.ai team — small founders, big market gap, built from zero',body:`Hi How I Built This team,\n\nPitching the team behind AuraLayer.ai as guests — a no-code AI tool orchestration platform built from scratch by a small group of founders who felt something was genuinely missing.\n\nNo VC funding, no prior exits — just a clear problem and a May 1, 2026 launch date.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'ideas@myfirstmillion.com',subject:'Business idea pitch for MFM: AuraLayer.ai — the orchestration layer for every AI tool',body:`Hi My First Million team,\n\nPitching AuraLayer.ai as a business idea worth discussing — SaaS businesses that solve coordination problems between existing tools tend to be sticky, high-margin, and defensible. AuraLayer does exactly that for the AI stack.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'hello@thesaaspodcast.com',subject:'Podcast guest pitch: AuraLayer.ai — small team, saw a gap, built the solution, launching May 1',body:`Hi The SaaS Podcast team,\n\nPitching AuraLayer.ai as a guest story — a small team who felt something genuinely missing built a no-code AI tool orchestration platform, launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'hello@theygotacquired.com',subject:'Founder feature pitch: AuraLayer.ai — small team, felt something was missing, launching May 1',body:`Hi They Got Acquired team,\n\nNot pitching an acquisition — pitching the story behind building one. AuraLayer.ai is a no-code AI tool orchestration platform built entirely on our own terms, launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'info@a16z.com',subject:'Startup introduction: AuraLayer.ai — AI orchestration infrastructure for the non-technical user',body:`Hi a16z team,\n\nIntroducing AuraLayer.ai — a no-code AI tool orchestration platform launching May 1, 2026 addressing the next major infrastructure gap in the AI productivity market.\n\nDeck: https://auralayer.ai/deck\nProduct: https://auralayer.ai\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'info@sequoiacap.com',subject:'Startup introduction: AuraLayer.ai — consumer AI orchestration infrastructure',body:`Hi Sequoia team,\n\nIntroducing AuraLayer.ai — a no-code AI tool orchestration platform launching May 1, 2026. We believe consumer-level AI orchestration is one of the most significant infrastructure opportunities right now.\n\nDeck: https://auralayer.ai/deck\nProduct: https://auralayer.ai\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'research@cbinsights.com',subject:'Startup introduction: AuraLayer.ai — consumer-level AI orchestration infrastructure',body:`Hi CB Insights team,\n\nIntroducing AuraLayer.ai — launching May 1, 2026 at the intersection of AI tooling and workflow automation. We believe consumer-level AI orchestration is an emerging category worth tracking.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'hello@trends.vc',subject:'Trend submission: AuraLayer.ai — consumer AI orchestration, an emerging category',body:`Hi Trends.vc team,\n\nSubmitting AuraLayer.ai for Trends coverage — consumer-level AI orchestration as an emerging category worth tracking. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'hello@every.to',subject:'Story pitch: AuraLayer.ai — the orchestration layer the AI stack has been missing',body:`Hi Every team,\n\nPitching AuraLayer.ai for your knowledge worker audience — the orchestration layer the AI stack has been missing, launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'aireporter@theinformation.com',subject:'AI beat pitch: AuraLayer.ai — first consumer-level AI orchestration platform',body:`Hi The Information AI reporter,\n\nTargeted pitch for your AI tools beat — AuraLayer.ai, first consumer-level AI orchestration platform, launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'hiten@hitenshah.com',subject:'SaaS Weekly pitch: AuraLayer.ai — AI orchestration, launching May 1',body:`Hi Hiten,\n\nLong-time admirer of your work. Reaching out about AuraLayer.ai — no-code AI orchestration launching May 1, 2026 that we think would resonate with your SaaS Weekly audience.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'scott@profgalloway.com',subject:'Product introduction: AuraLayer.ai — the orchestration layer for the AI consumer stack',body:`Hi Scott Galloway,\n\nReaching out about AuraLayer.ai — the orchestration layer for the AI consumer stack, launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'trends@thehustle.co',subject:'Business trend pitch: AuraLayer.ai — consumer AI orchestration, an emerging category',body:`Hi The Hustle team,\n\nSubmitting AuraLayer.ai as a business trend — consumer AI orchestration as an emerging category. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'hello@explodingtopics.com',subject:'Trend submission: Consumer AI orchestration — AuraLayer.ai as the category example',body:`Hi Exploding Topics team,\n\nSubmitting consumer AI orchestration as a trend worth tracking — AuraLayer.ai as the category example, launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'hello@sidehustlenation.com',subject:'Tool + affiliate pitch: AuraLayer.ai — AI orchestration for online business builders',body:`Hi Side Hustle Nation team,\n\nPitching AuraLayer.ai for your audience — AI orchestration for online builders plus a 50% recurring affiliate commission for 12 months.\n\nProduct: https://auralayer.ai\nAffiliate signup: https://auralayer-ai.getrewardful.com/signup\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'editorial@contentmarketinginstitute.com',subject:'Tool pitch: AuraLayer.ai — AI orchestration for content marketing teams',body:`Hi CMI team,\n\nPitching AuraLayer.ai for your content marketing audience — connects every AI tool in a content team's workflow into one seamless layer. Launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`},
+  {to:'tips@searchenginejournal.com',subject:'Tool pitch: AuraLayer.ai — AI orchestration for SEO and content teams',body:`Hi SEJ team,\n\nPitching AuraLayer.ai for your SEO audience — AI orchestration for content teams, launching May 1, 2026.\n\nProduct: https://auralayer.ai\nDeck: https://auralayer.ai/deck\n\nBest,\nManny A.\nsupport@auralayer.ai\nhttps://auralayer.ai`}
+];
+
+function toHtml(text) {
+  return `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#111111;max-width:580px">` +
+    text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" style="color:#C9A84C;text-decoration:none">$1</a>')
+      .replace(/\n\n/g,'</p><p style="margin:0 0 14px">').replace(/\n/g,'<br>') +
+    `</div>`;
+}
+
+function renderList() {
+  document.getElementById('draftList').innerHTML = drafts.map((d,i) => `
+    <div class="draft-item ${selectedIdx===i?'selected':''} ${sentSet.has(i)?'sent':''}" onclick="selectDraft(${i})">
+      <div class="draft-to">${d.to}${sentSet.has(i)?'<span class="sent-tag">sent</span>':''}</div>
+      <div class="draft-subj">${d.subject}</div>
+    </div>`).join('');
+}
+
+function selectDraft(i) {
+  selectedIdx = i;
+  renderList();
+  const d = drafts[i];
+  document.getElementById('toField').value = d.to;
+  document.getElementById('subjectField').value = d.subject;
+  document.getElementById('bodyField').value = d.body;
+  document.getElementById('composePanel').style.display = 'block';
+  document.getElementById('status').style.display = 'none';
+  document.getElementById('sendBtn').textContent = 'Send via Resend →';
+  document.getElementById('sendBtn').disabled = false;
+}
+
+async function sendEmail() {
+  const to = document.getElementById('toField').value.trim();
+  const subject = document.getElementById('subjectField').value.trim();
+  const plainBody = document.getElementById('bodyField').value.trim();
+  const fromName = document.getElementById('fromName').value.trim() || 'Manny A.';
+  if (!to || !subject || !plainBody) { showStatus('error','Please fill in all fields.'); return; }
+
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  showStatus('loading','Sending...');
+
+  try {
+    const res = await fetch('/api/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, subject, fromName, html: toHtml(plainBody), text: plainBody })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showStatus('success', `Sent to ${to}`);
+      sentSet.add(selectedIdx);
+      renderList();
+      btn.textContent = 'Sent!';
+      setTimeout(() => { btn.disabled=false; btn.textContent='Send via Resend →'; }, 3000);
+    } else {
+      showStatus('error', data.error || 'Send failed — check Resend key.');
+      btn.disabled=false; btn.textContent='Send via Resend →';
+    }
+  } catch(e) {
+    showStatus('error', 'Error: ' + e.message);
+    btn.disabled=false; btn.textContent='Send via Resend →';
+  }
+}
+
+function showStatus(type, msg) {
+  const el = document.getElementById('status');
+  el.className = 'status ' + type;
+  el.textContent = msg;
+}
+
+renderList();
+</script>
+</body>
+</html>
