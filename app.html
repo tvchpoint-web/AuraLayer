@@ -117,8 +117,8 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
 .lang-option-check{font-size:11px;color:var(--ag);flex-shrink:0;}
 
 /* ── VIEWS ── */
-#view-main,#view-workspace,#view-news,#view-affiliate{display:none;}
-#view-main.active,#view-workspace.active,#view-news.active,#view-affiliate.active{display:block;}
+#view-main,#view-workspace,#view-news,#view-affiliate,#view-settings{display:none;}
+#view-main.active,#view-workspace.active,#view-news.active,#view-affiliate.active,#view-settings.active{display:block;}
 
 /* ── MAIN ── */
 .main{padding:1.5rem;max-width:820px;margin:0 auto;}
@@ -527,6 +527,63 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
 .aff-terms-item{font-size:10px;color:var(--am);display:flex;gap:7px;line-height:1.5;}
 .aff-terms-item::before{content:'·';color:var(--ag);flex-shrink:0;}
 
+/* ── SETTINGS ── */
+.settings{padding:1.5rem;max-width:820px;margin:0 auto;}
+.settings-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;}
+.settings-title{font-family:var(--fh);font-size:22px;font-weight:800;color:var(--at);margin-bottom:4px;}
+.settings-sub{font-size:12px;color:var(--am);max-width:480px;line-height:1.6;}
+.settings-tier-info{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.settings-tier-count{font-family:var(--fh);font-size:11px;font-weight:700;color:var(--ag);letter-spacing:0.04em;padding:6px 12px;border-radius:20px;border:0.5px solid var(--ab);background:rgba(201,168,76,0.06);}
+
+/* settings banner */
+.settings-banner{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(139,111,10,0.04));border:0.5px solid rgba(201,168,76,0.25);border-radius:var(--radius);padding:14px 16px;margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;animation:fadeUp 0.3s ease;}
+.settings-banner-left{display:flex;align-items:flex-start;gap:12px;flex:1;}
+.settings-banner-icon{font-size:20px;color:var(--ag);flex-shrink:0;margin-top:1px;}
+.settings-banner-title{font-family:var(--fh);font-size:12px;font-weight:700;color:var(--at);margin-bottom:3px;}
+.settings-banner-sub{font-size:11px;color:var(--am);line-height:1.6;}
+.settings-banner-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.settings-banner-btn{font-family:var(--fh);font-size:10px;font-weight:800;letter-spacing:0.06em;padding:8px 14px;border-radius:8px;border:0.5px solid rgba(201,168,76,0.4);background:rgba(201,168,76,0.1);color:var(--ag);cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.settings-banner-btn:hover{background:rgba(201,168,76,0.2);}
+.settings-banner-dismiss{background:transparent;border:none;color:var(--am);cursor:pointer;font-size:13px;padding:4px;transition:color 0.2s;}
+.settings-banner-dismiss:hover{color:var(--at);}
+
+/* integration cards */
+.integrations-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.int-card{background:var(--surface);border:0.5px solid var(--ab);border-radius:var(--radius);padding:18px;transition:all 0.25s;position:relative;overflow:hidden;}
+.int-card:hover{border-color:var(--abh);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,0.2);}
+.int-card.locked{opacity:0.55;}
+.int-card.locked:hover{transform:none;box-shadow:none;}
+.int-card.active{border-color:rgba(201,168,76,0.5);background:rgba(201,168,76,0.04);}
+.int-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.int-card-icon{font-size:28px;width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.int-card-info{flex:1;}
+.int-card-name{font-family:var(--fh);font-size:14px;font-weight:800;color:var(--at);letter-spacing:-0.01em;}
+.int-card-cat{font-size:10px;color:var(--am);margin-top:2px;letter-spacing:0.04em;}
+.int-card-desc{font-size:11px;color:var(--am);line-height:1.6;margin-bottom:14px;min-height:36px;}
+.int-card-btn{width:100%;padding:9px;border-radius:8px;font-family:var(--fh);font-size:10px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;border:0.5px solid var(--ab);background:transparent;color:var(--am);}
+.int-card-btn:hover{border-color:var(--abh);color:var(--ag);background:rgba(201,168,76,0.06);}
+.int-card-btn.active{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.4);color:var(--ag);}
+.int-card-btn.active:hover{background:rgba(226,75,74,0.1);border-color:rgba(226,75,74,0.4);color:#E24B4A;}
+.int-card-btn.upgrade{background:linear-gradient(135deg,rgba(232,201,107,0.12),rgba(201,168,76,0.08));border-color:rgba(201,168,76,0.3);color:var(--ag);}
+.int-card-btn.upgrade:hover{background:linear-gradient(135deg,rgba(232,201,107,0.2),rgba(201,168,76,0.15));}
+.int-card-badge{position:absolute;top:10px;right:10px;font-family:var(--fh);font-size:7px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
+.int-badge-active{background:rgba(78,158,143,0.15);color:#4E9E8F;border:0.5px solid rgba(78,158,143,0.3);}
+.int-badge-pro{background:rgba(201,168,76,0.1);color:var(--ag);border:0.5px solid rgba(201,168,76,0.25);}
+.int-badge-vis{background:rgba(139,111,212,0.1);color:#8B6FD4;border:0.5px solid rgba(139,111,212,0.25);}
+
+/* integration badge on matrix stack tool slots */
+.slot-int-badge{display:inline-flex;align-items:center;gap:3px;font-size:8px;font-family:var(--fh);font-weight:700;letter-spacing:0.06em;padding:2px 6px;border-radius:10px;margin-left:6px;background:rgba(201,168,76,0.1);border:0.5px solid rgba(201,168,76,0.2);color:var(--ag);}
+.slot-int-badge.warning{background:rgba(226,75,74,0.08);border-color:rgba(226,75,74,0.25);color:#E24B4A;}
+
+/* settings responsive */
+@media(max-width:600px){
+  .settings-header{flex-direction:column;gap:10px;}
+  .settings-banner{flex-direction:column;}
+  .settings-banner-actions{width:100%;justify-content:flex-end;}
+  .integrations-grid{grid-template-columns:1fr;}
+  .int-card-desc{min-height:auto;}
+}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
@@ -591,6 +648,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
     <div class="header-nav">
       <button class="nav-btn" id="nav-workspace" onclick="switchView('workspace')">⬡ Workspace</button>
       <button class="nav-btn" id="nav-news" onclick="switchView('news')">◎ Tool News</button>
+      <button class="nav-btn" id="nav-settings" onclick="switchView('settings')">⊙ Settings</button>
       <div class="lang-wrap" id="lang-wrap">
         <button class="lang-btn" id="lang-btn" onclick="toggleLangDropdown()">
           <span class="lang-flag" id="lang-flag">🇺🇸</span>
@@ -645,7 +703,7 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
           </div>
           <div class="acct-divider"></div>
           <div class="acct-menu">
-            <div class="acct-item" onclick="showToast('Settings coming soon');closeAcctDropdown()">
+            <div class="acct-item" onclick="switchView('settings');closeAcctDropdown()">
               <span class="acct-item-icon">⊙</span>
               <span>Account Settings</span>
             </div>
@@ -1163,6 +1221,42 @@ body{background:var(--ink);color:var(--at);font-family:var(--fb);min-height:100v
 
 </div>
 
+  <!-- ══ VIEW: SETTINGS ══ -->
+  <div id="view-settings">
+    <div class="settings">
+
+      <!-- Tier Banner -->
+      <div class="settings-banner" id="settings-banner">
+        <div class="settings-banner-left">
+          <span class="settings-banner-icon">✦</span>
+          <div>
+            <div class="settings-banner-title" id="settings-banner-title">You're on the Starter plan</div>
+            <div class="settings-banner-sub" id="settings-banner-sub">Upgrade to Pro to connect Claude, ChatGPT, and Canva — unlock the tools behind your workflows.</div>
+          </div>
+        </div>
+        <div class="settings-banner-actions">
+          <button class="settings-banner-btn" onclick="openP()">View Plans →</button>
+          <button class="settings-banner-dismiss" onclick="dismissSettingsBanner()">✕</button>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="settings-header">
+        <div>
+          <div class="settings-title">API Integrations</div>
+          <div class="settings-sub">Connect AI tools to power your workflows. Your plan determines which integrations are available.</div>
+        </div>
+        <div class="settings-tier-info" id="settings-tier-info">
+          <span class="settings-tier-count" id="settings-tier-count">0 / 3 active</span>
+        </div>
+      </div>
+
+      <!-- Integration Grid -->
+      <div class="integrations-grid" id="integrations-grid"></div>
+
+    </div>
+  </div>
+
 <!-- ══ SHARE MODAL ══ -->
 <div class="share-modal" id="share-modal">
   <div class="share-wrap">
@@ -1257,6 +1351,22 @@ const NEWS_DATA=[
 
 const COLORS=['#C9A84C','#8B6FD4','#4E9E8F','#C97B4C','#4C7FC9'];
 
+// ── INTEGRATIONS ──
+const INTEGRATIONS=[
+  {id:'claude',name:'Claude',provider:'Anthropic',cat:'AI Reasoning',emoji:'🟠',color:'#E8C96B',desc:'Advanced reasoning and strategic analysis for your workflows.',minTier:'pro'},
+  {id:'chatgpt',name:'ChatGPT',provider:'OpenAI',cat:'AI Assistant',emoji:'🟢',color:'#74C59B',desc:'Conversational AI for content generation and brainstorming.',minTier:'pro'},
+  {id:'canva',name:'Canva',provider:'Canva',cat:'Design Automation',emoji:'🎨',color:'#E8A86B',desc:'Automated design generation for social media, decks, and brands.',minTier:'pro'},
+  {id:'midjourney',name:'Midjourney',provider:'Midjourney',cat:'AI Image',emoji:'🖼️',color:'#7BAFDE',desc:'Photorealistic and artistic image generation from text prompts.',minTier:'visionary'},
+  {id:'perplexity',name:'Perplexity',provider:'Perplexity AI',cat:'AI Research',emoji:'🟣',color:'#9B8FD4',desc:'Real-time research with cited sources for data-driven decisions.',minTier:'visionary'},
+  {id:'notion',name:'Notion',provider:'Notion Labs',cat:'Productivity',emoji:'📝',color:'#B0B0B0',desc:'Automated workspace scaffolding — docs, databases, and wikis.',minTier:'visionary'},
+  {id:'runway',name:'Runway',provider:'Runway',cat:'AI Video',emoji:'🎬',color:'#FF3366',desc:'Generate cinematic video from text descriptions and images.',minTier:'visionary'},
+  {id:'elevenlabs',name:'ElevenLabs',provider:'ElevenLabs',cat:'AI Voice',emoji:'🎙️',color:'#FF6B35',desc:'Natural voice synthesis for podcasts, narration, and apps.',minTier:'visionary'},
+];
+
+const TIER_LIMITS={starter:0,pro:3,visionary:Infinity};
+let activeIntegrations=JSON.parse(localStorage.getItem('aura_integrations')||'[]');
+let settingsBannerDismissed=false; // Ephemeral — banner reappears on refresh as a recurring upgrade nudge
+
 // ── STATE ──
 let sel=[], mode='guidance', userName='', userRole='', sbsMode=false, sbsRunB=false;
 let sessions=[], lastResult=null, lastPrompt='', obSelectedTools=[];
@@ -1326,7 +1436,7 @@ function setMode(m){
 
 // ── VIEWS ──
 function switchView(v){
-  ['main','workspace','news','affiliate'].forEach(x=>{
+  ['main','workspace','news','affiliate','settings'].forEach(x=>{
     document.getElementById('view-'+x).classList.toggle('active',x===v);
     const nb=document.getElementById('nav-'+x);
     if(nb)nb.classList.toggle('active',x===v);
@@ -1334,6 +1444,7 @@ function switchView(v){
   if(v==='workspace')renderWorkspace();
   if(v==='news')renderNews();
   if(v==='affiliate')renderAffiliateTable('all');
+  if(v==='settings')renderSettings();
 }
 
 // ── RECOMMENDATIONS ──
@@ -1383,13 +1494,8 @@ function addTool(id){
   const t=TOOLS.find(t=>t.id===id);
   if(!t||sel.find(s=>s.id===id))return;
   sel.push({...t,pct:0,locked:false});
-  normalize();// Detect return from Stripe payment
-if(window.location.search.includes('paid=true')||window.location.search.includes('success=true')){
-  sessionStorage.setItem('auralayer_paid','true');
-  const badge=document.getElementById('tier-badge-text');
-  if(badge)badge.textContent='PRO ▾';
-}
-renderStack();
+  normalize();
+  renderStack();
   document.getElementById('tsearch').value='';
   document.getElementById('errmsg').style.display='none';
   showRecommendations();
@@ -1435,6 +1541,17 @@ function updateAllDisplays(){
   renderPieBar();renderAuraScore();
 }
 
+function getIntBadge(toolId){
+  const int=INTEGRATIONS.find(i=>i.id===toolId);
+  if(!int)return '';
+  const isActive=activeIntegrations.includes(toolId);
+  if(isActive)return `<span class="slot-int-badge">⚡ API</span>`;
+  // Show warning if was active but got deactivated
+  const wasActive=localStorage.getItem('aura_int_warned_'+toolId);
+  if(wasActive)return `<span class="slot-int-badge warning">⚠ No API</span>`;
+  return '';
+}
+
 // ── RENDER STACK ──
 function renderStack(){
   const stack=document.getElementById('mstack');
@@ -1449,7 +1566,7 @@ function renderStack(){
   const slots=sel.map((t,i)=>{
     const s=`<div class="matrix-slot${t.locked?' locked':''}" id="slot-${t.id}" style="animation-delay:${i*0.06}s">
       <div class="slot-inner">
-        <div class="slot-left"><span class="slot-emoji">${t.emoji}</span><div><div class="slot-name">${t.name}</div><div class="slot-cat">${t.cat}</div></div></div>
+        <div class="slot-left"><span class="slot-emoji">${t.emoji}</span><div><div class="slot-name">${t.name}${getIntBadge(t.id)}</div><div class="slot-cat">${t.cat}</div></div></div>
         <div class="slot-right">
           <div class="slot-pct" id="pct-${t.id}">${t.pct}%</div>
           <button class="lock-btn${t.locked?' locked':''}" id="lock-${t.id}" onclick="toggleLock('${t.id}')">${t.locked?'🔒':'🔓'}</button>
@@ -1950,7 +2067,7 @@ document.addEventListener('click',function(e){
 
 // ── OUTPUT DIMENSIONS ──
 const DIMS_STATE={analytical:55,creative:25};
-const CURRENT_TIER='pro'; // 'starter'|'pro'|'visionary'
+let CURRENT_TIER='starter'; // 'starter'|'pro'|'visionary' — updated by getCurrentTier()
 let savedDimProfiles=[];
 
 const DIM_PRESETS={
@@ -2039,6 +2156,147 @@ function getDimNote(){
 function openP(){document.getElementById('pmodal').classList.add('open');}
 function closeP(){document.getElementById('pmodal').classList.remove('open');}
 
+// ── SETTINGS / INTEGRATIONS ──
+function getCurrentTier(){
+  const badge=document.getElementById('tier-badge-text');
+  const text=badge?badge.textContent.trim().toLowerCase():'starter';
+  if(text.includes('visionary'))return 'visionary';
+  if(text.includes('pro'))return 'pro';
+  if(sessionStorage.getItem('auralayer_paid')==='true')return 'pro';
+  return 'starter';
+}
+
+function refreshTierUI(){
+  const tier=getCurrentTier();
+  CURRENT_TIER=tier; // keep legacy variable in sync
+  const badge=document.getElementById('tier-badge-text');
+  if(badge)badge.textContent=tier.toUpperCase()+' ▾';
+  const acctTier=document.querySelector('.acct-tier');
+  if(acctTier)acctTier.textContent=tier.charAt(0).toUpperCase()+tier.slice(1)+' Plan';
+}
+
+function renderSettings(){
+  const tier=getCurrentTier();
+  const limit=TIER_LIMITS[tier];
+  const activeCount=activeIntegrations.length;
+
+  // Banner
+  const banner=document.getElementById('settings-banner');
+  if(tier==='visionary'||settingsBannerDismissed){
+    banner.style.display='none';
+  }else{
+    banner.style.display='flex';
+    const title=document.getElementById('settings-banner-title');
+    const sub=document.getElementById('settings-banner-sub');
+    if(tier==='pro'){
+      title.textContent=`You're on the Pro plan — ${activeCount} of ${limit} integrations active`;
+      sub.textContent='Upgrade to Visionary for unlimited integrations including Midjourney, Perplexity, Notion, and more.';
+    }else{
+      title.textContent="You're on the Starter plan";
+      sub.textContent='Upgrade to Pro to connect Claude, ChatGPT, and Canva — unlock the tools behind your workflows.';
+    }
+  }
+
+  // Tier count
+  const countEl=document.getElementById('settings-tier-count');
+  if(tier==='visionary'){
+    countEl.textContent=`${activeCount} active · Unlimited`;
+  }else{
+    countEl.textContent=`${activeCount} / ${limit} active`;
+  }
+
+  // Grid
+  const grid=document.getElementById('integrations-grid');
+  grid.innerHTML=INTEGRATIONS.map(int=>{
+    const isActive=activeIntegrations.includes(int.id);
+    const tierRank={starter:0,pro:1,visionary:2};
+    const hasAccess=tierRank[tier]>=tierRank[int.minTier];
+    const atLimit=activeCount>=limit&&!isActive;
+
+    let btnClass='',btnText='',btnAction='',cardClass='',badgeHTML='';
+
+    if(isActive){
+      cardClass='active';
+      btnClass='active';
+      btnText='✓ Active — Click to Deactivate';
+      btnAction=`toggleIntegration('${int.id}')`;
+      badgeHTML=`<div class="int-card-badge int-badge-active">Active</div>`;
+    }else if(!hasAccess){
+      cardClass='locked';
+      btnClass='upgrade';
+      btnText=int.minTier==='visionary'?'Upgrade to Visionary →':'Upgrade to Pro →';
+      btnAction='openP()';
+      badgeHTML=`<div class="int-card-badge ${int.minTier==='visionary'?'int-badge-vis':'int-badge-pro'}">${int.minTier}</div>`;
+    }else if(atLimit){
+      cardClass='locked';
+      btnClass='';
+      btnText=`Limit reached (${limit}/${limit})`;
+      btnAction='';
+      badgeHTML='';
+    }else{
+      btnClass='';
+      btnText='Activate';
+      btnAction=`toggleIntegration('${int.id}')`;
+      badgeHTML='';
+    }
+
+    return`<div class="int-card ${cardClass}">
+      ${badgeHTML}
+      <div class="int-card-header">
+        <div class="int-card-icon" style="background:${int.color}15;border:0.5px solid ${int.color}33;">${int.emoji}</div>
+        <div class="int-card-info">
+          <div class="int-card-name">${int.name}</div>
+          <div class="int-card-cat">${int.provider} · ${int.cat}</div>
+        </div>
+      </div>
+      <div class="int-card-desc">${int.desc}</div>
+      <button class="int-card-btn ${btnClass}" ${btnAction?`onclick="${btnAction}"`:'disabled'}>${btnText}</button>
+    </div>`;
+  }).join('');
+}
+
+function toggleIntegration(id){
+  const tier=getCurrentTier();
+  const limit=TIER_LIMITS[tier];
+
+  if(activeIntegrations.includes(id)){
+    activeIntegrations=activeIntegrations.filter(x=>x!==id);
+    // Mark tool slots that were using this integration.
+    // NOTE: Integration IDs (INTEGRATIONS[].id) intentionally match TOOLS[].id
+    // (e.g., both use 'claude'). This coupling enables badge lookup in getIntBadge().
+    const affectedSlots=sel.filter(s=>s.id===id);
+    if(affectedSlots.length){
+      localStorage.setItem('aura_int_warned_'+id,'true');
+    }
+    localStorage.setItem('aura_integrations',JSON.stringify(activeIntegrations));
+    showToast(`${INTEGRATIONS.find(i=>i.id===id)?.name||id} deactivated`);
+  }else{
+    if(activeIntegrations.length>=limit){
+      showToast(`Integration limit reached — upgrade your plan for more.`);
+      return;
+    }
+    activeIntegrations.push(id);
+    localStorage.removeItem('aura_int_warned_'+id);
+    localStorage.setItem('aura_integrations',JSON.stringify(activeIntegrations));
+    showToast(`${INTEGRATIONS.find(i=>i.id===id)?.name||id} activated ✓`);
+  }
+  renderSettings();
+  renderStack(); // refresh matrix badges
+}
+
+function dismissSettingsBanner(){
+  settingsBannerDismissed=true;
+  document.getElementById('settings-banner').style.display='none';
+}
+
+// Detect return from Stripe payment (runs once on page load)
+if(window.location.search.includes('paid=true')||window.location.search.includes('success=true')){
+  sessionStorage.setItem('auralayer_paid','true');
+  const badge=document.getElementById('tier-badge-text');
+  if(badge)badge.textContent='PRO ▾';
+}
+
+refreshTierUI();
 renderStack();
 </script>
 </body>
