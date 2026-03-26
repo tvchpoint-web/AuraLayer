@@ -1705,9 +1705,16 @@ async function activate(isRefine){
     if(sbsMode){renderSBS(parsed,sbsRunB);}else{renderResults(parsed);}
     document.getElementById('refine-btn').style.display='block';
   }catch(e){
-    clearInterval(lv);document.getElementById('loadstate').style.display='none';document.getElementById('actbtn').disabled=false;
-    const resultsVisible=document.getElementById('results')&&document.getElementById('results').style.display!=='none';
-    if(!resultsVisible){showErr('Connection error. Please try again.');}
+    clearInterval(lv);
+    document.getElementById('loadstate').style.display='none';
+    document.getElementById('actbtn').disabled=false;
+    // Only show error if results panel is not visible
+    setTimeout(function(){
+      const r=document.getElementById('results');
+      if(!r||r.style.display==='none'||r.style.display===''){
+        showErr('Connection error. Please try again.');
+      }
+    },500);
   }
 }
 
