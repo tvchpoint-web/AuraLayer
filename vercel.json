@@ -1,0 +1,10 @@
+{
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/app.html", "dest": "/app.html" },
+    { "src": "/app", "dest": "/app.html" },
+    { "src": "/deck", "dest": "/auralayer_pitch_deck.html" },
+    { "src": "/auralayer_pitch_deck.html", "dest": "/auralayer_pitch_deck.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
