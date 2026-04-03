@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AuraLayer · Type 06 · Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;min-height:100%;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-x:hidden;overflow-y:auto;font-family:'DM Mono',monospace;}
+#stage{position:relative;width:100vw;height:calc(100vw * 16/9);max-width:390px;max-height:calc(390px * 16/9);background:#000;overflow:hidden;flex-shrink:0;margin:0 auto;}
+#stage::after{content:'';position:absolute;inset:0;z-index:90;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");pointer-events:none;mix-blend-mode:overlay;}
+#scan{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(201,146,42,0.2),transparent);z-index:85;animation:scan 6s linear infinite;pointer-events:none;}
+@keyframes scan{0%{top:-2px;}100%{top:100%;}}
+#flash{position:absolute;inset:0;z-index:80;background:#fff;opacity:0;pointer-events:none;transition:opacity .05s;}
+#progress{position:absolute;bottom:0;left:0;z-index:70;height:3px;background:#C9922A;width:0%;}
+.layer{position:absolute;inset:0;opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 44px;}
+/* S1 */
+#l1{align-items:flex-start;}
+.ch-ey{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.55);margin-bottom:20px;}
+.ch-slam{font-family:'Bebas Neue',sans-serif;font-size:96px;line-height:.88;letter-spacing:.02em;color:#F5F3EE;text-transform:uppercase;}
+.ch-slam em{color:#C9922A;font-style:normal;}
+.ch-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:26px;color:rgba(245,243,238,0.45);margin-top:20px;line-height:1.3;}
+/* S2 */
+.card{width:100%;border:1px solid rgba(201,146,42,0.25);background:rgba(201,146,42,0.04);padding:26px 26px;}
+.card-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.5);margin-bottom:18px;}
+.blend-rows{display:flex;flex-direction:column;gap:14px;margin-bottom:20px;}
+.br{display:flex;align-items:center;gap:12px;}
+.br-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.br-name{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,243,238,0.6);flex:1;}
+.br-pct{font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:1;}
+.card-handle{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(245,243,238,0.3);padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);}
+/* S3 */
+.q-big{font-family:'Bebas Neue',sans-serif;font-size:84px;line-height:.9;text-align:center;color:#F5F3EE;margin-bottom:20px;letter-spacing:.02em;}
+.q-big em{color:#C9922A;font-style:normal;display:block;}
+.q-prompt{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,146,42,0.55);margin-bottom:24px;text-align:center;}
+.tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;padding:8px 20px;border:1px solid rgba(201,146,42,0.4);color:#C9922A;margin-bottom:28px;}
+/* Overlay + panel */
+#ctrl{position:absolute;bottom:0;left:0;right:0;z-index:200;background:rgba(0,0,0,0.9);border-top:1px solid rgba(201,146,42,0.25);padding:10px 14px 12px;display:flex;flex-direction:column;gap:7px;}
+.cl{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,146,42,0.45);}
+.cr{display:flex;gap:6px;align-items:center;}
+.ci{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(201,146,42,0.2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:11px;padding:5px 8px;outline:none;min-width:0;}
+.ci:focus{border-color:rgba(201,146,42,0.7);}
+.ci.sm{max-width:46px;text-align:center;}
+.cb{background:#C9922A;border:none;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#000;padding:7px 10px;cursor:pointer;flex-shrink:0;}
+.cb:hover{background:#E8C96B;}
+.cp{display:flex;border:1px solid rgba(201,146,42,0.2);flex-shrink:0;}
+.cpb{padding:5px 8px;font-size:8px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-family:'DM Mono',monospace;}
+.cpb.on{background:rgba(201,146,42,0.15);color:#C9922A;}
+.cpb.on.p2{background:rgba(116,197,155,0.15);color:#74C59B;}
+#epw{display:none;width:260px;min-width:260px;height:100vh;background:#111;border-left:1px solid rgba(201,146,42,0.2);padding:24px 20px;overflow-y:auto;}
+#epw h3{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C9922A;margin-bottom:20px;}
+.ef{margin-bottom:14px;}
+.ef label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+.ef input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,146,42,0.25);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;}
+.ef input:focus{border-color:#C9922A;}
+.epct{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.eb{width:100%;padding:11px;background:#C9922A;border:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;margin-top:4px;}
+.eb:hover{background:#E8C96B;}
+.ediv{height:1px;background:rgba(255,255,255,0.06);margin:18px 0;}
+.ehint{font-size:9px;color:rgba(255,255,255,0.25);line-height:1.6;letter-spacing:.5px;}
+.eph{display:flex;border:1px solid rgba(201,146,42,0.25);margin-bottom:14px;}
+.ephb{flex:1;padding:8px 4px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;}
+.ephb.on{background:rgba(201,146,42,0.15);color:#C9922A;}
+.ephb.on.p2{background:rgba(116,197,155,0.15);color:#74C59B;}
+@media(max-width:719px){#epw{display:none!important;}#mob-panel{display:block;}}
+@media(min-width:720px){html,body{flex-direction:row;align-items:center;justify-content:center;height:100%;overflow:hidden;}#mob-panel{display:none!important;}#epw{display:block!important;}}
+
+:root{
+  --ac:#C9922A;
+  --ac-border:rgba(201,146,42,0.4);
+  --ac-border2:rgba(201,146,42,0.25);
+  --ac-dim:rgba(201,146,42,0.45);
+}
+
+/* ── MOBILE PERMANENT EDIT PANEL ── */
+#mob-panel{
+  width:100%;max-width:390px;margin:0 auto;
+  background:#0E0E14;border-top:2px solid var(--ac-border);
+  padding:14px 16px 20px;
+}
+.mp-title{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--ac-dim);margin-bottom:12px;}
+.mp-field{margin-bottom:10px;}
+.mp-field label{display:block;font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;}
+.mp-field input,.mp-field textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--ac-border2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;-webkit-appearance:none;border-radius:0;resize:none;}
+.mp-field input:focus,.mp-field textarea:focus{border-color:var(--ac);}
+.mp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.mp-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.mp-grid2 .mp-field,.mp-grid3 .mp-field{margin-bottom:0;}
+.mp-phase{display:flex;border:1px solid var(--ac-border2);margin-bottom:12px;}
+.mp-phase button{flex:1;padding:8px 4px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;}
+.mp-phase button.on{background:rgba(201,146,42,0.15);color:#C9922A;}
+.mp-phase button.on.p2{background:rgba(116,197,155,0.15);color:#74C59B;}
+.mp-apply{width:100%;padding:11px;background:var(--ac);border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;border-radius:0;margin-bottom:8px;}
+.mp-apply:active{opacity:.85;}
+.mp-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0;}
+.mp-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;border-radius:0;}
+.mp-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.mp-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;border-radius:0;}
+.mp-btn-export:active{background:rgba(255,255,255,0.08);}
+/* Desktop save/export row */
+.ep-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.ep-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-save:hover,.ep-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.ep-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-export:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);}
+/* legacy ctrl hidden */
+#ctrl{display:none!important;}
+
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="scan"></div><div id="flash"></div><div id="progress"></div>
+
+  <div class="layer" id="l1" style="align-items:flex-start;">
+    <div class="ch-ey">#WhatsYourAuraLayer challenge</div>
+    <div class="ch-slam"><span id="headline">What's Your</span><br><em>AuraLayer?</em></div>
+    <div class="ch-sub">Every blend is different. Show me yours.</div>
+  </div>
+
+  <div class="layer" id="l2" style="padding:48px 40px;align-items:flex-start;justify-content:center;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:36px;">
+      <span style="display:block;width:28px;height:1px;background:#C9922A;opacity:.5;flex-shrink:0;"></span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.55);">My blend</span>
+    </div>
+    <div style="display:flex;align-items:center;width:100%;margin-bottom:10px;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;color:#E8C96B;min-width:110px;" id="cp-c">45%</span>
+      <div style="flex:1;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#E8C96B;margin-bottom:7px;">Claude</div>
+        <div style="width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="cp-bar-c" style="height:100%;border-radius:40px;width:0%;background:linear-gradient(90deg,#E8C96B,#C9922A);"></div></div>
+      </div>
+    </div>
+    <div style="width:100%;height:1px;background:rgba(255,255,255,0.05);margin-bottom:10px;"></div>
+    <div style="display:flex;align-items:center;width:100%;margin-bottom:10px;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;color:#74C59B;min-width:110px;" id="cp-cv">33%</span>
+      <div style="flex:1;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#74C59B;margin-bottom:7px;">Canva</div>
+        <div style="width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="cp-bar-cv" style="height:100%;border-radius:40px;width:0%;background:#74C59B;"></div></div>
+      </div>
+    </div>
+    <div style="width:100%;height:1px;background:rgba(255,255,255,0.05);margin-bottom:10px;"></div>
+    <div style="display:flex;align-items:center;width:100%;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;color:#9B8FD4;min-width:110px;" id="cp-p">22%</span>
+      <div style="flex:1;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#9B8FD4;margin-bottom:7px;">Perplexity</div>
+        <div style="width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="cp-bar-p" style="height:100%;border-radius:40px;width:0%;background:#9B8FD4;"></div></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(245,243,238,0.25);" id="card-handle">@yourcreatorname · auralayer.ai</div>
+  </div>
+
+  <div class="layer" id="l3">
+    <div class="q-big">What's<em>yours?</em></div>
+    <div style="width:100%;background:rgba(201,146,42,0.1);border-left:3px solid #C9922A;padding:10px 14px;margin-bottom:16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#E8C96B;" id="q-prompt">Drop yours in the comments</div>
+      <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:rgba(201,146,42,0.5);margin-top:3px;">Every reply = free reach</div>
+    </div>
+    <div class="tag" id="tag-el">#WhatsYourAuraLayer</div>
+    <div style="width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:20px;"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;color:#C9922A;letter-spacing:-.5px;line-height:1;margin-bottom:8px;">auralayer.ai</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,146,42,0.45);">Free to start · Link in bio</div>
+  </div>
+
+
+</div>
+
+<div id="mob-panel">
+  <div class="mp-title">✦ Edit your content — then hit Apply + Replay</div>
+  <div class="mp-actions" style="margin-bottom:12px;">
+    <button class="mp-btn-save" id="mob-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="mp-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="mp-field"><label>Challenge headline</label><input id="mm-headline" value="What's Your" maxlength="16"></div>
+  <div class="mp-grid3">
+    <div class="mp-field"><label>Claude %</label><input id="mm-c" type="number" value="45" min="1" max="98"></div>
+    <div class="mp-field"><label>Canva %</label><input id="mm-cv" type="number" value="33" min="1" max="98"></div>
+    <div class="mp-field"><label>Perplexity %</label><input id="mm-p" type="number" value="22" min="1" max="98"></div>
+  </div>
+  <div class="mp-field"><label>Your Handle</label><input id="mm-handle" value="@yourcreatorname" maxlength="30"></div>
+  <div class="mp-field"><label>Comment prompt</label><input id="mm-prompt" value="Drop yours in the comments 👇" maxlength="36"></div>
+  <div class="mp-field"><label>Phase</label>
+    <div class="mp-phase">
+      <button class="on" id="mmp1" onclick="setPhase(1)">Phase 1</button>
+      <button id="mmp2" onclick="setPhase(2)">Phase 2</button>
+    </div>
+  </div>
+  <button class="mp-apply" onclick="mobApply()">↺ Apply + Replay</button>
+</div>
+
+<div id="epw">
+  <h3>✦ Type 06 · Challenge</h3>
+  <div class="ef"><label>Challenge headline</label><input id="w-headline" value="What's Your" maxlength="16"></div>
+  <div class="epct">
+    <div class="ef"><label>Claude %</label><input id="w-c" type="number" value="45" min="1" max="98"></div>
+    <div class="ef"><label>Canva %</label><input id="w-cv" type="number" value="33" min="1" max="98"></div>
+    <div class="ef"><label>Perplexity %</label><input id="w-p" type="number" value="22" min="1" max="98"></div>
+  </div>
+  <div class="ef"><label>Your Handle</label><input id="w-handle" value="@yourcreatorname" maxlength="30"></div>
+  <div class="ef"><label>Comment prompt</label><input id="w-prompt" value="Drop yours in the comments 👇" maxlength="36"></div>
+  <div class="ef"><label>Phase</label>
+    <div class="eph">
+      <button class="ephb on" id="wp1" onclick="setPhase(1)">Phase 1</button>
+      <button class="ephb" id="wp2" onclick="setPhase(2)">Phase 2</button>
+    </div>
+  </div>
+  <button class="eb" onclick="apply()">↺ Apply + Replay</button>
+  <div class="ep-actions">
+    <button class="ep-btn-save" id="ep-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="ep-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="ediv"></div>
+  <div class="ehint">Highest-engagement format. Every comment = free algorithmic distribution.</div>
+</div>
+
+<script>
+let timers=[],af=null,phase=1;
+function g(id){return document.getElementById(id);}
+function flash(){const f=g('flash');f.style.opacity='.5';setTimeout(()=>{f.style.opacity='0';},65);}
+function show(id){g(id).style.opacity='1';}function hide(id){g(id).style.opacity='0';}
+function setPhase(n){
+  phase=n;
+  if(g('mp1'))g('mp1').className='cpb'+(n===1?' on':'');if(g('mp2'))g('mp2').className='cpb'+(n===2?' on p2':'');
+  if(g('mmp1'))g('mmp1').className=(n===1?'on':'');if(g('mmp2'))g('mmp2').className=(n===2?'on p2':'');
+  if(g('wp1'))g('wp1').className='ephb'+(n===1?' on':'');
+  if(g('wp2'))g('wp2').className='ephb'+(n===2?' on p2':'');
+  g('progress').style.background=n===2?'#74C59B':'#C9922A';
+  g('tag-el').style.borderColor=n===2?'rgba(116,197,155,0.4)':'rgba(201,146,42,0.4)';
+  g('tag-el').style.color=n===2?'#74C59B':'#C9922A';
+}
+function apply(){
+  const wide=window.innerWidth>=720;
+  const r=(w,m)=>(wide&&g(w))?g(w).value:g(m).value;
+  const handle=r('w-handle','mm-handle');
+  const vc=parseInt(r('w-c','mm-c'))||45;
+  const vcv=parseInt(r('w-cv','mm-cv'))||33;
+  const vp=parseInt(r('w-p','mm-p'))||22;
+  if(wide&&g('w-headline'))g('headline').textContent=g('w-headline').value;
+  else if(!wide&&g('mm-headline'))g('headline').textContent=g('mm-headline').value;
+  if(wide&&g('w-prompt'))g('q-prompt').textContent=g('w-prompt').value;
+  else if(!wide&&g('mm-prompt'))g('q-prompt').textContent=g('mm-prompt').value;
+  g('cp-c').textContent='0%';g('cp-cv').textContent='0%';g('cp-p').textContent='0%';
+  g('card-handle').textContent=handle+' · auralayer.ai';
+  if(g('mm-handle'))g('mm-handle').value=handle;if(g('mm-c'))g('mm-c').value=vc;if(g('mm-cv'))g('mm-cv').value=vcv;if(g('mm-p'))g('mm-p').value=vp;
+  if(g('w-handle'))g('w-handle').value=handle;if(g('w-c'))g('w-c').value=vc;if(g('w-cv'))g('w-cv').value=vcv;if(g('w-p'))g('w-p').value=vp;
+  start(vc,vcv,vp);
+}
+function animBars06(vc,vcv,vp){
+  var dur=4300,t0=performance.now();
+  function spring(t){
+    if(t<0.45){const p=t/0.45;return 1.95*(p<0.5?2*p*p:-1+(4-2*p)*p);}
+    else if(t<0.7){const p=(t-0.45)/0.25;return 1.95-(1.0*(p<0.5?2*p*p:-1+(4-2*p)*p));}
+    else{const p=(t-0.7)/0.3;return 0.95+(0.05*(p<0.5?2*p*p:-1+(4-2*p)*p));}
+  }
+  (function tick(now){
+    var t=Math.min((now-t0)/dur,1),s=spring(t);
+    var bc=g('cp-bar-c'),bcv=g('cp-bar-cv'),bp=g('cp-bar-p');
+    if(bc)bc.style.width=Math.min(Math.round(vc*s),100)+'%';
+    if(bcv)bcv.style.width=Math.min(Math.round(vcv*s),100)+'%';
+    if(bp)bp.style.width=Math.min(Math.round(vp*s),100)+'%';
+    g('cp-c').textContent=Math.round(vc*s)+'%';
+    g('cp-cv').textContent=Math.round(vcv*s)+'%';
+    g('cp-p').textContent=Math.round(vp*s)+'%';
+    if(t<1)requestAnimationFrame(tick);
+    else{
+      if(bc)bc.style.width=vc+'%';if(bcv)bcv.style.width=vcv+'%';if(bp)bp.style.width=vp+'%';
+      g('cp-c').textContent=vc+'%';g('cp-cv').textContent=vcv+'%';g('cp-p').textContent=vp+'%';
+    }
+  })(performance.now());
+}
+function start(vc,vcv,vp){
+  if(af)cancelAnimationFrame(af);timers.forEach(t=>clearTimeout(t));timers=[];
+  ['l1','l2','l3'].forEach(hide);g('progress').style.width='0%';
+  ['cp-bar-c','cp-bar-cv','cp-bar-p'].forEach(id=>{if(g(id))g(id).style.width='0%';});
+  const t0=performance.now();
+  function prog(now){const p=Math.min((now-t0)/15200*100,100);g('progress').style.width=p+'%';if(p<100)af=requestAnimationFrame(prog);}
+  af=requestAnimationFrame(prog);
+  const s=(fn,d)=>{timers.push(setTimeout(fn,d));};
+  s(()=>{show('l1');flash();},0);
+  s(()=>{hide('l1');flash();show('l2');animBars06(vc,vcv,vp);},3200);
+  s(()=>{hide('l2');flash();show('l3');},8700);
+  s(apply,15200);
+}
+const AL_TYPE='06';
+document.addEventListener('DOMContentLoaded',function(){loadSettings();setTimeout(apply,500);});
+
+function collectSaveData(){var ids=['mm-headline','mm-c','mm-cv','mm-p','mm-handle','mm-prompt'];var d={};ids.forEach(function(i){var el=document.getElementById(i);if(el)d[i]=el.value;});d['phase']=phase;return d;}
+function mobApply(){
+  const wide=window.innerWidth>=720;
+  if(!wide){
+    var map={'mm-headline':'w-headline','mm-c':'w-c','mm-cv':'w-cv','mm-p':'w-p','mm-handle':'w-handle','mm-prompt':'w-prompt'};
+    Object.keys(map).forEach(function(s){var src=document.getElementById(s);var dst=document.getElementById(map[s]);if(src&&dst)dst.value=src.value;});
+  }
+  apply();
+}
+
+// ── Save settings ──
+function saveSettings(){
+  try{
+    const data=collectSaveData();
+    localStorage.setItem('al_ugc_'+AL_TYPE,JSON.stringify(data));
+  }catch(e){}
+  ['mob-save-btn','ep-save-btn'].forEach(function(id){
+    const btn=document.getElementById(id);if(!btn)return;
+    const orig=btn.textContent;btn.textContent='✓ Saved';btn.classList.add('saved');
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('saved');},1800);
+  });
+}
+// ── Load saved settings ──
+function loadSettings(){
+  try{
+    const raw=localStorage.getItem('al_ugc_'+AL_TYPE);
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    Object.keys(s).forEach(function(k){
+      var el=document.getElementById(k);
+      if(el)el.value=s[k];
+    });
+    if(s.phase)setPhase(parseInt(s.phase));
+  }catch(e){}
+}
+// ── Export PNG (stage only) ──
+function exportPNG(){
+  const stage=document.getElementById('stage');
+  if(!stage||typeof html2canvas==='undefined'){alert('Export not available — go online first.');return;}
+  html2canvas(stage,{backgroundColor:'#000000',scale:2,useCORS:true,allowTaint:true})
+  .then(function(canvas){
+    const link=document.createElement('a');
+    link.download='auralayer-type'+AL_TYPE+'.png';
+    link.href=canvas.toDataURL('image/png');link.click();
+  }).catch(function(){alert('Export failed — try again.');});
+}
+
+</script>
+</body>
+</html>

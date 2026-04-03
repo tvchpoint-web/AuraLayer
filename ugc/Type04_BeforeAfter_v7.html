@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AuraLayer · Type 04 · Before After</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;min-height:100%;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-x:hidden;overflow-y:auto;font-family:'DM Mono',monospace;}
+#stage{position:relative;width:100vw;height:calc(100vw * 16/9);max-width:390px;max-height:calc(390px * 16/9);background:#000;overflow:hidden;flex-shrink:0;margin:0 auto;}
+#stage::after{content:'';position:absolute;inset:0;z-index:90;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");pointer-events:none;mix-blend-mode:overlay;}
+#scan{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(201,146,42,0.2),transparent);z-index:85;animation:scan 6s linear infinite;pointer-events:none;}
+@keyframes scan{0%{top:-2px;}100%{top:100%;}
+#flash{position:absolute;inset:0;z-index:80;opacity:0;pointer-events:none;transition:opacity .05s;}
+#progress{position:absolute;bottom:0;left:0;z-index:70;height:3px;width:0%;}
+.layer{position:absolute;inset:0;opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 44px;}
+
+#l3{align-items:flex-start;}
+.era-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;padding:5px 14px;align-self:flex-start;margin-bottom:24px;}
+.after-tag{border:1px solid rgba(116,197,155,0.4);color:#74C59B;}
+.b-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;padding:7px 16px;border:1px solid rgba(201,146,42,0.35);color:#C9922A;margin-bottom:20px;}
+.a-items{display:flex;flex-direction:column;gap:12px;width:100%;margin-bottom:24px;}
+.a-item{display:flex;align-items:center;gap:12px;font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.5px;color:rgba(245,243,238,0.75);}
+.result-line{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:30px;line-height:1.2;color:#F5F3EE;margin-bottom:20px;}
+.result-line em{color:#C9922A;font-style:normal;}
+.tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;padding:7px 16px;border:1px solid rgba(201,146,42,0.35);color:#C9922A;margin-bottom:20px;}
+
+/* Overlay strip */
+#ctrl{position:absolute;bottom:0;left:0;right:0;z-index:200;background:rgba(0,0,0,0.9);border-top:1px solid rgba(201,146,42,0.25);padding:10px 14px 12px;display:flex;flex-direction:column;gap:7px;}
+.cl{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,146,42,0.45);}
+.cr{display:flex;gap:6px;align-items:center;}
+.ci{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(201,146,42,0.2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:11px;padding:5px 8px;outline:none;min-width:0;}
+.ci:focus{border-color:rgba(201,146,42,0.7);}
+.ci.sm{max-width:46px;text-align:center;}
+.ci.red{border-color:rgba(232,123,116,0.35);color:#E87B74;}
+.ci.grn{border-color:rgba(116,197,155,0.3);color:#74C59B;}
+.cb{border:none;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#000;padding:7px 10px;cursor:pointer;flex-shrink:0;}
+.cb.gold{background:#C9922A;}.cb.gold:hover{background:#E8C96B;}
+.cb.red{background:#E87B74;}.cb.red:hover{background:#F09595;}
+.cb.grn{background:#74C59B;}.cb.grn:hover{background:#9FE1CB;}
+/* Wide panel */
+#epw{display:none;width:260px;min-width:260px;height:100vh;background:#111;border-left:1px solid rgba(201,146,42,0.2);padding:24px 20px;overflow-y:auto;}
+#epw h3{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C9922A;margin-bottom:20px;}
+.ef{margin-bottom:14px;}
+.ef label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+.ef input,.ef textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,146,42,0.25);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;resize:none;}
+.ef input:focus,.ef textarea:focus{border-color:#C9922A;}
+.epct{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.eb{width:100%;padding:11px;border:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;margin-top:4px;}
+.eb.gold{background:#C9922A;color:#000;}.eb.gold:hover{background:#E8C96B;}
+.eb.red{background:#E87B74;color:#000;}.eb.red:hover{background:#F09595;}
+.eb.grn{background:#74C59B;color:#000;}.eb.grn:hover{background:#9FE1CB;}
+.ediv{height:1px;background:rgba(255,255,255,0.06);margin:18px 0;}
+.ehint{font-size:9px;color:rgba(255,255,255,0.25);line-height:1.6;letter-spacing:.5px;}
+.ewarn{font-size:9px;color:rgba(232,123,116,0.65);padding:8px 10px;border:1px solid rgba(232,123,116,0.2);background:rgba(232,123,116,0.04);margin-bottom:14px;}
+@media(max-width:719px){#epw{display:none!important;}#mob-panel{display:block;}
+@media(min-width:720px){html,body{flex-direction:row;align-items:center;justify-content:center;height:100%;overflow:hidden;}#mob-panel{display:none!important;}#epw{display:block!important;}
+
+:root{
+  --ac:#C9922A;
+  --ac-border:rgba(201,146,42,0.4);
+  --ac-border2:rgba(201,146,42,0.25);
+  --ac-dim:rgba(201,146,42,0.45);
+}
+
+/* ── MOBILE PERMANENT EDIT PANEL ── */
+#mob-panel{
+  width:100%;max-width:390px;margin:0 auto;
+  background:#0E0E14;border-top:2px solid var(--ac-border);
+  padding:14px 16px 20px;
+}
+.mp-title{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--ac-dim);margin-bottom:12px;}
+.mp-field{margin-bottom:10px;}
+.mp-field label{display:block;font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;}
+.mp-field input,.mp-field textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--ac-border2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;-webkit-appearance:none;border-radius:0;resize:none;}
+.mp-field input:focus,.mp-field textarea:focus{border-color:var(--ac);}
+.mp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.mp-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.mp-grid2 .mp-field,.mp-grid3 .mp-field{margin-bottom:0;}
+.mp-phase{display:flex;border:1px solid var(--ac-border2);margin-bottom:12px;}
+.mp-phase button{flex:1;padding:8px 4px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;}
+.mp-phase button.on{background:rgba(201,146,42,0.15);color:#C9922A;}
+.mp-phase button.on.p2{background:rgba(116,197,155,0.15);color:#74C59B;}
+.mp-apply{width:100%;padding:11px;background:var(--ac);border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;border-radius:0;margin-bottom:8px;}
+.mp-apply:active{opacity:.85;}
+.mp-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0;}
+.mp-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;border-radius:0;}
+.mp-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.mp-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;border-radius:0;}
+.mp-btn-export:active{background:rgba(255,255,255,0.08);}
+/* Desktop save/export row */
+.ep-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.ep-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-save:hover,.ep-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.ep-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-export:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);}
+/* legacy ctrl hidden */
+#ctrl{display:none!important;}
+
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="scan"></div>
+<div id="flash"></div><div id="progress" style="background:#C9922A;"></div>
+
+<div class="layer" id="l1" style="align-items:flex-start;justify-content:flex-end;padding:48px 44px 72px;">
+  <!-- Massive background time -->
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:280px;line-height:.85;color:rgba(232,123,116,0.08);letter-spacing:-.02em;user-select:none;" id="btime">2HRS</span>
+  </div>
+  <!-- Before tag -->
+  <div style="position:absolute;top:48px;left:44px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;border:1px solid rgba(232,123,116,0.4);color:#E87B74;padding:7px 16px;">Before AuraLayer</div>
+  <!-- Punchy fragments -->
+  <div style="display:flex;flex-direction:column;gap:10px;width:100%;position:relative;z-index:2;">
+    <div style="font-family:'DM Mono',monospace;font-size:13px;letter-spacing:1px;color:rgba(245,243,238,0.35);display:flex;align-items:center;gap:10px;"><span style="color:rgba(232,123,116,0.5);font-size:16px;">—</span><span id="bd1">6 tabs. 3 tools. 0 flow.</span></div>
+    <div style="font-family:'DM Mono',monospace;font-size:13px;letter-spacing:1px;color:rgba(245,243,238,0.35);display:flex;align-items:center;gap:10px;"><span style="color:rgba(232,123,116,0.5);font-size:16px;">—</span><span id="bd2">Copy-pasting for hours.</span></div>
+    <div style="font-family:'DM Mono',monospace;font-size:16px;letter-spacing:1px;color:rgba(245,243,238,0.7);display:flex;align-items:center;gap:10px;margin-top:4px;"><span style="color:#C9922A;font-size:18px;">—</span><span id="bd3" style="color:#E8C96B;">Nothing sounds like me.</span></div>
+    <!-- Time label anchored bottom -->
+    <div style="margin-top:16px;display:flex;align-items:baseline;gap:6px;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;color:#E87B74;" id="btimesm">2hrs</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(232,123,116,0.45);">per workflow</span>
+    </div>
+  </div>
+</div>
+
+<div class="layer" id="l2" style="align-items:flex-start;justify-content:center;padding:48px 44px;">
+  <!-- Eyebrow -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:36px;">
+    <span style="display:block;width:20px;height:1px;background:#C9922A;opacity:.5;flex-shrink:0;"></span>
+    <span style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.5);">Same workflow. New result.</span>
+  </div>
+  <!-- Before — crossed out -->
+  <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px;position:relative;">
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:80px;line-height:1;color:rgba(232,123,116,0.25);text-decoration:line-through;text-decoration-color:rgba(232,123,116,0.4);text-decoration-thickness:3px;" id="arr-from">2hrs</span>
+    <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(232,123,116,0.3);">before</span>
+  </div>
+  <!-- Divider -->
+  <div style="width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:20px;"></div>
+  <!-- After — gold hero -->
+  <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:8px;">
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:120px;line-height:.9;color:#C9922A;" id="arr-to">20min</span>
+    <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,146,42,0.55);" id="arr-unit">after</span>
+  </div>
+  <!-- Subline -->
+  <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:22px;color:rgba(245,243,238,0.4);margin-top:16px;">with AuraLayer.</div>
+</div>
+
+<div class="layer" id="l3" style="align-items:flex-start;">
+  <div class="era-tag after-tag" style="font-size:10px;letter-spacing:3px;padding:7px 16px;margin-bottom:28px;">After AuraLayer</div>
+  <div class="a-items">
+    <div class="a-item"><div class="b-dot" style="background:#74C59B;"></div><span id="ad1">One blend, one prompt</span></div>
+    <div class="a-item"><div class="b-dot" style="background:#74C59B;"></div><span id="ad2">Sounds exactly like me</span></div>
+  </div>
+  <div class="result-line" id="result">Same output. My voice. <em>Zero switching.</em></div>
+  <div class="tag">#WhatsYourAuraLayer</div>
+  <!-- Divider -->
+  <div style="width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:20px;"></div>
+  <!-- URL Hero -->
+  <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;color:#C9922A;letter-spacing:-.5px;line-height:1;margin-bottom:8px;">auralayer.ai</div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,146,42,0.45);">Free to start · Link in bio</div>
+</div>
+
+<div id="ctrl">
+  <div class="cl">✦ Type 04 · Before/After</div>
+  <div class="cr">
+    <input class="ci sm" id="m-bt" placeholder="Before" value="2hrs" maxlength="8" title="Before time">
+    <input class="ci sm" id="m-at" placeholder="After" value="20min" maxlength="8" title="After time">
+    <input class="ci" id="m-handle" placeholder="Your handle" value="@yourcreatorname" maxlength="26">
+    <button class="cb gold" onclick="apply()">↺</button>
+  </div>
+</div>
+</div>
+
+<div id="mob-panel">
+  <div class="mp-title">✦ Edit your content — then hit Apply + Replay</div>
+  <div class="mp-actions" style="margin-bottom:12px;">
+    <button class="mp-btn-save" id="mob-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="mp-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="mp-grid3">
+    <div class="mp-field"><label>Before</label><input id="mm-bt" value="2hrs" maxlength="8"></div>
+    <div class="mp-field"><label>After</label><input id="mm-at" value="20min" maxlength="8"></div>
+    <div class="mp-field"><label>Unit</label><input id="mm-unit" value="minutes" maxlength="14"></div>
+  </div>
+  <div class="mp-field"><label>Before detail 1</label><input id="mm-bd1" value="6 tabs. 3 tools. 0 flow." maxlength="28"></div>
+  <div class="mp-field"><label>Before detail 2</label><input id="mm-bd2" value="Copy-pasting for hours." maxlength="28"></div>
+  <div class="mp-field"><label>Before detail 3</label><input id="mm-bd3" value="Nothing sounds like me." maxlength="28"></div>
+  <div class="mp-field"><label>After detail 1</label><input id="mm-ad1" value="One blend, one prompt" maxlength="28"></div>
+  <div class="mp-field"><label>After detail 2</label><input id="mm-ad2" value="Sounds exactly like me" maxlength="28"></div>
+  <div class="mp-field"><label>Result line</label><input id="mm-result" value="Same output. My voice. Zero switching." maxlength="40"></div>
+  <button class="mp-apply" onclick="mobApply()">↺ Apply + Replay</button>
+</div>
+
+<div id="epw">
+  <h3>✦ Type 04 · Before/After</h3>
+  <div class="epct">
+    <div class="ef"><label>Before</label><input id="w-bt" value="2hrs" maxlength="8"></div>
+    <div class="ef"><label>After</label><input id="w-at" value="20min" maxlength="8"></div>
+    <div class="ef"><label>Unit</label><input id="w-unit" value="minutes" maxlength="14"></div>
+  </div>
+  <div class="ef"><label>Before detail 1</label><input id="w-bd1" value="6 tabs. 3 tools. 0 flow." maxlength="28"></div>
+  <div class="ef"><label>Before detail 2</label><input id="w-bd2" value="Copy-pasting for hours." maxlength="28"></div>
+  <div class="ef"><label>Before detail 3</label><input id="w-bd3" value="Nothing sounds like me." maxlength="28"></div>
+  <div class="ef"><label>After detail 1</label><input id="w-ad1" value="One blend, one prompt" maxlength="28"></div>
+  <div class="ef"><label>After detail 2</label><input id="w-ad2" value="Sounds exactly like me" maxlength="28"></div>
+  <div class="ef"><label>Result line</label><input id="w-result" value="Same output. My voice. Zero switching." maxlength="40"></div>
+  <button class="eb gold" onclick="apply()">↺ Apply + Replay</button>
+  <div class="ep-actions">
+    <button class="ep-btn-save" id="ep-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="ep-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="ediv"></div>
+  <div class="ehint">SCREEN TEXT: "2 hours → 20 mins. side by side."</div>
+</div>
+
+<script>
+
+let timers=[],af=null;
+function g(id){return document.getElementById(id);}
+function flash(col){const f=g('flash');f.style.background=col||'#fff';f.style.opacity='.55';setTimeout(()=>{f.style.opacity='0';},65);}
+function show(id){g(id).style.opacity='1';}function hide(id){g(id).style.opacity='0';}
+function prog(t0,total){const p=Math.min((performance.now()-t0)/total*100,100);g('progress').style.width=p+'%';if(p<100)af=requestAnimationFrame(()=>prog(t0,total));}
+function startProg(total){if(af)cancelAnimationFrame(af);const t0=performance.now();af=requestAnimationFrame(()=>prog(t0,total));}
+function sched(fn,d){timers.push(setTimeout(fn,d));}
+function clearAll(){timers.forEach(t=>clearTimeout(t));timers=[];g('progress').style.width='0%';}
+
+function apply(){
+  const wide=window.innerWidth>=720;
+  const bt=(wide&&g('w-bt'))?g('w-bt').value:g('mm-bt')?g('mm-bt').value:'2hrs';
+  const at=(wide&&g('w-at'))?g('w-at').value:g('mm-at')?g('mm-at').value:'20min';
+  g('btime').textContent=bt.toUpperCase();
+  if(g('btimesm'))g('btimesm').textContent=bt;
+  g('arr-from').textContent=bt;g('arr-to').textContent=at;
+  if(wide&&g('w-unit'))g('arr-unit').textContent=g('w-unit').value;
+  ['bd1','bd2','bd3','ad1','ad2'].forEach(k=>{if(wide&&g('w-'+k))g(k).textContent=g('w-'+k).value;});
+  if(wide&&g('w-result'))g('result').innerHTML=g('w-result').value;
+  if(g('mm-bt'))g('mm-bt').value=bt;if(g('mm-at'))g('mm-at').value=at;
+  if(g('w-bt'))g('w-bt').value=bt;if(g('w-at'))g('w-at').value=at;
+  start();
+}
+function start(){
+  clearAll();['l1','l2','l3'].forEach(id=>hide(id));
+  startProg(11440);
+  sched(()=>{show('l1');flash('#fff');},0);
+  sched(()=>{hide('l1');flash('#fff');show('l2');},3200);
+  sched(()=>{hide('l2');flash('#fff');show('l3');},5800);
+  sched(apply,11440);
+}
+const AL_TYPE='04';
+document.addEventListener('DOMContentLoaded',function(){loadSettings();setTimeout(apply,500);});
+
+function collectSaveData(){return{
+  'mm-bt':document.getElementById('mm-bt')?document.getElementById('mm-bt').value:'',
+  'mm-at':document.getElementById('mm-at')?document.getElementById('mm-at').value:'',
+  'mm-unit':document.getElementById('mm-unit')?document.getElementById('mm-unit').value:'',
+  'mm-bd1':document.getElementById('mm-bd1')?document.getElementById('mm-bd1').value:'',
+  'mm-bd2':document.getElementById('mm-bd2')?document.getElementById('mm-bd2').value:'',
+  'mm-bd3':document.getElementById('mm-bd3')?document.getElementById('mm-bd3').value:'',
+  'mm-ad1':document.getElementById('mm-ad1')?document.getElementById('mm-ad1').value:'',
+  'mm-ad2':document.getElementById('mm-ad2')?document.getElementById('mm-ad2').value:'',
+  'mm-result':document.getElementById('mm-result')?document.getElementById('mm-result').value:''
+};}
+function mobApply(){
+  const wide=window.innerWidth>=720;
+  if(!wide){
+    var map={'mm-bt':'w-bt','mm-at':'w-at','mm-unit':'w-unit','mm-bd1':'w-bd1','mm-bd2':'w-bd2','mm-bd3':'w-bd3','mm-ad1':'w-ad1','mm-ad2':'w-ad2','mm-result':'w-result'};
+    Object.keys(map).forEach(function(s){var src=document.getElementById(s);var dst=document.getElementById(map[s]);if(src&&dst)dst.value=src.value;});
+  }
+  apply();
+}
+
+// ── Save settings ──
+function saveSettings(){
+  try{
+    const data=collectSaveData();
+    localStorage.setItem('al_ugc_'+AL_TYPE,JSON.stringify(data));
+  }catch(e){}
+  ['mob-save-btn','ep-save-btn'].forEach(function(id){
+    const btn=document.getElementById(id);if(!btn)return;
+    const orig=btn.textContent;btn.textContent='✓ Saved';btn.classList.add('saved');
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('saved');},1800);
+  });
+}
+// ── Load saved settings ──
+function loadSettings(){
+  try{
+    const raw=localStorage.getItem('al_ugc_'+AL_TYPE);
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    Object.keys(s).forEach(function(k){
+      var el=document.getElementById(k);
+      if(el)el.value=s[k];
+    });
+  }catch(e){}
+}
+// ── Export PNG (stage only) ──
+function exportPNG(){
+  const stage=document.getElementById('stage');
+  if(!stage||typeof html2canvas==='undefined'){alert('Export not available — go online first.');return;}
+  html2canvas(stage,{backgroundColor:'#000000',scale:2,useCORS:true,allowTaint:true})
+  .then(function(canvas){
+    const link=document.createElement('a');
+    link.download='auralayer-type'+AL_TYPE+'.png';
+    link.href=canvas.toDataURL('image/png');link.click();
+  }).catch(function(){alert('Export failed — try again.');});
+}
+
+</script>
+</body></html>

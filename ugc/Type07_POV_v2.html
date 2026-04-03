@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AuraLayer · Type 07 · POV</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;min-height:100%;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-x:hidden;overflow-y:auto;font-family:'DM Mono',monospace;}
+#stage{position:relative;width:100vw;height:calc(100vw * 16/9);max-width:390px;max-height:calc(390px * 16/9);background:#000;overflow:hidden;flex-shrink:0;margin:0 auto;}
+#stage::after{content:'';position:absolute;inset:0;z-index:90;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");pointer-events:none;mix-blend-mode:overlay;}
+#scan{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(201,146,42,0.2),transparent);z-index:85;animation:scan 6s linear infinite;pointer-events:none;}
+@keyframes scan{0%{top:-2px;}100%{top:100%;}}
+#flash{position:absolute;inset:0;z-index:80;background:#fff;opacity:0;pointer-events:none;transition:opacity .05s;}
+#progress{position:absolute;bottom:0;left:0;z-index:70;height:3px;background:#C9922A;width:0%;}
+.layer{position:absolute;inset:0;opacity:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:48px 44px;}
+/* L1 — POV Hook */
+.pov-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.55);margin-bottom:20px;}
+.pov-slam{font-family:'Bebas Neue',sans-serif;font-size:88px;line-height:.88;color:#F5F3EE;text-transform:uppercase;letter-spacing:.01em;}
+.pov-slam em{color:#C9922A;font-style:normal;display:block;}
+.pov-hook{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:24px;color:rgba(245,243,238,0.45);margin-top:18px;line-height:1.35;}
+/* L2 — The Real Talk */
+.rt-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.55);margin-bottom:24px;}
+.rt-line{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:.92;color:#F5F3EE;text-transform:uppercase;letter-spacing:.02em;margin-bottom:6px;}
+.rt-line.gold{color:#C9922A;}
+.rt-line.dim{color:rgba(245,243,238,0.2);font-size:38px;}
+.rt-div{width:40px;height:2px;background:#C9922A;opacity:.4;margin:18px 0;}
+.rt-stat{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
+.rt-num{font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;color:#C9922A;}
+.rt-unit{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,146,42,0.5);}
+.rt-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:20px;color:rgba(245,243,238,0.35);margin-top:4px;}
+/* L3 — Action */
+.ac-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.55);margin-bottom:18px;}
+.ac-big{font-family:'Bebas Neue',sans-serif;font-size:76px;line-height:.9;color:#F5F3EE;text-transform:uppercase;margin-bottom:20px;}
+.ac-big em{color:#C9922A;font-style:normal;display:block;}
+.ac-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:21px;color:rgba(245,243,238,0.5);line-height:1.4;margin-bottom:22px;border-left:2px solid rgba(201,146,42,0.3);padding-left:14px;}
+.tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;padding:7px 16px;border:1px solid rgba(201,146,42,0.35);color:#C9922A;margin-bottom:20px;display:inline-block;}
+/* panels */
+#ctrl{display:none!important;}
+#epw{display:none;width:260px;min-width:260px;height:100vh;background:#111;border-left:1px solid rgba(201,146,42,0.2);padding:24px 20px;overflow-y:auto;}
+#epw h3{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C9922A;margin-bottom:20px;}
+.ef{margin-bottom:14px;}
+.ef label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px;}
+.ef input,.ef textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,146,42,0.25);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;resize:none;}
+.ef input:focus,.ef textarea:focus{border-color:#C9922A;}
+.eb{width:100%;padding:11px;background:#C9922A;border:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;margin-top:4px;}
+.eb:hover{background:#E8C96B;}
+.ep-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.ep-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-save:hover,.ep-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.ep-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-export:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);}
+.ediv{height:1px;background:rgba(255,255,255,0.06);margin:16px 0;}
+.ehint{font-size:9px;color:rgba(255,255,255,0.25);line-height:1.6;letter-spacing:.5px;}
+@media(max-width:719px){#epw{display:none!important;}#mob-panel{display:block;}}
+@media(min-width:720px){html,body{flex-direction:row;align-items:center;justify-content:center;height:100%;overflow:hidden;}#mob-panel{display:none!important;}#epw{display:block!important;}}
+:root{--ac:#C9922A;--ac-border:rgba(201,146,42,0.4);--ac-border2:rgba(201,146,42,0.25);--ac-dim:rgba(201,146,42,0.45);}
+#mob-panel{width:100%;max-width:390px;margin:0 auto;background:#0E0E14;border-top:2px solid var(--ac-border);padding:14px 16px 20px;}
+.mp-title{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--ac-dim);margin-bottom:12px;}
+.mp-field{margin-bottom:10px;}
+.mp-field label{display:block;font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;}
+.mp-field input,.mp-field textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--ac-border2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;-webkit-appearance:none;border-radius:0;resize:none;}
+.mp-field input:focus,.mp-field textarea:focus{border-color:var(--ac);}
+.mp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.mp-apply{width:100%;padding:11px;background:var(--ac);border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;border-radius:0;margin-bottom:8px;}
+.mp-apply:active{opacity:.85;}
+.mp-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0;}
+.mp-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;border-radius:0;}
+.mp-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.mp-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;border-radius:0;}
+.mp-btn-export:active{background:rgba(255,255,255,0.08);}
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="scan"></div><div id="flash"></div><div id="progress"></div>
+
+<!-- L1: POV Hook -->
+<div class="layer" id="l1">
+  <div class="pov-tag">POV —</div>
+  <div class="pov-slam"><span id="l1-line1">You're still</span><em id="l1-line2">switching tabs.</em></div>
+  <div class="pov-hook" id="l1-sub">Every creator I know does this. Most never stop.</div>
+</div>
+
+<!-- L2: The Real Talk -->
+<div class="layer" id="l2" style="align-items:flex-start;justify-content:flex-end;padding:48px 44px 72px;">
+  <!-- Massive background stat -->
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:260px;line-height:.85;color:rgba(201,146,42,0.07);letter-spacing:-.02em;user-select:none;" id="l2-stat-bg">87%</span>
+  </div>
+  <!-- Top label -->
+  <div style="position:absolute;top:48px;left:44px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.5);">The honest truth —</div>
+  <!-- Content anchored bottom -->
+  <div style="display:flex;flex-direction:column;gap:0;width:100%;position:relative;z-index:2;">
+    <div class="rt-line dim">It's not the tools.</div>
+    <div class="rt-line">It's the <span style="color:#C9922A;">blend.</span></div>
+    <div style="width:40px;height:2px;background:#C9922A;opacity:.4;margin:16px 0;"></div>
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:88px;line-height:1;color:#C9922A;" id="l2-stat">87%</span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,146,42,0.5);" id="l2-unit">of creators</span>
+    </div>
+    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:20px;color:rgba(245,243,238,0.4);line-height:1.4;" id="l2-sub">use 3+ AI tools and still sound like everyone else.</div>
+  </div>
+</div>
+
+<!-- L3: Action -->
+<div class="layer" id="l3">
+  <div class="ac-eyebrow" id="l3-handle">@yourcreatorname</div>
+  <div class="ac-big"><span id="l3-line1">Stop</span><em id="l3-line2">switching.</em></div>
+  <div class="ac-quote" id="l3-quote">One blend. Your voice. That's the whole game.</div>
+  <div class="tag">#WhatsYourAuraLayer</div>
+  <div style="width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:20px;"></div>
+  <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;color:#C9922A;letter-spacing:-.5px;line-height:1;margin-bottom:8px;">auralayer.ai</div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,146,42,0.45);">Free to start · Link in bio</div>
+</div>
+</div>
+
+<!-- Mobile panel -->
+<div id="mob-panel">
+  <div class="mp-title">✦ Edit your content — then hit Apply + Replay</div>
+  <div class="mp-actions" style="margin-bottom:12px;">
+    <button class="mp-btn-save" id="mob-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="mp-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="mp-field"><label>L1 line 1</label><input id="mm-l1a" value="You're still" maxlength="20"></div>
+  <div class="mp-field"><label>L1 line 2 (gold)</label><input id="mm-l1b" value="switching tabs." maxlength="20"></div>
+  <div class="mp-field"><label>L1 subline</label><input id="mm-l1sub" value="Every creator I know does this. Most never stop." maxlength="54"></div>
+  <div class="mp-grid2">
+    <div class="mp-field"><label>Stat number</label><input id="mm-stat" value="87%" maxlength="6"></div>
+    <div class="mp-field"><label>Stat unit</label><input id="mm-unit" value="of creators" maxlength="16"></div>
+  </div>
+  <div class="mp-field"><label>Stat subline</label><input id="mm-statsub" value="use 3+ AI tools and still sound like everyone else." maxlength="56"></div>
+  <div class="mp-field"><label>L3 line 1</label><input id="mm-l3a" value="Stop" maxlength="16"></div>
+  <div class="mp-field"><label>L3 line 2 (gold)</label><input id="mm-l3b" value="switching." maxlength="16"></div>
+  <div class="mp-field"><label>Quote line</label><input id="mm-quote" value="One blend. Your voice. That's the whole game." maxlength="54"></div>
+  <div class="mp-field"><label>Your Handle</label><input id="mm-handle" value="@yourcreatorname" maxlength="30"></div>
+  <button class="mp-apply" onclick="mobApply()">↺ Apply + Replay</button>
+</div>
+
+<!-- Desktop panel -->
+<div id="epw">
+  <h3>✦ Type 07 · POV</h3>
+  <div class="ef"><label>L1 line 1</label><input id="w-l1a" value="You're still" maxlength="20"></div>
+  <div class="ef"><label>L1 line 2 (gold)</label><input id="w-l1b" value="switching tabs." maxlength="20"></div>
+  <div class="ef"><label>L1 subline</label><input id="w-l1sub" value="Every creator I know does this. Most never stop." maxlength="54"></div>
+  <div class="ef"><label>Stat number</label><input id="w-stat" value="87%" maxlength="6"></div>
+  <div class="ef"><label>Stat unit</label><input id="w-unit" value="of creators" maxlength="16"></div>
+  <div class="ef"><label>Stat subline</label><input id="w-statsub" value="use 3+ AI tools and still sound like everyone else." maxlength="56"></div>
+  <div class="ef"><label>L3 line 1</label><input id="w-l3a" value="Stop" maxlength="16"></div>
+  <div class="ef"><label>L3 line 2 (gold)</label><input id="w-l3b" value="switching." maxlength="16"></div>
+  <div class="ef"><label>Quote line</label><input id="w-quote" value="One blend. Your voice. That's the whole game." maxlength="54"></div>
+  <div class="ef"><label>Your Handle</label><input id="w-handle" value="@yourcreatorname" maxlength="30"></div>
+  <button class="eb" onclick="apply()">↺ Apply + Replay</button>
+  <div class="ep-actions">
+    <button class="ep-btn-save" id="ep-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="ep-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="ediv"></div>
+  <div class="ehint">Gary Vee style — raw POV hook → stat that stings → direct action close. Swap the stat for any real number from your niche.</div>
+</div>
+
+<script>
+let timers=[],af=null;
+function g(id){return document.getElementById(id);}
+function flash(){const f=g('flash');f.style.opacity='.5';setTimeout(()=>{f.style.opacity='0';},65);}
+function show(id){g(id).style.opacity='1';}function hide(id){g(id).style.opacity='0';}
+function apply(){
+  const wide=window.innerWidth>=720;
+  const r=(w,m)=>(wide&&g(w))?g(w).value:g(m)?g(m).value:'';
+  const l1a=r('w-l1a','mm-l1a');
+  const l1b=r('w-l1b','mm-l1b');
+  const l1sub=r('w-l1sub','mm-l1sub');
+  const stat=r('w-stat','mm-stat');
+  const unit=r('w-unit','mm-unit');
+  const statsub=r('w-statsub','mm-statsub');
+  const l3a=r('w-l3a','mm-l3a');
+  const l3b=r('w-l3b','mm-l3b');
+  const quote=r('w-quote','mm-quote');
+  const handle=r('w-handle','mm-handle');
+  if(g('l1-line1'))g('l1-line1').textContent=l1a;
+  if(g('l1-line2'))g('l1-line2').textContent=l1b;
+  if(g('l1-sub'))g('l1-sub').textContent=l1sub;
+  if(g('l2-stat'))g('l2-stat').textContent=stat;
+  if(g('l2-stat-bg'))g('l2-stat-bg').textContent=stat;
+  if(g('l2-unit'))g('l2-unit').textContent=unit;
+  if(g('l2-sub'))g('l2-sub').textContent=statsub;
+  if(g('l3-line1'))g('l3-line1').textContent=l3a;
+  if(g('l3-line2'))g('l3-line2').textContent=l3b;
+  if(g('l3-quote'))g('l3-quote').textContent=quote;
+  if(g('l3-handle'))g('l3-handle').textContent=handle;
+  if(g('mm-handle'))g('mm-handle').value=handle;
+  if(g('w-handle'))g('w-handle').value=handle;
+  start();
+}
+function start(){
+  if(af)cancelAnimationFrame(af);timers.forEach(t=>clearTimeout(t));timers=[];
+  ['l1','l2','l3'].forEach(hide);g('progress').style.width='0%';
+  const t0=performance.now();
+  function prog(now){const p=Math.min((now-t0)/15200*100,100);g('progress').style.width=p+'%';if(p<100)af=requestAnimationFrame(prog);}
+  af=requestAnimationFrame(prog);
+  const s=(fn,d)=>{timers.push(setTimeout(fn,d));};
+  s(()=>{show('l1');flash();},0);
+  s(()=>{hide('l1');flash();show('l2');},4800);
+  s(()=>{hide('l2');flash();show('l3');},9600);
+  s(apply,15200);
+}
+const AL_TYPE='07';
+document.addEventListener('DOMContentLoaded',function(){loadSettings();setTimeout(apply,500);});
+function collectSaveData(){
+  var ids=['mm-l1a','mm-l1b','mm-l1sub','mm-stat','mm-unit','mm-statsub','mm-l3a','mm-l3b','mm-quote','mm-handle'];
+  var d={};ids.forEach(function(i){var el=document.getElementById(i);if(el)d[i]=el.value;});return d;
+}
+function mobApply(){
+  const wide=window.innerWidth>=720;
+  if(!wide){
+    var map={'mm-l1a':'w-l1a','mm-l1b':'w-l1b','mm-l1sub':'w-l1sub','mm-stat':'w-stat','mm-unit':'w-unit','mm-statsub':'w-statsub','mm-l3a':'w-l3a','mm-l3b':'w-l3b','mm-quote':'w-quote','mm-handle':'w-handle'};
+    Object.keys(map).forEach(function(s){var src=document.getElementById(s);var dst=document.getElementById(map[s]);if(src&&dst)dst.value=src.value;});
+  }
+  apply();
+}
+function saveSettings(){
+  try{
+    const data=collectSaveData();
+    localStorage.setItem('al_ugc_'+AL_TYPE,JSON.stringify(data));
+  }catch(e){}
+  ['mob-save-btn','ep-save-btn'].forEach(function(id){
+    const btn=document.getElementById(id);if(!btn)return;
+    const orig=btn.textContent;btn.textContent='✓ Saved';btn.classList.add('saved');
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('saved');},1800);
+  });
+}
+function loadSettings(){
+  try{
+    const raw=localStorage.getItem('al_ugc_'+AL_TYPE);
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    Object.keys(s).forEach(function(k){var el=document.getElementById(k);if(el)el.value=s[k];});
+  }catch(e){}
+}
+function exportPNG(){
+  const stage=document.getElementById('stage');
+  if(!stage||typeof html2canvas==='undefined'){alert('Export not available — go online first.');return;}
+  html2canvas(stage,{backgroundColor:'#000000',scale:2,useCORS:true,allowTaint:true})
+  .then(function(canvas){
+    const link=document.createElement('a');
+    link.download='auralayer-type'+AL_TYPE+'.png';
+    link.href=canvas.toDataURL('image/png');link.click();
+  }).catch(function(){alert('Export failed — try again.');});
+}
+</script>
+</body></html>

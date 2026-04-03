@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AuraLayer · Type 08 · Real Results</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;min-height:100%;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-x:hidden;overflow-y:auto;font-family:'DM Mono',monospace;}
+#stage{position:relative;width:100vw;height:calc(100vw * 16/9);max-width:390px;max-height:calc(390px * 16/9);background:#000;overflow:hidden;flex-shrink:0;margin:0 auto;}
+#stage::after{content:'';position:absolute;inset:0;z-index:90;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");pointer-events:none;mix-blend-mode:overlay;}
+#scan{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(116,197,155,0.2),transparent);z-index:85;animation:scan 6s linear infinite;pointer-events:none;}
+@keyframes scan{0%{top:-2px;}100%{top:100%;}}
+#flash{position:absolute;inset:0;z-index:80;background:#74C59B;opacity:0;pointer-events:none;transition:opacity .05s;}
+#progress{position:absolute;bottom:0;left:0;z-index:70;height:3px;background:#74C59B;width:0%;}
+.layer{position:absolute;inset:0;opacity:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:48px 44px;}
+/* S1 */
+.ey-g{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(116,197,155,0.6);margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.ey-g::after{content:'';flex:1;height:1px;background:rgba(116,197,155,0.2);}
+.hook{font-family:'Bebas Neue',sans-serif;font-size:70px;line-height:.9;letter-spacing:.02em;color:#F5F3EE;text-transform:uppercase;}
+.hook em{color:#74C59B;font-style:normal;display:block;}
+.days-chip{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;padding:6px 14px;border:1px solid rgba(116,197,155,0.3);color:rgba(116,197,155,0.6);display:inline-block;margin-top:24px;}
+/* S2 */
+.out-card{width:100%;border:1px solid rgba(116,197,155,0.2);background:rgba(116,197,155,0.03);padding:22px 24px;}
+.oc-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(116,197,155,0.5);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.oc-lbl::after{content:'';flex:1;height:1px;background:rgba(116,197,155,0.15);}
+.oc-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:24px;line-height:1.5;color:#F5F3EE;margin-bottom:14px;}
+.oc-blend{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(245,243,238,0.3);}
+.oc-blend span{color:rgba(245,243,238,0.55);}
+/* S3 */
+.proof-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(116,197,155,0.6);margin-bottom:22px;}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;margin-bottom:24px;}
+.stat{border:1px solid rgba(255,255,255,0.07);padding:14px 16px;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:1;color:#74C59B;}
+.stat-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,243,238,0.3);margin-top:2px;}
+.cta-r{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:26px;color:#F5F3EE;line-height:1.3;margin-bottom:18px;}
+.cta-r em{color:#74C59B;font-style:normal;}
+.tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;padding:7px 16px;border:1px solid rgba(116,197,155,0.3);color:#74C59B;margin-bottom:14px;}
+/* Overlay + panel */
+#ctrl{position:absolute;bottom:0;left:0;right:0;z-index:200;background:rgba(0,0,0,0.9);border-top:1px solid rgba(116,197,155,0.25);padding:10px 14px 12px;display:flex;flex-direction:column;gap:7px;}
+.cl{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(116,197,155,0.5);}
+.cr{display:flex;gap:6px;align-items:center;}
+.ci{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(116,197,155,0.2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:11px;padding:5px 8px;outline:none;min-width:0;}
+.ci:focus{border-color:rgba(116,197,155,0.6);}
+.ci.sm{max-width:46px;text-align:center;color:#74C59B;}
+.ci.std{border-color:rgba(201,146,42,0.2);color:#F5F3EE;}
+.cb{background:#74C59B;border:none;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#000;padding:7px 10px;cursor:pointer;flex-shrink:0;}
+.cb:hover{background:#9FE1CB;}
+#epw{display:none;width:260px;min-width:260px;height:100vh;background:#111;border-left:1px solid rgba(116,197,155,0.2);padding:24px 20px;overflow-y:auto;}
+#epw h3{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#74C59B;margin-bottom:8px;}
+.p2-badge{font-size:9px;color:rgba(116,197,155,0.6);padding:4px 10px;border:1px solid rgba(116,197,155,0.2);background:rgba(116,197,155,0.04);display:inline-block;margin-bottom:16px;}
+.ef{margin-bottom:12px;}
+.ef label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:5px;}
+.ef input,.ef textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(116,197,155,0.2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;resize:none;}
+.ef input:focus,.ef textarea:focus{border-color:#74C59B;}
+.epct{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.eb{width:100%;padding:11px;background:#74C59B;border:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;margin-top:4px;}
+.eb:hover{background:#9FE1CB;}
+.ediv{height:1px;background:rgba(255,255,255,0.06);margin:16px 0;}
+.ehint{font-size:9px;color:rgba(255,255,255,0.25);line-height:1.6;letter-spacing:.5px;}
+@media(max-width:719px){#epw{display:none!important;}#mob-panel{display:block;}}
+@media(min-width:720px){html,body{flex-direction:row;align-items:center;justify-content:center;height:100%;overflow:hidden;}#mob-panel{display:none!important;}#epw{display:block!important;}}
+
+:root{
+  --ac:#74C59B;
+  --ac-border:rgba(116,197,155,0.4);
+  --ac-border2:rgba(116,197,155,0.25);
+  --ac-dim:rgba(116,197,155,0.5);
+}
+
+/* ── MOBILE PERMANENT EDIT PANEL ── */
+#mob-panel{
+  width:100%;max-width:390px;margin:0 auto;
+  background:#0E0E14;border-top:2px solid var(--ac-border);
+  padding:14px 16px 20px;
+}
+.mp-title{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--ac-dim);margin-bottom:12px;}
+.mp-field{margin-bottom:10px;}
+.mp-field label{display:block;font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;}
+.mp-field input,.mp-field textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--ac-border2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;-webkit-appearance:none;border-radius:0;resize:none;}
+.mp-field input:focus,.mp-field textarea:focus{border-color:var(--ac);}
+.mp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.mp-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.mp-grid2 .mp-field,.mp-grid3 .mp-field{margin-bottom:0;}
+.mp-phase{display:flex;border:1px solid var(--ac-border2);margin-bottom:12px;}
+.mp-phase button{flex:1;padding:8px 4px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;}
+.mp-phase button.on{background:rgba(201,146,42,0.15);color:#C9922A;}
+.mp-phase button.on.p2{background:rgba(116,197,155,0.15);color:#74C59B;}
+.mp-apply{width:100%;padding:11px;background:var(--ac);border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;border-radius:0;margin-bottom:8px;}
+.mp-apply:active{opacity:.85;}
+.mp-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0;}
+.mp-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;border-radius:0;}
+.mp-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.mp-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;border-radius:0;}
+.mp-btn-export:active{background:rgba(255,255,255,0.08);}
+/* Desktop save/export row */
+.ep-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.ep-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-save:hover,.ep-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.ep-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-export:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);}
+/* legacy ctrl hidden */
+#ctrl{display:none!important;}
+
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="scan"></div><div id="flash"></div><div id="progress"></div>
+
+  <div class="layer" id="l1">
+    <div class="ey-g">Phase 2 · Real results</div>
+    <div class="hook"><span id="h1">30 days in.</span><em id="h2">Here's what changed.</em></div>
+    <div class="days-chip" id="days-chip">30 days with AuraLayer</div>
+  </div>
+
+  <div class="layer" id="l2">
+    <div class="out-card">
+      <div class="oc-lbl">My real output</div>
+      <div class="oc-text" id="oc-text">Your music creator blend is optimized for independent monetization.</div>
+      <!-- Mini Option D blend attribution -->
+      <div style="border-top:1px solid rgba(116,197,155,0.1);padding-top:14px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(116,197,155,0.4);margin-bottom:4px;">Generated by this blend</div>
+        <div style="display:flex;align-items:center;gap:0;width:100%;">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;color:#E8C96B;min-width:52px;" id="oc-pct-c">45%</span>
+          <div style="flex:1;">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#E8C96B;margin-bottom:4px;">Claude</div>
+            <div style="width:100%;height:2px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="oc-bar-c" style="height:100%;border-radius:40px;width:0%;background:linear-gradient(90deg,#E8C96B,#C9922A);"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0;width:100%;">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;color:#74C59B;min-width:52px;" id="oc-pct-cv">33%</span>
+          <div style="flex:1;">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#74C59B;margin-bottom:4px;">Canva</div>
+            <div style="width:100%;height:2px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="oc-bar-cv" style="height:100%;border-radius:40px;width:0%;background:#74C59B;"></div></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0;width:100%;">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;color:#9B8FD4;min-width:52px;" id="oc-pct-p">22%</span>
+          <div style="flex:1;">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#9B8FD4;margin-bottom:4px;">Perplexity</div>
+            <div style="width:100%;height:2px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="oc-bar-p" style="height:100%;border-radius:40px;width:0%;background:#9B8FD4;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layer" id="l3">
+    <div class="proof-lbl">Real numbers →</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="sv1">3</div><div class="stat-lbl" id="sl1">Tools cancelled</div></div>
+      <div class="stat"><div class="stat-val" id="sv2">20min</div><div class="stat-lbl" id="sl2">Per workflow now</div></div>
+    </div>
+    <div class="cta-r"><em id="cta-r">Still using it. Zero regrets.</em></div>
+    <div class="tag">#WhatsYourAuraLayer</div>
+    <div style="width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:20px;"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;color:#C9922A;letter-spacing:-.5px;line-height:1;margin-bottom:8px;">auralayer.ai</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,146,42,0.45);">Free to start · Link in bio</div>
+  </div>
+
+  <div id="ctrl">
+    <div class="cl">✦ Type 08 · Results — Phase 2 only</div>
+    <div class="cr">
+      <input class="ci std" id="m-handle" placeholder="@handle" value="@yourcreatorname" maxlength="24">
+      <input class="ci sm" id="m-days" type="number" value="30" min="1" title="Days using">
+      <input class="ci std" id="m-h1" placeholder="Hook 1" value="30 days in." maxlength="18">
+      <button class="cb" onclick="apply()">↺</button>
+    </div>
+  </div>
+</div>
+
+<div id="mob-panel">
+  <div class="mp-title">✦ Edit your content — then hit Apply + Replay</div>
+  <div class="mp-actions" style="margin-bottom:12px;">
+    <button class="mp-btn-save" id="mob-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="mp-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="mp-field"><label>Hook line 1</label><input id="mm-h1" value="30 days in." maxlength="20"></div>
+  <div class="mp-field"><label>Hook line 2 (green)</label><input id="mm-h2" value="Here's what changed." maxlength="24"></div>
+  <div class="mp-field"><label>Days using AuraLayer</label><input id="mm-days" type="number" value="30" min="1" max="999"></div>
+  <div class="mp-field"><label>Real output (paste yours)</label><textarea id="mm-out" rows="2">Your music creator blend is optimized for independent monetization.</textarea></div>
+  <div class="mp-field"><label>Your Blend</label><input id="mm-blend" value="Claude 45% / Canva 33% / Perplexity 22%" maxlength="40"></div>
+  <div class="mp-grid2">
+    <div class="mp-field"><label>Stat 1 value</label><input id="mm-s1v" value="3" maxlength="8"></div>
+    <div class="mp-field"><label>Stat 1 label</label><input id="mm-s1l" value="Tools cancelled" maxlength="18"></div>
+  </div>
+  <div class="mp-grid2">
+    <div class="mp-field"><label>Stat 2 value</label><input id="mm-s2v" value="20min" maxlength="8"></div>
+    <div class="mp-field"><label>Stat 2 label</label><input id="mm-s2l" value="Per workflow now" maxlength="18"></div>
+  </div>
+  <div class="mp-field"><label>Result CTA</label><input id="mm-cta" value="Still using it. Zero regrets." maxlength="34"></div>
+  <div class="mp-field"><label>Your Handle</label><input id="mm-handle" value="@yourcreatorname" maxlength="30"></div>
+  <button class="mp-apply" onclick="mobApply()">↺ Apply + Replay</button>
+</div>
+
+<div id="epw">
+  <h3>✦ Type 08 · Real Results</h3>
+  <div class="p2-badge">Phase 2 only · May 1 →</div>
+  <div class="ef"><label>Hook line 1</label><input id="w-h1" value="30 days in." maxlength="20"></div>
+  <div class="ef"><label>Hook line 2 (green)</label><input id="w-h2" value="Here's what changed." maxlength="24"></div>
+  <div class="ef"><label>Days using AuraLayer</label><input id="w-days" type="number" value="30" min="1" max="999"></div>
+  <div class="ef"><label>Real output (paste yours)</label><textarea id="w-out" rows="4">Your music creator blend is optimized for independent monetization.</textarea></div>
+  <div class="ef"><label>Your Blend</label><input id="w-blend" value="Claude 45% / Canva 33% / Perplexity 22%" maxlength="40"></div>
+  <div class="epct">
+    <div class="ef"><label>Stat 1 value</label><input id="w-s1v" value="3" maxlength="8"></div>
+    <div class="ef"><label>Stat 1 label</label><input id="w-s1l" value="Tools cancelled" maxlength="18"></div>
+  </div>
+  <div class="epct">
+    <div class="ef"><label>Stat 2 value</label><input id="w-s2v" value="20min" maxlength="8"></div>
+    <div class="ef"><label>Stat 2 label</label><input id="w-s2l" value="Per workflow now" maxlength="18"></div>
+  </div>
+  <div class="ef"><label>Result CTA</label><input id="w-cta" value="Still using it. Zero regrets." maxlength="34"></div>
+  <div class="ef"><label>Your Handle</label><input id="w-handle" value="@yourcreatorname" maxlength="30"></div>
+  <button class="eb" onclick="apply()">↺ Apply + Replay</button>
+  <div class="ep-actions">
+    <button class="ep-btn-save" id="ep-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="ep-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="ediv"></div>
+  <div class="ehint">Paste a real AuraLayer output. The more specific, the more credible. Let the output sell itself.</div>
+</div>
+
+<script>
+let timers=[],af=null;
+function g(id){return document.getElementById(id);}
+function flash(){const f=g('flash');f.style.opacity='.4';setTimeout(()=>{f.style.opacity='0';},65);}
+function show(id){g(id).style.opacity='1';}function hide(id){g(id).style.opacity='0';}
+function apply(){
+  const wide=window.innerWidth>=720;
+  const r=(w,m)=>(wide&&g(w))?g(w).value:g(m)?g(m).value:'';
+  const h1=r('w-h1','mm-h1');const days=r('w-days','mm-days');const handle=r('w-handle','mm-handle');
+  g('h1').textContent=h1;
+  const h2=wide&&g('w-h2')?g('w-h2').value:g('mm-h2')?g('mm-h2').value:'Here\'s what changed.';
+  const out=wide&&g('w-out')?g('w-out').value:g('mm-out')?g('mm-out').value:'';
+  const cta=wide&&g('w-cta')?g('w-cta').value:g('mm-cta')?g('mm-cta').value:'Still using it. Zero regrets.';
+  const s1v=wide&&g('w-s1v')?g('w-s1v').value:g('mm-s1v')?g('mm-s1v').value:'3x';
+  const s1l=wide&&g('w-s1l')?g('w-s1l').value:g('mm-s1l')?g('mm-s1l').value:'faster output';
+  const s2v=wide&&g('w-s2v')?g('w-s2v').value:g('mm-s2v')?g('mm-s2v').value:'$9';
+  const s2l=wide&&g('w-s2l')?g('w-s2l').value:g('mm-s2l')?g('mm-s2l').value:'per month';
+  if(g('h2'))g('h2').textContent=h2;
+  g('days-chip').textContent=days+' days with AuraLayer';
+  if(g('oc-text'))g('oc-text').textContent=out;
+  if(g('sv1'))g('sv1').textContent=s1v;if(g('sl1'))g('sl1').textContent=s1l;
+  if(g('sv2'))g('sv2').textContent=s2v;if(g('sl2'))g('sl2').textContent=s2l;
+  if(g('cta-r'))g('cta-r').textContent=cta;
+  // Parse blend percentages
+  var blendRaw=(wide&&g('w-blend'))?g('w-blend').value:(g('mm-blend')?g('mm-blend').value:'Claude 45% / Canva 33% / Perplexity 22%');
+  var vc=45,vcv=33,vp=22;
+  var mm=blendRaw.match(/(\d+)%[^/]*\/[^/]*?(\d+)%[^/]*\/[^/]*?(\d+)%/);
+  if(mm){vc=parseInt(mm[1]);vcv=parseInt(mm[2]);vp=parseInt(mm[3]);}
+  ['oc-bar-c','oc-bar-cv','oc-bar-p'].forEach(function(id){var el=g(id);if(el)el.style.width='0%';});
+  if(g('oc-pct-c'))g('oc-pct-c').textContent='0%';
+  if(g('oc-pct-cv'))g('oc-pct-cv').textContent='0%';
+  if(g('oc-pct-p'))g('oc-pct-p').textContent='0%';
+  if(g('mm-h1'))g('mm-h1').value=h1;if(g('mm-days'))g('mm-days').value=days;if(g('mm-handle'))g('mm-handle').value=handle;
+  if(g('w-h1'))g('w-h1').value=h1;if(g('w-days'))g('w-days').value=days;if(g('w-handle'))g('w-handle').value=handle;
+  start(vc,vcv,vp);
+}
+function animBars08(vc,vcv,vp){
+  var dur=2800,t0=performance.now();
+  function springTo(target,peak,t){
+    if(t<0.5){const p=t/0.5;const e=p<0.5?2*p*p:-1+(4-2*p)*p;return peak*e;}
+    else if(t<0.88){const p=(t-0.5)/0.38;const e=p<0.5?2*p*p:-1+(4-2*p)*p;return peak-(peak-target*0.95)*e;}
+    else{const p=(t-0.88)/0.12;const e=p<0.5?2*p*p:-1+(4-2*p)*p;return target*0.95+(target*0.05*e);}
+  }
+  function tick(now){
+    var t=Math.min((now-t0)/dur,1);
+    var sc=springTo(vc,90,t);
+    var scv=springTo(vcv,70,t);
+    var sp=springTo(vp,80,t);
+    if(g('oc-bar-c'))g('oc-bar-c').style.width=Math.min(Math.round(sc),100)+'%';
+    if(g('oc-bar-cv'))g('oc-bar-cv').style.width=Math.min(Math.round(scv),100)+'%';
+    if(g('oc-bar-p'))g('oc-bar-p').style.width=Math.min(Math.round(sp),100)+'%';
+    if(g('oc-pct-c'))g('oc-pct-c').textContent=Math.round(sc)+'%';
+    if(g('oc-pct-cv'))g('oc-pct-cv').textContent=Math.round(scv)+'%';
+    if(g('oc-pct-p'))g('oc-pct-p').textContent=Math.round(sp)+'%';
+    if(t<1)requestAnimationFrame(tick);
+    else{
+      if(g('oc-bar-c'))g('oc-bar-c').style.width=vc+'%';
+      if(g('oc-bar-cv'))g('oc-bar-cv').style.width=vcv+'%';
+      if(g('oc-bar-p'))g('oc-bar-p').style.width=vp+'%';
+      if(g('oc-pct-c'))g('oc-pct-c').textContent=vc+'%';
+      if(g('oc-pct-cv'))g('oc-pct-cv').textContent=vcv+'%';
+      if(g('oc-pct-p'))g('oc-pct-p').textContent=vp+'%';
+    }
+  }
+  requestAnimationFrame(tick);
+}
+function start(vc,vcv,vp){
+  if(af)cancelAnimationFrame(af);timers.forEach(t=>clearTimeout(t));timers=[];
+  ['l1','l2','l3'].forEach(hide);g('progress').style.width='0%';
+  const t0=performance.now();
+  function prog(now){const p=Math.min((now-t0)/13400*100,100);g('progress').style.width=p+'%';if(p<100)af=requestAnimationFrame(prog);}
+  af=requestAnimationFrame(prog);
+  const s=(fn,d)=>{timers.push(setTimeout(fn,d));};
+  s(()=>{show('l1');flash();},0);
+  s(()=>{hide('l1');flash();show('l2');animBars08(vc,vcv,vp);},3500);
+  s(()=>{hide('l2');flash();show('l3');},7800);
+  s(apply,13400);
+}
+const AL_TYPE='08';
+document.addEventListener('DOMContentLoaded',function(){loadSettings();setTimeout(apply,500);});
+
+function collectSaveData(){var ids=['mm-h1','mm-h2','mm-days','mm-out','mm-blend','mm-s1v','mm-s1l','mm-s2v','mm-s2l','mm-cta','mm-handle'];var d={};ids.forEach(function(i){var el=document.getElementById(i);if(el)d[i]=el.value;});return d;}
+function mobApply(){
+  const wide=window.innerWidth>=720;
+  if(!wide){
+    var map={'mm-h1':'w-h1','mm-h2':'w-h2','mm-days':'w-days','mm-out':'w-out','mm-blend':'w-blend','mm-s1v':'w-s1v','mm-s1l':'w-s1l','mm-s2v':'w-s2v','mm-s2l':'w-s2l','mm-cta':'w-cta','mm-handle':'w-handle'};
+    Object.keys(map).forEach(function(s){var src=document.getElementById(s);var dst=document.getElementById(map[s]);if(src&&dst)dst.value=src.value;});
+  }
+  apply();
+}
+
+// ── Save settings ──
+function saveSettings(){
+  try{
+    const data=collectSaveData();
+    localStorage.setItem('al_ugc_'+AL_TYPE,JSON.stringify(data));
+  }catch(e){}
+  ['mob-save-btn','ep-save-btn'].forEach(function(id){
+    const btn=document.getElementById(id);if(!btn)return;
+    const orig=btn.textContent;btn.textContent='✓ Saved';btn.classList.add('saved');
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('saved');},1800);
+  });
+}
+// ── Load saved settings ──
+function loadSettings(){
+  try{
+    const raw=localStorage.getItem('al_ugc_'+AL_TYPE);
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    Object.keys(s).forEach(function(k){
+      var el=document.getElementById(k);
+      if(el)el.value=s[k];
+    });
+  }catch(e){}
+}
+// ── Export PNG (stage only) ──
+function exportPNG(){
+  const stage=document.getElementById('stage');
+  if(!stage||typeof html2canvas==='undefined'){alert('Export not available — go online first.');return;}
+  html2canvas(stage,{backgroundColor:'#000000',scale:2,useCORS:true,allowTaint:true})
+  .then(function(canvas){
+    const link=document.createElement('a');
+    link.download='auralayer-type'+AL_TYPE+'.png';
+    link.href=canvas.toDataURL('image/png');link.click();
+  }).catch(function(){alert('Export failed — try again.');});
+}
+
+</script>
+</body>
+</html>

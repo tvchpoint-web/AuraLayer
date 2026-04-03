@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AuraLayer · Type 05 · Niche Deep Dive</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;min-height:100%;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-x:hidden;overflow-y:auto;font-family:'DM Mono',monospace;}
+#stage{position:relative;width:100vw;height:calc(100vw * 16/9);max-width:390px;max-height:calc(390px * 16/9);background:#000;overflow:hidden;flex-shrink:0;margin:0 auto;}
+#stage::after{content:'';position:absolute;inset:0;z-index:90;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");pointer-events:none;mix-blend-mode:overlay;}
+#scan{position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(201,146,42,0.2),transparent);z-index:85;animation:scan 6s linear infinite;pointer-events:none;}
+@keyframes scan{0%{top:-2px;}100%{top:100%;}}
+#flash{position:absolute;inset:0;z-index:80;background:#fff;opacity:0;pointer-events:none;transition:opacity .05s;}
+#progress{position:absolute;bottom:0;left:0;z-index:70;height:3px;background:#C9922A;width:0%;}
+.layer{position:absolute;inset:0;opacity:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:48px 44px;}
+/* S1 */
+.ey{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.55);margin-bottom:16px;}
+.niche-big{font-family:'Bebas Neue',sans-serif;font-size:80px;line-height:.9;letter-spacing:.02em;text-transform:uppercase;color:#F5F3EE;}
+.niche-big em{color:#C9922A;font-style:normal;display:block;}
+.niche-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:26px;color:rgba(245,243,238,0.45);margin-top:16px;line-height:1.3;}
+/* S2 */
+.blend-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.55);margin-bottom:22px;}
+.nb-rows{display:flex;flex-direction:column;gap:18px;width:100%;margin-bottom:24px;}
+.nb{display:flex;flex-direction:column;gap:6px;}
+.nb-hdr{display:flex;justify-content:space-between;}
+.nb-name{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;}
+.nb-pct{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;}
+.nb-why{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;color:rgba(245,243,238,0.3);margin-top:2px;}
+.nb-track{width:100%;height:4px;background:rgba(255,255,255,0.07);border-radius:40px;overflow:hidden;}
+.nb-fill{height:100%;border-radius:40px;width:0%;transition:width 1s cubic-bezier(.16,1,.3,1);}
+.r-c .nb-name,.r-c .nb-pct{color:#E8C96B;} .r-c .nb-fill{background:linear-gradient(90deg,#E8C96B,#C9922A);}
+.r-cv .nb-name,.r-cv .nb-pct{color:#74C59B;} .r-cv .nb-fill{background:#74C59B;}
+.r-p .nb-name,.r-p .nb-pct{color:#9B8FD4;} .r-p .nb-fill{background:#9B8FD4;}
+/* S3 */
+.out-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(116,197,155,0.6);margin-bottom:14px;}
+.out-box{width:100%;padding:18px 20px;border:1px solid rgba(116,197,155,0.2);background:rgba(116,197,155,0.03);margin-bottom:20px;}
+.out-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:22px;line-height:1.5;color:#F5F3EE;}
+.out-attr{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(116,197,155,0.45);margin-top:10px;}
+.tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;padding:7px 16px;border:1px solid rgba(201,146,42,0.35);color:#C9922A;margin-bottom:16px;}
+/* Overlay + panel */
+#ctrl{position:absolute;bottom:0;left:0;right:0;z-index:200;background:rgba(0,0,0,0.9);border-top:1px solid rgba(201,146,42,0.25);padding:10px 14px 12px;display:flex;flex-direction:column;gap:7px;}
+.cl{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,146,42,0.45);}
+.cr{display:flex;gap:6px;align-items:center;}
+.ci{flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(201,146,42,0.2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:11px;padding:5px 8px;outline:none;min-width:0;}
+.ci:focus{border-color:rgba(201,146,42,0.7);}
+.ci.sm{max-width:46px;text-align:center;}
+.cb{background:#C9922A;border:none;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#000;padding:7px 10px;cursor:pointer;flex-shrink:0;}
+.cb:hover{background:#E8C96B;}
+#epw{display:none;width:260px;min-width:260px;height:100vh;background:#111;border-left:1px solid rgba(201,146,42,0.2);padding:24px 20px;overflow-y:auto;}
+#epw h3{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#C9922A;margin-bottom:20px;}
+.ef{margin-bottom:12px;}
+.ef label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:5px;}
+.ef input,.ef textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,146,42,0.25);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;resize:none;}
+.ef input:focus,.ef textarea:focus{border-color:#C9922A;}
+.epct{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.eb{width:100%;padding:11px;background:#C9922A;border:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;margin-top:4px;}
+.eb:hover{background:#E8C96B;}
+.ediv{height:1px;background:rgba(255,255,255,0.06);margin:16px 0;}
+.ehint{font-size:9px;color:rgba(255,255,255,0.25);line-height:1.6;letter-spacing:.5px;}
+@media(max-width:719px){#epw{display:none!important;}#mob-panel{display:block;}}
+@media(min-width:720px){html,body{flex-direction:row;align-items:center;justify-content:center;height:100%;overflow:hidden;}#mob-panel{display:none!important;}#epw{display:block!important;}}
+
+:root{
+  --ac:#C9922A;
+  --ac-border:rgba(201,146,42,0.4);
+  --ac-border2:rgba(201,146,42,0.25);
+  --ac-dim:rgba(201,146,42,0.45);
+}
+
+/* ── MOBILE PERMANENT EDIT PANEL ── */
+#mob-panel{
+  width:100%;max-width:390px;margin:0 auto;
+  background:#0E0E14;border-top:2px solid var(--ac-border);
+  padding:14px 16px 20px;
+}
+.mp-title{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--ac-dim);margin-bottom:12px;}
+.mp-field{margin-bottom:10px;}
+.mp-field label{display:block;font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px;}
+.mp-field input,.mp-field textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--ac-border2);color:#F5F3EE;font-family:'DM Mono',monospace;font-size:12px;padding:8px 10px;outline:none;-webkit-appearance:none;border-radius:0;resize:none;}
+.mp-field input:focus,.mp-field textarea:focus{border-color:var(--ac);}
+.mp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.mp-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
+.mp-grid2 .mp-field,.mp-grid3 .mp-field{margin-bottom:0;}
+.mp-phase{display:flex;border:1px solid var(--ac-border2);margin-bottom:12px;}
+.mp-phase button{flex:1;padding:8px 4px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;}
+.mp-phase button.on{background:rgba(201,146,42,0.15);color:#C9922A;}
+.mp-phase button.on.p2{background:rgba(116,197,155,0.15);color:#74C59B;}
+.mp-apply{width:100%;padding:11px;background:var(--ac);border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;border-radius:0;margin-bottom:8px;}
+.mp-apply:active{opacity:.85;}
+.mp-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:0;}
+.mp-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;border-radius:0;}
+.mp-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.mp-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;border-radius:0;}
+.mp-btn-export:active{background:rgba(255,255,255,0.08);}
+/* Desktop save/export row */
+.ep-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.ep-btn-save{padding:10px;background:rgba(201,146,42,0.1);border:1px solid rgba(201,146,42,0.35);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#C9922A;cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-save:hover,.ep-btn-save.saved{background:rgba(201,146,42,0.2);color:#E8C96B;}
+.ep-btn-export{padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);cursor:pointer;width:100%;border-radius:0;}
+.ep-btn-export:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);}
+/* legacy ctrl hidden */
+#ctrl{display:none!important;}
+
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="scan"></div><div id="flash"></div><div id="progress"></div>
+
+  <div class="layer" id="l1">
+    <div class="ey">Deep dive →</div>
+    <div class="niche-big"><span id="n1">Music</span><em id="n2">Creator.</em></div>
+    <div class="niche-sub" id="nsub">Here's how I use AuraLayer</div>
+  </div>
+
+  <div class="layer" id="l2" style="padding:48px 40px;align-items:flex-start;justify-content:center;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:36px;">
+      <span style="display:block;width:28px;height:1px;background:#C9922A;opacity:.5;flex-shrink:0;"></span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.55);">My blend for this niche</span>
+    </div>
+    <div style="display:flex;align-items:center;width:100%;margin-bottom:10px;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;color:#E8C96B;min-width:110px;" id="p-c">45%</span>
+      <div style="flex:1;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#E8C96B;margin-bottom:5px;">Claude</div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.5px;color:rgba(255,255,255,0.25);margin-bottom:6px;" id="why-c">Strategy + release planning</div>
+        <div style="width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="b-c" style="height:100%;border-radius:40px;width:0%;background:linear-gradient(90deg,#E8C96B,#C9922A);"></div></div>
+      </div>
+    </div>
+    <div style="width:100%;height:1px;background:rgba(255,255,255,0.05);margin-bottom:10px;"></div>
+    <div style="display:flex;align-items:center;width:100%;margin-bottom:10px;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;color:#74C59B;min-width:110px;" id="p-cv">33%</span>
+      <div style="flex:1;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#74C59B;margin-bottom:5px;">Canva</div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.5px;color:rgba(255,255,255,0.25);margin-bottom:6px;" id="why-cv">Visual brand + cover art</div>
+        <div style="width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="b-cv" style="height:100%;border-radius:40px;width:0%;background:#74C59B;"></div></div>
+      </div>
+    </div>
+    <div style="width:100%;height:1px;background:rgba(255,255,255,0.05);margin-bottom:10px;"></div>
+    <div style="display:flex;align-items:center;width:100%;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;color:#9B8FD4;min-width:110px;" id="p-p">22%</span>
+      <div style="flex:1;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#9B8FD4;margin-bottom:5px;">Perplexity</div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.5px;color:rgba(255,255,255,0.25);margin-bottom:6px;" id="why-p">Industry research</div>
+        <div style="width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="b-p" style="height:100%;border-radius:40px;width:0%;background:#9B8FD4;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layer" id="l3">
+    <div class="out-lbl">Real output ↓</div>
+    <div style="width:100%;border:1px solid rgba(116,197,155,0.2);border-top:2px solid rgba(116,197,155,0.5);background:rgba(116,197,155,0.03);padding:14px 16px;margin-bottom:16px;">
+      <div style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(116,197,155,0.45);margin-bottom:10px;display:flex;align-items:center;gap:6px;"><span style="display:block;width:12px;height:1px;background:#74C59B;opacity:.4;"></span>AuraLayer output</div>
+      <div class="out-text" id="out-text">Your music creator blend is optimized for independent monetization.</div>
+      <!-- Mini bars attribution -->
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1px;color:#E8C96B;min-width:56px;">Claude</span>
+          <div style="flex:1;height:2px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="mb-c" style="width:0%;height:100%;background:linear-gradient(90deg,#E8C96B,#C9922A);border-radius:40px;"></div></div>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:#E8C96B;line-height:1;min-width:24px;text-align:right;" id="mb-pct-c">45%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1px;color:#74C59B;min-width:56px;">Canva</span>
+          <div style="flex:1;height:2px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="mb-cv" style="width:0%;height:100%;background:#74C59B;border-radius:40px;"></div></div>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:#74C59B;line-height:1;min-width:24px;text-align:right;" id="mb-pct-cv">33%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1px;color:#9B8FD4;min-width:56px;">Perplexity</span>
+          <div style="flex:1;height:2px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;"><div id="mb-p" style="width:0%;height:100%;background:#9B8FD4;border-radius:40px;"></div></div>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:#9B8FD4;line-height:1;min-width:24px;text-align:right;" id="mb-pct-p">22%</span>
+        </div>
+      </div>
+    </div>
+    <div class="tag">#WhatsYourAuraLayer</div>
+    <div style="width:100%;height:1px;background:rgba(255,255,255,0.06);margin-bottom:20px;"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:32px;color:#C9922A;letter-spacing:-.5px;line-height:1;margin-bottom:8px;">auralayer.ai</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,146,42,0.45);">Free to start · Link in bio</div>
+  </div>
+
+  <div id="ctrl">
+    <div class="cl">✦ Type 05 · Niche Dive</div>
+    <div class="cr">
+      <input class="ci sm" id="m-n1" placeholder="Niche" value="Music" maxlength="12">
+      <input class="ci sm" id="m-c" type="number" value="45" min="1" max="98" title="Claude %">
+      <input class="ci sm" id="m-cv" type="number" value="33" min="1" max="98" title="Canva %">
+      <input class="ci sm" id="m-p" type="number" value="22" min="1" max="98" title="Perplexity %">
+      <input class="ci" id="m-handle" placeholder="@handle" value="@yourcreatorname" maxlength="22">
+      <button class="cb" onclick="apply()">↺</button>
+    </div>
+  </div>
+</div>
+
+<div id="mob-panel">
+  <div class="mp-title">✦ Edit your content — then hit Apply + Replay</div>
+  <div class="mp-actions" style="margin-bottom:12px;">
+    <button class="mp-btn-save" id="mob-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="mp-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="mp-grid2">
+    <div class="mp-field"><label>Niche</label><input id="mm-n1" value="Music" maxlength="16"></div>
+    <div class="mp-field"><label>Label (gold)</label><input id="mm-n2" value="Creator." maxlength="16"></div>
+  </div>
+  <div class="mp-field"><label>Subtitle</label><input id="mm-nsub" value="Here's how I use AuraLayer" maxlength="34"></div>
+  <div class="mp-grid3">
+    <div class="mp-field"><label>Claude %</label><input id="mm-c" type="number" value="45" min="1" max="98"></div>
+    <div class="mp-field"><label>Canva %</label><input id="mm-cv" type="number" value="33" min="1" max="98"></div>
+    <div class="mp-field"><label>Perplexity %</label><input id="mm-p" type="number" value="22" min="1" max="98"></div>
+  </div>
+  <div class="mp-field"><label>Claude — why</label><input id="mm-wc" value="Strategy + release planning" maxlength="30"></div>
+  <div class="mp-field"><label>Canva — why</label><input id="mm-wcv" value="Visual brand + cover art" maxlength="30"></div>
+  <div class="mp-field"><label>Perplexity — why</label><input id="mm-wp" value="Industry research" maxlength="30"></div>
+  <div class="mp-field"><label>Real output</label><textarea id="mm-out" rows="2">Your music creator blend is optimized for independent monetization.</textarea></div>
+  <div class="mp-field"><label>Your Handle</label><input id="mm-handle" value="@yourcreatorname" maxlength="30"></div>
+  <button class="mp-apply" onclick="mobApply()">↺ Apply + Replay</button>
+</div>
+
+<div id="epw">
+  <h3>✦ Type 05 · Niche Dive</h3>
+  <div class="ef"><label>Your Niche (line 1)</label><input id="w-n1" value="Music" maxlength="16"></div>
+  <div class="ef"><label>Niche label (gold)</label><input id="w-n2" value="Creator." maxlength="16"></div>
+  <div class="ef"><label>Niche subtitle</label><input id="w-nsub" value="Here's how I use AuraLayer" maxlength="34"></div>
+  <div class="epct">
+    <div class="ef"><label>Claude %</label><input id="w-c" type="number" value="45" min="1" max="98"></div>
+    <div class="ef"><label>Canva %</label><input id="w-cv" type="number" value="33" min="1" max="98"></div>
+    <div class="ef"><label>Perplexity %</label><input id="w-p" type="number" value="22" min="1" max="98"></div>
+  </div>
+  <div class="ef"><label>Claude — why</label><input id="w-wc" value="Strategy + release planning" maxlength="30"></div>
+  <div class="ef"><label>Canva — why</label><input id="w-wcv" value="Visual brand + cover art" maxlength="30"></div>
+  <div class="ef"><label>Perplexity — why</label><input id="w-wp" value="Industry research" maxlength="30"></div>
+  <div class="ef"><label>Real output (paste yours)</label><textarea id="w-out" rows="4">Your music creator blend is optimized for independent monetization.</textarea></div>
+  <div class="ef"><label>Your Handle</label><input id="w-handle" value="@yourcreatorname" maxlength="30"></div>
+  <button class="eb" onclick="apply()">↺ Apply + Replay</button>
+  <div class="ep-actions">
+    <button class="ep-btn-save" id="ep-save-btn" onclick="saveSettings()">💾 Save</button>
+    <button class="ep-btn-export" onclick="exportPNG()">🖼 Export PNG</button>
+  </div>
+  <div class="ediv"></div>
+  <div class="ehint">SCREEN TEXT: "Here's how a [niche] actually uses AuraLayer"</div>
+</div>
+
+<script>
+let timers=[],af=null,af2=null;
+function g(id){return document.getElementById(id);}
+function flash(){const f=g('flash');f.style.opacity='.5';setTimeout(()=>{f.style.opacity='0';},65);}
+function show(id){g(id).style.opacity='1';}function hide(id){g(id).style.opacity='0';}
+function resetBars(){['b-c','b-cv','b-p'].forEach(id=>{g(id).style.width='0%';});}
+function setMiniBars(vc,vcv,vp){
+  var els={c:g('mb-c'),cv:g('mb-cv'),p:g('mb-p'),pc:g('mb-pct-c'),pcv:g('mb-pct-cv'),pp:g('mb-pct-p')};
+  if(!els.c)return;
+  els.c.style.width=vc+'%';els.pc.textContent=vc+'%';
+  els.cv.style.width=vcv+'%';els.pcv.textContent=vcv+'%';
+  els.p.style.width=vp+'%';els.pp.textContent=vp+'%';
+}
+function animBars(vc,vcv,vp){
+  if(af2)cancelAnimationFrame(af2);
+  const dur=2800;const t0=performance.now();
+  function spring(t){
+    // Overshoot to 110%, back to 95%, settle at 100%
+    if(t<0.6){
+      // ease up to 110%
+      const p=t/0.6;
+      return 1.1*(p<0.5?2*p*p:-1+(4-2*p)*p);
+    } else if(t<0.8){
+      // pull back to 95%
+      const p=(t-0.6)/0.2;
+      return 1.1-(0.15*(p<0.5?2*p*p:-1+(4-2*p)*p));
+    } else {
+      // settle to 100%
+      const p=(t-0.8)/0.2;
+      return 0.95+(0.05*(p<0.5?2*p*p:-1+(4-2*p)*p));
+    }
+  }
+  function tick(now){
+    const t=Math.min((now-t0)/dur,1);
+    const s=spring(t);
+    const wc=Math.min(Math.round(vc*s),100);
+    const wcv=Math.min(Math.round(vcv*s),100);
+    const wp=Math.min(Math.round(vp*s),100);
+    g('b-c').style.width=wc+'%';g('p-c').textContent=Math.round(vc*(t>=1?1:s))+'%';
+    g('b-cv').style.width=wcv+'%';g('p-cv').textContent=Math.round(vcv*(t>=1?1:s))+'%';
+    g('b-p').style.width=wp+'%';g('p-p').textContent=Math.round(vp*(t>=1?1:s))+'%';
+    if(t<1)af2=requestAnimationFrame(tick);
+    else{
+      g('b-c').style.width=vc+'%';g('p-c').textContent=vc+'%';
+      g('b-cv').style.width=vcv+'%';g('p-cv').textContent=vcv+'%';
+      g('b-p').style.width=vp+'%';g('p-p').textContent=vp+'%';
+    }
+  }
+  af2=requestAnimationFrame(tick);
+}
+function apply(){
+  const wide=window.innerWidth>=720;
+  const r=(wid,mid)=>(wide&&g(wid))?g(wid).value:g(mid).value;
+  const n1=r('w-n1','mm-n1');const vc=parseInt(r('w-c','mm-c'))||45;
+  const vcv=parseInt(r('w-cv','mm-cv'))||33;const vp=parseInt(r('w-p','mm-p'))||22;
+  const handle=r('w-handle','mm-handle');
+  g('n1').textContent=n1;
+  const n2=wide&&g('w-n2')?g('w-n2').value:g('mm-n2')?g('mm-n2').value:'Creator.';
+  const nsub=wide&&g('w-nsub')?g('w-nsub').value:g('mm-nsub')?g('mm-nsub').value:'Here\'s how I use AuraLayer';
+  const wc=wide&&g('w-wc')?g('w-wc').value:g('mm-wc')?g('mm-wc').value:'Strategy + release planning';
+  const wcv=wide&&g('w-wcv')?g('w-wcv').value:g('mm-wcv')?g('mm-wcv').value:'Visual brand + cover art';
+  const wp=wide&&g('w-wp')?g('w-wp').value:g('mm-wp')?g('mm-wp').value:'Industry research';
+  const out=wide&&g('w-out')?g('w-out').value:g('mm-out')?g('mm-out').value:'Your creator blend is optimized for authentic output.';
+  if(g('n2'))g('n2').textContent=n2;
+  if(g('nsub'))g('nsub').textContent=nsub;
+  if(g('why-c'))g('why-c').textContent=wc;
+  if(g('why-cv'))g('why-cv').textContent=wcv;
+  if(g('why-p'))g('why-p').textContent=wp;
+  if(g('out-text'))g('out-text').textContent=out;
+  if(g('out-attr'))g('out-attr').textContent='Generated by '+handle+"'s blend";
+  if(g('mm-n1'))g('mm-n1').value=n1;if(g('mm-c'))g('mm-c').value=vc;if(g('mm-cv'))g('mm-cv').value=vcv;if(g('mm-p'))g('mm-p').value=vp;if(g('mm-handle'))g('mm-handle').value=handle;
+  if(g('w-n1'))g('w-n1').value=n1;if(g('w-c'))g('w-c').value=vc;if(g('w-cv'))g('w-cv').value=vcv;if(g('w-p'))g('w-p').value=vp;if(g('w-handle'))g('w-handle').value=handle;
+  start(vc,vcv,vp);
+}
+function start(vc,vcv,vp){
+  if(af)cancelAnimationFrame(af);timers.forEach(t=>clearTimeout(t));timers=[];
+  resetBars();['l1','l2','l3'].forEach(hide);g('progress').style.width='0%';
+  const t0=performance.now();
+  function prog(now){const p=Math.min((now-t0)/13400*100,100);g('progress').style.width=p+'%';if(p<100)af=requestAnimationFrame(prog);}
+  af=requestAnimationFrame(prog);
+  const s=(fn,d)=>{timers.push(setTimeout(fn,d));};
+  s(()=>{show('l1');flash();},0);
+  s(()=>{hide('l1');flash();show('l2');animBars(vc,vcv,vp);},3500);
+  s(()=>{hide('l2');flash();show('l3');setMiniBars(vc,vcv,vp);},8000);
+  s(apply,13400);
+}
+const AL_TYPE='05';
+document.addEventListener('DOMContentLoaded',function(){loadSettings();setTimeout(apply,500);});
+
+function collectSaveData(){var ids=['mm-n1','mm-n2','mm-nsub','mm-c','mm-cv','mm-p','mm-wc','mm-wcv','mm-wp','mm-out','mm-handle'];var d={};ids.forEach(function(i){var el=document.getElementById(i);if(el)d[i]=el.value;});return d;}
+function mobApply(){
+  const wide=window.innerWidth>=720;
+  if(!wide){
+    var map={'mm-n1':'w-n1','mm-n2':'w-n2','mm-nsub':'w-nsub','mm-c':'w-c','mm-cv':'w-cv','mm-p':'w-p','mm-wc':'w-wc','mm-wcv':'w-wcv','mm-wp':'w-wp','mm-out':'w-out','mm-handle':'w-handle'};
+    Object.keys(map).forEach(function(s){var src=document.getElementById(s);var dst=document.getElementById(map[s]);if(src&&dst)dst.value=src.value;});
+  }
+  apply();
+}
+
+// ── Save settings ──
+function saveSettings(){
+  try{
+    const data=collectSaveData();
+    localStorage.setItem('al_ugc_'+AL_TYPE,JSON.stringify(data));
+  }catch(e){}
+  ['mob-save-btn','ep-save-btn'].forEach(function(id){
+    const btn=document.getElementById(id);if(!btn)return;
+    const orig=btn.textContent;btn.textContent='✓ Saved';btn.classList.add('saved');
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('saved');},1800);
+  });
+}
+// ── Load saved settings ──
+function loadSettings(){
+  try{
+    const raw=localStorage.getItem('al_ugc_'+AL_TYPE);
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    Object.keys(s).forEach(function(k){
+      var el=document.getElementById(k);
+      if(el)el.value=s[k];
+    });
+  }catch(e){}
+}
+// ── Export PNG (stage only) ──
+function exportPNG(){
+  const stage=document.getElementById('stage');
+  if(!stage||typeof html2canvas==='undefined'){alert('Export not available — go online first.');return;}
+  html2canvas(stage,{backgroundColor:'#000000',scale:2,useCORS:true,allowTaint:true})
+  .then(function(canvas){
+    const link=document.createElement('a');
+    link.download='auralayer-type'+AL_TYPE+'.png';
+    link.href=canvas.toDataURL('image/png');link.click();
+  }).catch(function(){alert('Export failed — try again.');});
+}
+
+</script>
+</body>
+</html>
