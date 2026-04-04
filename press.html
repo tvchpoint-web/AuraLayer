@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraLayer.ai — Press</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0A0A0F;--black-2:#111118;--gold:#C9922A;--gold-light:#E8B04B;--gold-dim:rgba(201,146,42,0.18);--white:#F5F3EE;--muted:#A8A49A;--dim:#5A5750;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.4;}
+body::after{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(201,146,42,0.08) 0%,transparent 70%);pointer-events:none;z-index:0;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 32px;position:relative;z-index:1;}
+nav{padding:28px 0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.bars{display:flex;flex-direction:column;gap:4px;}
+.bars span{display:block;height:5px;border-radius:20px;}
+.bars span:nth-child(1){background:linear-gradient(90deg,#E8C96B,#C9922A);width:28px;}
+.bars span:nth-child(2){background:linear-gradient(90deg,#E8C96B,#C9922A);opacity:0.65;width:20px;}
+.bars span:nth-child(3){background:#A07518;opacity:0.35;width:13px;}
+
+.wm{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:22px;letter-spacing:0.02em;}
+.wm .a{color:var(--white);}.wm .l{color:var(--gold);}.wm .ai{color:var(--gold);font-size:16px;}
+.nav-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;}
+
+/* TWO-COLUMN HERO */
+.hero{padding:64px 0 56px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.hero-inner{display:grid;grid-template-columns:1fr 420px;gap:56px;align-items:center;}
+.hero-copy{}
+.eye{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:20px;}
+h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(36px,4.5vw,54px);line-height:1.1;margin-bottom:20px;}
+h1 em{font-style:italic;color:var(--gold);}
+.desc{font-size:14px;color:var(--muted);max-width:480px;line-height:1.75;margin-bottom:32px;}
+.stats{display:flex;gap:28px;flex-wrap:wrap;}
+.stat{display:flex;flex-direction:column;gap:3px;}
+.sv{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--gold-light);line-height:1;}
+.sl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;}
+.social-proof{margin-top:20px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;}
+.try-btn{display:inline-flex;align-items:center;gap:8px;margin-top:18px;background:var(--gold);color:var(--black);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:11px 24px;border-radius:6px;text-decoration:none;transition:background 0.2s;}
+.try-btn:hover{background:var(--gold-light);}
+.hero-visual{position:relative;}
+.hero-visual svg{width:100%;height:auto;display:block;border-radius:16px;}
+
+@media(max-width:800px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-visual{max-width:400px;margin:0 auto;}
+  h1{font-size:clamp(34px,8vw,52px);}
+}
+
+section{padding:48px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.divider{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
+.sec-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:0;}
+.divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,146,42,0.3),transparent);}
+.story{font-size:15px;color:var(--muted);line-height:1.8;max-width:660px;}
+.story p+p{margin-top:18px;}
+.story strong{color:var(--white);font-weight:500;}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:rgba(255,255,255,0.04);border:1px solid var(--gold-dim);border-radius:12px;overflow:hidden;}
+.fact{background:var(--black-2);padding:20px 24px;display:flex;flex-direction:column;gap:5px;}
+.fk{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;}
+.fv{font-size:14px;color:var(--white);}
+.fv.g{color:var(--gold-light);}
+.hooks{display:flex;flex-direction:column;gap:14px;}
+.hook{background:var(--black-2);border:1px solid var(--gold-dim);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:18px 22px;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;font-style:italic;color:var(--white);line-height:1.5;}
+.logo-card{border:1px solid var(--gold-dim);border-radius:10px;overflow:hidden;max-width:280px;}
+.logo-preview{padding:28px;display:flex;align-items:center;justify-content:center;background:var(--black);}
+.logo-card-lbl{background:var(--black-2);padding:10px 14px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;border-top:1px solid rgba(255,255,255,0.06);}
+.asset-note{background:var(--black-2);border:1px solid var(--gold-dim);border-radius:10px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.asset-note p{font-size:14px;color:var(--muted);max-width:460px;line-height:1.6;}
+.btn{display:inline-flex;align-items:center;background:var(--gold);color:var(--black);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:11px 22px;border-radius:6px;text-decoration:none;white-space:nowrap;}
+.contact{background:var(--black-2);border:1px solid var(--gold-dim);border-radius:12px;padding:36px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;}
+.contact h3{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:6px;}
+.contact p{font-size:14px;color:var(--muted);max-width:380px;}
+.ce{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-dim);padding-bottom:2px;display:inline-block;margin-top:14px;}
+footer{padding:32px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.ft{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--dim);}
+.flinks{display:flex;gap:20px;}
+.flinks a{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);text-decoration:none;text-transform:uppercase;}
+.flinks a:hover{color:var(--gold);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.hero,section{animation:fadeUp 0.6s ease both;}
+@media(max-width:600px){.facts{grid-template-columns:1fr;}.stats{gap:20px;}.contact{flex-direction:column;}.asset-note{flex-direction:column;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <a href="https://auralayer.ai" class="logo">
+    <div class="bars"><span></span><span></span><span></span></div>
+    <div class="wm"><span class="a">Aura</span><span class="l">Layer</span><span class="ai">.ai</span></div>
+  </a>
+  <span class="nav-lbl">Press</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+
+    <!-- LEFT: Copy -->
+    <div class="hero-copy">
+      <div class="eye">&#10022; &nbsp; Press &nbsp;&middot;&nbsp; Media Kit &nbsp;&middot;&nbsp; April 2026</div>
+      <h1>The first AI<br><em>tool-blending</em><br>platform for creators.</h1>
+      <p class="desc">A small team got tired of tab chaos &mdash; six AI tools open, copy-pasting between windows, losing their voice in the output. So they built the tool they couldn&rsquo;t find. AuraLayer blends Claude, Canva, ChatGPT, and Perplexity by weighted percentage. One output. Your voice. Zero switching.</p>
+      <div class="stats">
+        <div class="stat"><span class="sv">$9</span><span class="sl">per month &middot; beta</span></div>
+        <div class="stat"><span class="sv">Apr 30</span><span class="sl">beta closes</span></div>
+        <div class="stat"><span class="sv">May 1</span><span class="sl">public launch</span></div>
+        <div class="stat"><span class="sv">4</span><span class="sl">AI tools &middot; 1 blend</span></div>
+      </div>
+      <p class="social-proof">&#10022; &nbsp; Hundreds of creators already blending in beta.</p>
+      <a href="https://auralayer.ai" class="try-btn">Try AuraLayer.ai free &rarr;</a>
+    </div>
+
+    <!-- RIGHT: Live SVG Demo -->
+    <div class="hero-visual">
+      <svg viewBox="0 0 460 520" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="pgld" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#E8C96B"/>
+            <stop offset="100%" stop-color="#C9922A"/>
+          </linearGradient>
+        </defs>
+        <rect width="460" height="520" rx="16" fill="#0D0D16"/>
+        <rect width="460" height="520" rx="16" fill="none" stroke="rgba(201,146,42,0.18)" stroke-width="1"/>
+        <rect width="460" height="44" fill="#0A0A0F"/>
+        <rect y="44" width="460" height="1" fill="rgba(255,255,255,0.06)"/>
+        <rect x="16" y="15" width="18" height="3" rx="1.5" fill="url(#pgld)"/>
+        <rect x="16" y="21" width="14" height="3" rx="1.5" fill="url(#pgld)" opacity=".65"/>
+        <rect x="16" y="27" width="10" height="3" rx="1.5" fill="url(#pgld)" opacity=".35"/>
+        <text x="40" y="27" font-family="serif" font-size="13" font-weight="600" fill="#F5F3EE" letter-spacing="0.5">Aura<tspan fill="#C9922A">Layer</tspan><tspan font-size="8" fill="rgba(201,146,42,0.4)">.ai</tspan></text>
+        <rect x="148" y="11" width="90" height="22" rx="4" fill="rgba(201,146,42,0.1)" stroke="rgba(201,146,42,0.35)" stroke-width="0.75"/>
+        <text x="193" y="26" font-family="sans-serif" font-size="9" font-weight="700" fill="#C9922A" text-anchor="middle" letter-spacing="0.5">GET MY STRATEGY</text>
+        <rect x="244" y="11" width="78" height="22" rx="4" fill="transparent"/>
+        <text x="283" y="26" font-family="sans-serif" font-size="9" font-weight="700" fill="rgba(240,237,228,0.3)" text-anchor="middle" letter-spacing="0.5">BUILD MY APP</text>
+        <rect x="380" y="12" width="64" height="20" rx="3" fill="rgba(201,146,42,0.12)" stroke="rgba(201,146,42,0.3)" stroke-width="0.75"/>
+        <text x="412" y="25" font-family="monospace" font-size="8" fill="#C9922A" text-anchor="middle" letter-spacing="0.5">VISIONARY</text>
+        <rect x="0" y="45" width="195" height="475" fill="#0A0A0F"/>
+        <rect x="195" y="45" width="1" height="475" fill="rgba(255,255,255,0.06)"/>
+        <rect x="10" y="58" width="175" height="60" rx="6" fill="rgba(201,146,42,0.04)" stroke="rgba(201,146,42,0.2)" stroke-width="0.75"/>
+        <text x="20" y="75" font-family="sans-serif" font-size="8" fill="rgba(201,146,42,0.5)" letter-spacing="0.8">WHAT ARE YOU TRYING TO DO?</text>
+        <text x="20" y="90" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.35)">I make beats and want to turn</text>
+        <text x="20" y="103" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.35)">my music into real income...</text>
+        <text x="10" y="132" font-family="sans-serif" font-size="8" font-weight="700" fill="#F0EDE4" letter-spacing="0.3">Quick start &mdash; who are you?</text>
+        <rect id="chip-rect-music" x="10" y="138" width="80" height="26" rx="5" fill="rgba(201,146,42,0.1)" stroke="rgba(201,146,42,0.4)" stroke-width="0.75"/>
+        <text x="50" y="154" font-family="sans-serif" font-size="9" font-weight="700" fill="#C9922A" text-anchor="middle">Music</text>
+        <rect id="chip-rect-content" x="97" y="138" width="78" height="26" rx="5" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)" stroke-width="0.75"/>
+        <text x="136" y="154" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.35)" text-anchor="middle">Content</text>
+        <rect id="chip-rect-freelance" x="10" y="170" width="80" height="26" rx="5" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)" stroke-width="0.75"/>
+        <text x="50" y="186" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.35)" text-anchor="middle">Freelance</text>
+        <rect id="chip-rect-seller" x="97" y="170" width="78" height="26" rx="5" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)" stroke-width="0.75"/>
+        <text x="136" y="186" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.35)" text-anchor="middle">Seller</text>
+        <text x="10" y="215" font-family="monospace" font-size="8" fill="rgba(201,146,42,0.4)" letter-spacing="1">YOUR AI STACK</text>
+        <circle cx="20" cy="231" r="5" fill="#E8C96B"/>
+        <text x="30" y="235" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.6)">Claude</text>
+        <text id="svg-pct-claude" x="165" y="235" font-family="monospace" font-size="9" fill="#C9922A" text-anchor="end">45%</text>
+        <rect x="10" y="239" width="175" height="2" rx="1" fill="rgba(255,255,255,0.05)"/>
+        <rect id="svg-bar-claude" x="10" y="239" width="79" height="2" rx="1" fill="#E8C96B"/>
+        <circle cx="20" cy="256" r="5" fill="#74C59B"/>
+        <text x="30" y="260" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.6)">Canva</text>
+        <text id="svg-pct-canva" x="165" y="260" font-family="monospace" font-size="9" fill="#C9922A" text-anchor="end">33%</text>
+        <rect x="10" y="264" width="175" height="2" rx="1" fill="rgba(255,255,255,0.05)"/>
+        <rect id="svg-bar-canva" x="10" y="264" width="58" height="2" rx="1" fill="#74C59B"/>
+        <circle cx="20" cy="281" r="5" fill="#9B8FD4"/>
+        <text x="30" y="285" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.6)">Perplexity</text>
+        <text id="svg-pct-perplexity" x="165" y="285" font-family="monospace" font-size="9" fill="#C9922A" text-anchor="end">22%</text>
+        <rect x="10" y="289" width="175" height="2" rx="1" fill="rgba(255,255,255,0.05)"/>
+        <rect id="svg-bar-perplexity" x="10" y="289" width="38" height="2" rx="1" fill="#9B8FD4"/>
+        <rect x="10" y="460" width="175" height="36" rx="5" fill="url(#pgld)"/>
+        <text x="97" y="482" font-family="sans-serif" font-size="11" font-weight="700" fill="#0A0A0F" text-anchor="middle" letter-spacing="1">LET'S GO</text>
+        <rect x="196" y="45" width="264" height="8" fill="#0A0A0F"/>
+        <rect id="blend-bar-claude" x="196" y="53" width="119" height="4" fill="#E8C96B"/>
+        <rect id="blend-bar-canva" x="315" y="53" width="88" height="4" fill="#74C59B"/>
+        <rect id="blend-bar-perplexity" x="403" y="53" width="57" height="4" fill="#9B8FD4"/>
+        <text id="svg-result-title" x="208" y="80" font-family="sans-serif" font-size="12" font-weight="700" fill="#F0EDE4" letter-spacing="0.3">Your Music Strategy</text>
+        <rect x="380" y="67" width="60" height="20" rx="3" fill="rgba(201,146,42,0.1)" stroke="rgba(201,146,42,0.3)" stroke-width="0.75"/>
+        <text x="410" y="80" font-family="sans-serif" font-size="8" font-weight="700" fill="#C9922A" text-anchor="middle">Go Deeper</text>
+        <circle cx="214" cy="101" r="3" fill="rgba(201,146,42,0.4)"/>
+        <text x="223" y="104" font-family="monospace" font-size="7.5" fill="rgba(201,146,42,0.5)" letter-spacing="0.8">OVERVIEW</text>
+        <text id="svg-ov1" x="208" y="120" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.4)">Your music creator blend is optimized for</text>
+        <text id="svg-ov2" x="208" y="133" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.4)">independent monetization. Claude 45% drives</text>
+        <text id="svg-ov3" x="208" y="146" font-family="sans-serif" font-size="9" fill="rgba(240,237,228,0.4)">strategy while Canva handles visual brand.</text>
+        <circle cx="214" cy="166" r="3" fill="rgba(201,146,42,0.4)"/>
+        <text x="223" y="169" font-family="monospace" font-size="7.5" fill="rgba(201,146,42,0.5)" letter-spacing="0.8">OPPORTUNITIES</text>
+        <rect x="208" y="177" width="100" height="20" rx="10" fill="rgba(201,146,42,0.06)" stroke="rgba(201,146,42,0.15)" stroke-width="0.75"/>
+        <text x="258" y="190" font-family="sans-serif" font-size="8.5" fill="rgba(240,237,228,0.4)" text-anchor="middle">Sync licensing</text>
+        <rect x="314" y="177" width="85" height="20" rx="10" fill="rgba(201,146,42,0.06)" stroke="rgba(201,146,42,0.15)" stroke-width="0.75"/>
+        <text x="356" y="190" font-family="sans-serif" font-size="8.5" fill="rgba(240,237,228,0.4)" text-anchor="middle">Sample pack store</text>
+        <rect x="208" y="203" width="80" height="20" rx="10" fill="rgba(201,146,42,0.06)" stroke="rgba(201,146,42,0.15)" stroke-width="0.75"/>
+        <text x="248" y="216" font-family="sans-serif" font-size="8.5" fill="rgba(240,237,228,0.4)" text-anchor="middle">Beat leases</text>
+        <circle cx="214" cy="238" r="3" fill="rgba(201,146,42,0.4)"/>
+        <text x="223" y="241" font-family="monospace" font-size="7.5" fill="rgba(201,146,42,0.5)" letter-spacing="0.8">NEXT STEPS</text>
+        <text x="208" y="256" font-family="monospace" font-size="7.5" fill="rgba(201,146,42,0.3)">01</text>
+        <text x="222" y="256" font-family="sans-serif" font-size="8.5" fill="rgba(240,237,228,0.3)">Create a sync brief with mood, tempo tags</text>
+        <text x="208" y="272" font-family="monospace" font-size="7.5" fill="rgba(201,146,42,0.3)">02</text>
+        <text x="222" y="272" font-family="sans-serif" font-size="8.5" fill="rgba(240,237,228,0.3)">Set up Bandcamp with 3 pricing tiers</text>
+        <text x="208" y="288" font-family="monospace" font-size="7.5" fill="rgba(201,146,42,0.3)">03</text>
+        <text x="222" y="288" font-family="sans-serif" font-size="8.5" fill="rgba(240,237,228,0.3)">Pitch 10 music supervisors per week</text>
+        <rect x="196" y="500" width="264" height="20" fill="rgba(201,146,42,0.04)"/>
+        <rect x="196" y="500" width="264" height="1" fill="rgba(255,255,255,0.05)"/>
+        <circle cx="208" cy="510" r="3" fill="#4CAF50"/>
+        <text x="216" y="514" font-family="monospace" font-size="7.5" fill="rgba(240,237,228,0.25)" letter-spacing="0.3">Join 1,400+ creators already blending</text>
+        <rect width="460" height="520" rx="16" fill="none" stroke="url(#pgld)" stroke-width="0.5" opacity="0.4"/>
+      </svg>
+    </div>
+
+  </div>
+</div>
+
+<section>
+  <div class="divider"><span class="sec-lbl">&#10022; &nbsp; The Story</span></div>
+  <div class="story">
+    <p>Most creators use four or five AI tools in a single workflow. <strong>Claude for writing. Canva for visuals. Perplexity for research. ChatGPT for ideation.</strong> They tab-switch constantly, copy-paste outputs between platforms, and end up with content that sounds like it was written by a committee of robots.</p>
+    <p>AuraLayer solves this by letting you set the percentage weight of each tool in your blend. <strong>40% Claude, 35% Canva, 25% Perplexity.</strong> Hit generate. The output sounds like you &mdash; not like AI slop.</p>
+    <p>Beta pricing locks forever at $9/mo for anyone who joins before April 30, 2026. The platform launches publicly on May 1.</p>
+  </div>
+</section>
+
+<section>
+  <div class="divider"><span class="sec-lbl">&#10022; &nbsp; Product Facts</span></div>
+  <div class="facts">
+    <div class="fact"><span class="fk">Product</span><span class="fv">AuraLayer.ai</span></div>
+    <div class="fact"><span class="fk">Category</span><span class="fv">AI Tool Orchestration</span></div>
+    <div class="fact"><span class="fk">Tagline</span><span class="fv g">Your blend. Your voice. Zero switching.</span></div>
+    <div class="fact"><span class="fk">Audience</span><span class="fv">Gen Z creators, solopreneurs, freelancers</span></div>
+    <div class="fact"><span class="fk">Beta Price</span><span class="fv g">$9/mo Starter &middot; $39/mo Pro &middot; $92/mo Visionary</span></div>
+    <div class="fact"><span class="fk">Beta Closes</span><span class="fv">April 30, 2026 (locks forever)</span></div>
+    <div class="fact"><span class="fk">Public Launch</span><span class="fv">May 1, 2026</span></div>
+    <div class="fact"><span class="fk">Tools Supported</span><span class="fv">Claude &middot; Canva &middot; ChatGPT &middot; Perplexity</span></div>
+    <div class="fact"><span class="fk">URL</span><span class="fv"><a href="https://auralayer.ai" style="color:var(--gold-light);text-decoration:none;">auralayer.ai</a></span></div>
+  </div>
+</section>
+
+<section>
+  <div class="divider"><span class="sec-lbl">&#10022; &nbsp; Story Angles</span></div>
+  <div class="hooks">
+    <div class="hook">&ldquo;The AI tool that ends tab chaos &mdash; blend Claude, Canva, and Perplexity by percentage and get output that actually sounds like you.&rdquo;</div>
+    <div class="hook">&ldquo;$85/mo in AI subscriptions &rarr; $9/mo. One blend replaced the entire stack.&rdquo;</div>
+    <div class="hook">&ldquo;Gen Z creators are drowning in tool noise. AuraLayer is the first platform built around the idea that your blend is your creative identity.&rdquo;</div>
+    <div class="hook">&ldquo;Beta pricing locks forever on April 30 &mdash; the founding cohort gets $9/mo for life.&rdquo;</div>
+  </div>
+</section>
+
+<section>
+  <div class="divider"><span class="sec-lbl">&#10022; &nbsp; Logo</span></div>
+  <div class="logo-card">
+    <div class="logo-preview">
+      <div class="logo" style="pointer-events:none;">
+        <div class="bars"><span></span><span></span><span></span></div>
+        <div class="wm"><span class="a">Aura</span><span class="l">Layer</span><span class="ai">.ai</span></div>
+      </div>
+    </div>
+    <div class="logo-card-lbl">Dark version &middot; Primary</div>
+  </div>
+  <p style="margin-top:16px;font-size:13px;color:var(--dim);">For high-res logo files &mdash; email <a href="/cdn-cgi/l/email-protection#c8bbbdb8b8a7babc88a9bdbaa9a4a9b1adbae6a9a1" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,146,42,0.3);"><span class="__cf_email__" data-cfemail="e0939590908f9294a0819592818c81998592ce8189">[email&#160;protected]</span></a></p>
+</section>
+
+<section>
+  <div class="divider"><span class="sec-lbl">&#10022; &nbsp; Screenshots &amp; Assets</span></div>
+  <div class="asset-note">
+    <p>High-resolution product screenshots, app walkthroughs, and brand assets are available on request. Include your publication name and deadline and we&rsquo;ll turn them around fast.</p>
+    <a href="/cdn-cgi/l/email-protection#a5d6d0d5d5cad7d1e5c4d0d7c4c9c4dcc0d78bc4cc9ad6d0c7cfc0c6d198f5d7c0d6d6809795c4d6d6c0d1809795d7c0d4d0c0d6d180979580e097809d95809c91809795e4d0d7c4e9c4dcc0d78bc4cc" class="btn">Request assets</a>
+  </div>
+</section>
+
+<section style="border-bottom:none;">
+  <div class="contact">
+    <div>
+      <h3>Let&rsquo;s talk.</h3>
+      <p>For press inquiries, review access, interviews, or coverage &mdash; reach us directly. We respond fast.</p>
+      <a href="/cdn-cgi/l/email-protection#5a292f2a2a35282e1a3b2f283b363b233f28743b33" class="ce"><span class="__cf_email__" data-cfemail="b0c3c5c0c0dfc2c4f0d1c5c2d1dcd1c9d5c29ed1d9">[email&#160;protected]</span></a>
+    </div>
+    <div>
+      <a href="https://auralayer.ai" class="btn">Try AuraLayer.ai free &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="ft">&ldquo;Your blend. Your voice. Zero switching.&rdquo;</span>
+  <div class="flinks">
+    <a href="https://auralayer.ai">Home</a>
+    <a href="/cdn-cgi/l/email-protection#30434540405f424470514542515c514955421e5159">Contact</a>
+  </div>
+</footer>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+(function(){
+  var MAX_W=175,BB_X=196,BB_TOT=264,ANIM_DUR=600,HOLD_DUR=1400,INIT_DELAY=800;
+  var archetypes=['music','content','freelance','seller'];
+  var frames=[
+    {arch:'music',c:45,cv:33,p:22,title:'Your Music Strategy',ov1:'Your music creator blend is optimized for',ov2:'independent monetization. Claude 45% drives',ov3:'strategy while Canva handles visual brand.'},
+    {arch:'content',c:40,cv:30,p:30,title:'Your Content Strategy',ov1:'Your content blend is optimized for growth.',ov2:'Claude 40% drives copy & strategy while',ov3:'Perplexity 30% keeps research sharp.'},
+    {arch:'freelance',c:50,cv:28,p:22,title:'Your Freelance Strategy',ov1:'Your freelance blend is built for client wins.',ov2:'Claude 50% drives positioning & proposals',ov3:'while Canva handles your creative portfolio.'},
+    {arch:'seller',c:35,cv:45,p:20,title:'Your Seller Strategy',ov1:'Your seller blend is optimized for conversion.',ov2:'Canva 45% drives visual brand & listings',ov3:'while Claude handles copy & ad strategy.'}
+  ];
+  var idx=0;
+  function g(id){return document.getElementById(id);}
+  function setChips(active){
+    archetypes.forEach(function(a){
+      var rect=g('chip-rect-'+a);
+      if(!rect)return;
+      if(a===active){rect.setAttribute('fill','rgba(201,146,42,0.12)');rect.setAttribute('stroke','rgba(201,146,42,0.55)');}
+      else{rect.setAttribute('fill','rgba(255,255,255,0.02)');rect.setAttribute('stroke','rgba(255,255,255,0.08)');}
+    });
+  }
+  function animateBars(toC,toCv,toP,onDone){
+    var barC=g('svg-bar-claude'),barCv=g('svg-bar-canva'),barP=g('svg-bar-perplexity');
+    var pctC=g('svg-pct-claude'),pctCv=g('svg-pct-canva'),pctP=g('svg-pct-perplexity');
+    var bbC=g('blend-bar-claude'),bbCv=g('blend-bar-canva'),bbP=g('blend-bar-perplexity');
+    if(!barC)return;
+    var fromC=parseFloat(barC.getAttribute('width'))||79;
+    var fromCv=parseFloat(barCv.getAttribute('width'))||58;
+    var fromP=parseFloat(barP.getAttribute('width'))||38;
+    var toWC=Math.round(toC/100*MAX_W),toWCv=Math.round(toCv/100*MAX_W),toWP=Math.round(toP/100*MAX_W);
+    var t=0,step=16;
+    var iv=setInterval(function(){
+      t+=step;var p=Math.min(t/ANIM_DUR,1);var e=p<0.5?2*p*p:-1+(4-2*p)*p;
+      var wC=Math.round(fromC+(toWC-fromC)*e),wCv=Math.round(fromCv+(toWCv-fromCv)*e),wP=Math.round(fromP+(toWP-fromP)*e);
+      barC.setAttribute('width',wC);barCv.setAttribute('width',wCv);barP.setAttribute('width',wP);
+      pctC.textContent=Math.round(wC/MAX_W*100)+'%';pctCv.textContent=Math.round(wCv/MAX_W*100)+'%';pctP.textContent=Math.round(wP/MAX_W*100)+'%';
+      if(bbC&&bbCv&&bbP){
+        var tot=(wC+wCv+wP)||1;
+        var wBC=Math.round(BB_TOT*wC/tot),wBCv=Math.round(BB_TOT*wCv/tot),wBP=Math.max(0,BB_TOT-wBC-wBCv);
+        bbC.setAttribute('width',wBC);bbCv.setAttribute('x',String(BB_X+wBC));bbCv.setAttribute('width',wBCv);
+        bbP.setAttribute('x',String(BB_X+wBC+wBCv));bbP.setAttribute('width',String(wBP));
+           }
+      if(t>=ANIM_DUR){clearInterval(iv);if(onDone)onDone();}
+    },step);
+  }
+  function runNext(){
+    var f=frames[idx%frames.length];
+    setChips(f.arch);
+    var el;
+    el=g('svg-result-title');if(el)el.textContent=f.title;
+    el=g('svg-ov1');if(el)el.textContent=f.ov1;
+    el=g('svg-ov2');if(el)el.textContent=f.ov2;
+    el=g('svg-ov3');if(el)el.textContent=f.ov3;
+    animateBars(f.c,f.cv,f.p,function(){idx++;setTimeout(runNext,HOLD_DUR);});
+  }
+  setTimeout(runNext,INIT_DELAY);
+})();
+</script>
+</body>
+</html>
