@@ -6035,7 +6035,6 @@ function getUserKeys(){
   // Skip onboarding for returning users OR users with saved email/tier
   const onboardingDone=localStorage.getItem('auralayer_onboarding_done');
   const _isQuizArrival=new URLSearchParams(window.location.search).get('from')==='quiz';
-  // Quiz arrivals: clear tour_done so native tour fires after first generation
   if(_isQuizArrival) localStorage.removeItem('auralayer_tour_done');
   if(!_isQuizArrival && (savedEmail || savedTier || onboardingDone)){
     launchApp();
@@ -6406,26 +6405,31 @@ function tourDone(){
   var qca = parseInt(_p.get('canva')      || 0);
   var qpx = parseInt(_p.get('perplexity') || 0);
   var qtp = _p.get('type') || '';
+  var qlang = (_p.get('lang') || 'en').toLowerCase();
   if(!qc || !qca || !qpx) return;
 
   // Gradient shift + glow pulse keyframe for Let's Go button
   var style = document.createElement('style');
-  style.textContent = [
-    '@keyframes quizBtnPulse{',
-    '  0%  { box-shadow:0 0 0 0 rgba(232,201,107,0.7); background-position:0% 50%; }',
-    '  50% { box-shadow:0 0 0 14px rgba(232,201,107,0); background-position:100% 50%; }',
-    '  100%{ box-shadow:0 0 0 0 rgba(232,201,107,0.7); background-position:0% 50%; }',
-    '}'
-  ].join('');
+  style.textContent = '@keyframes quizBtnPulse{0%{box-shadow:0 0 0 0 rgba(232,201,107,0.7);background-position:0% 50%;}50%{box-shadow:0 0 0 14px rgba(232,201,107,0);background-position:100% 50%;}100%{box-shadow:0 0 0 0 rgba(232,201,107,0.7);background-position:0% 50%;}}';
   document.head.appendChild(style);
 
   var PROMPTS = {
-    music:     "I make music and post on TikTok but my streams aren't converting to income. Help me build a real strategy to get paid from my sound.",
-    content:   "I'm a content creator growing on TikTok and IG but haven't monetized yet. Help me turn my audience into actual recurring income.",
-    freelance: "I'm freelancing but stuck trading time for money. Help me position myself to get better clients and charge what I'm actually worth.",
-    seller:    "I sell products online but my conversion is low and ads are eating my margin. Help me fix my content and positioning strategy.",
-    educator:  "I know my stuff and want to turn it into a course people will pay for. Help me launch something that generates real recurring income.",
-    builder:   "I'm building a product with limited runway. Help me nail my positioning, reach my first customers, and move faster with less."
+    en: {
+      music:     "I make music and post on TikTok but my streams aren't converting to income. Help me build a real strategy to get paid from my sound.",
+      content:   "I'm a content creator growing on TikTok and IG but haven't monetized yet. Help me turn my audience into actual recurring income.",
+      freelance: "I'm freelancing but stuck trading time for money. Help me position myself to get better clients and charge what I'm actually worth.",
+      seller:    "I sell products online but my conversion is low and ads are eating my margin. Help me fix my content and positioning strategy.",
+      educator:  "I know my stuff and want to turn it into a course people will pay for. Help me launch something that generates real recurring income.",
+      builder:   "I'm building a product with limited runway. Help me nail my positioning, reach my first customers, and move faster with less."
+    },
+    es: {
+      music:     "Hago música y publico en TikTok pero mis streams no se convierten en ingresos. Ayúdame a construir una estrategia real para ganar dinero con mi música.",
+      content:   "Soy creador de contenido creciendo en TikTok e IG pero aún no he monetizado. Ayúdame a convertir mi audiencia en ingresos recurrentes reales.",
+      freelance: "Soy freelancer pero estoy atascado intercambiando tiempo por dinero. Ayúdame a posicionarme para conseguir mejores clientes y cobrar lo que realmente valgo.",
+      seller:    "Vendo productos online pero mi conversión es baja y los anuncios se comen mi margen. Ayúdame a mejorar mi contenido y estrategia de posicionamiento.",
+      educator:  "Sé mi tema y quiero convertirlo en un curso que la gente pague. Ayúdame a lanzar algo que genere ingresos recurrentes reales.",
+      builder:   "Estoy construyendo un producto con recursos limitados. Ayúdame a definir mi posicionamiento, alcanzar mis primeros clientes y moverme más rápido."
+    }
   };
 
   function forceBlend(){
@@ -6439,9 +6443,12 @@ function tourDone(){
       if(t) sel.push(Object.assign({},t,{pct:pair[1],locked:false}));
     });
     renderStack();
-    // Pre-fill prompt — no input event dispatch (avoids archetype detector reset)
+    // Pre-fill prompt in correct language — no input event (avoids archetype detector reset)
     var el = document.getElementById('uprompt');
-    if(el) el.value = PROMPTS[qtp] || "I want to grow and monetize my work — help me figure out my next move with the right AI tools at my exact percentages.";
+    if(el){
+      var langPrompts = PROMPTS[qlang] || PROMPTS.en;
+      el.value = langPrompts[qtp] || langPrompts.content;
+    }
     // Pulse Let's Go button
     var btn = document.getElementById('actbtn');
     if(btn){
@@ -6455,11 +6462,14 @@ function tourDone(){
     launchApp();
     var saved = localStorage.getItem('auralayer_email');
     if(saved) verifySubscription(saved);
+    // Switch app language to match quiz language
+    if(qlang === 'es' && typeof selectLang === 'function'){
+      selectLang('ES');
+    }
     // Apply blend immediately + re-apply to survive any delayed resets
     forceBlend();
     setTimeout(forceBlend, 800);
     setTimeout(forceBlend, 1600);
-    // Native startTour() fires automatically after first generation (line ~4168 in app)
   });
 })();
 </script>
