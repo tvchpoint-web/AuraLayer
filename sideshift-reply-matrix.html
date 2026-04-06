@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraLayer · SideShift Reply Matrix</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0d0b;
+    --bg2: #161512;
+    --bg3: #1c1a16;
+    --border: rgba(232,201,107,0.12);
+    --border2: rgba(232,201,107,0.22);
+    --gold: #E8C96B;
+    --gold2: #C9922A;
+    --text: #F5F3EE;
+    --muted: #9a9080;
+    --dim: #5a5248;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; }
+  header {
+    padding: 32px 40px 24px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: var(--bg); z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .bars { display: flex; flex-direction: column; gap: 4px; }
+  .bar { border-radius: 20px; background: linear-gradient(90deg, #E8C96B, #C9922A); }
+  .bar1 { width: 44px; height: 7px; opacity: 1; }
+  .bar2 { width: 32px; height: 7px; opacity: 0.65; }
+  .bar3 { width: 20px; height: 7px; opacity: 0.35; }
+  .wordmark { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 500; letter-spacing: 0.02em; }
+  .wordmark span { color: var(--gold2); }
+  .header-meta { font-size: 11px; color: var(--dim); letter-spacing: 0.06em; }
+  .search-bar {
+    padding: 12px 40px; border-bottom: 0.5px solid var(--border);
+    background: var(--bg); display: flex; align-items: center; gap: 16px;
+  }
+  .search-bar input {
+    width: 100%; max-width: 400px; background: var(--bg2);
+    border: 0.5px solid var(--border2); border-radius: 8px;
+    padding: 8px 14px; font-family: 'DM Mono', monospace;
+    font-size: 12px; color: var(--text); outline: none;
+  }
+  .search-bar input::placeholder { color: var(--dim); }
+  .search-bar input:focus { border-color: var(--gold); }
+  .hashtag-badge {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px;
+    background: rgba(232,201,107,0.1); color: var(--gold);
+    border: 0.5px solid var(--border2); white-space: nowrap;
+  }
+  main { padding: 24px 40px 60px; max-width: 1100px; }
+  .section { margin-bottom: 36px; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .section-badge {
+    padding: 3px 12px; border-radius: 20px; font-size: 10px;
+    font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .section-count { font-size: 11px; color: var(--dim); }
+  .grid { display: flex; flex-direction: column; gap: 6px; }
+  .row {
+    display: grid; grid-template-columns: 280px 1fr;
+    border: 0.5px solid var(--border); border-radius: 8px;
+    overflow: hidden; transition: border-color 0.15s;
+  }
+  .row:hover { border-color: var(--border2); }
+  .row.has-hashtag { border-left: 2px solid rgba(232,201,107,0.4); }
+  .trigger {
+    padding: 12px 16px; background: var(--bg2);
+    border-right: 0.5px solid var(--border);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .trigger-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .trigger-text { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .reply-side {
+    padding: 12px 16px; background: var(--bg3);
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+  }
+  .reply-preview { font-size: 12px; color: var(--text); line-height: 1.6; flex: 1; }
+  .hashtag { color: var(--gold); font-weight: 500; }
+  .copy-btn {
+    padding: 5px 12px; font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.05em; border: 0.5px solid var(--border2); border-radius: 6px;
+    background: transparent; color: var(--muted); cursor: pointer;
+    transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
+  }
+  .copy-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .copy-btn.ok { border-color: #639922; color: #97C459; }
+  .legend { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--dim); padding: 0 40px 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; background: rgba(232,201,107,0.4); flex-shrink: 0; }
+  .toast {
+    position: fixed; bottom: 28px; right: 32px; background: var(--bg2);
+    border: 0.5px solid var(--gold); border-radius: 8px; padding: 10px 18px;
+    font-size: 12px; color: var(--gold); opacity: 0; transform: translateY(10px);
+    transition: all 0.2s; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .hidden { display: none !important; }
+  @media (max-width: 700px) {
+    header, .search-bar, main, .legend { padding-left: 20px; padding-right: 20px; }
+    .row { grid-template-columns: 1fr; }
+    .trigger { border-right: none; border-bottom: 0.5px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="bars">
+      <div class="bar bar1"></div>
+      <div class="bar bar2"></div>
+      <div class="bar bar3"></div>
+    </div>
+    <div class="wordmark">Aura<span>Layer.ai</span></div>
+  </div>
+  <div class="header-meta">SIDESHIFT REPLY MATRIX &nbsp;·&nbsp; UPDATED APR 6 2026</div>
+</header>
+
+<div class="search-bar">
+  <input type="text" id="search" placeholder="Search by trigger or keyword..." oninput="filterRows(this.value)">
+  <span class="hashtag-badge">#AuraLayer &nbsp;·&nbsp; #WhatsYourAuraLayer</span>
+</div>
+
+<div class="legend">
+  <div class="legend-dot"></div>
+  Gold left border = hashtags included in this reply
+</div>
+
+<main id="main"></main>
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+const MSG2 = "That's perfect — you're exactly who we're looking for. We're paying creators $10 per approved short video showing how you use AI tools. Full brief and video formats here → auralayer.ai/sideshift — submit it through SideShift for approval and get your $10. Use #AuraLayer #WhatsYourAuraLayer in your caption. 🔥";
+const MSG1 = "Hey! Do you use any AI tools in your content or day-to-day workflow? Things like ChatGPT, Claude, Canva AI, Notion, etc.? 🔥";
+const MSG3 = "Your video's approved — payment is on its way through SideShift. Make sure you have #AuraLayer #WhatsYourAuraLayer in your caption if you haven't already. Thanks for being part of the launch! 🙌";
+const MSG3_LATE = "Your video's approved — payment is on its way through SideShift. One thing — make sure you add #AuraLayer #WhatsYourAuraLayer to your caption if you haven't already. Helps the campaign get traction. Keep them coming! 🔥";
+
+const sections = [
+  {
+    title: "STANDARD FLOW", badgeBg: "#2a2010", badgeColor: "#E8C96B",
+    rows: [
+      { trigger: "No reply yet / just said Hey or Hello", icon: "👋", reply: MSG1, ht: false },
+      { trigger: "Confirms AI tool use (any tool)", icon: "✅", reply: MSG2, ht: true },
+      { trigger: "Video submitted & approved (got hashtags)", icon: "💰", reply: MSG3, ht: true },
+      { trigger: "Video approved — creator never got hashtags in MSG 2", icon: "🏷️", reply: MSG3_LATE, ht: true },
+    ]
+  },
+  {
+    title: "FORMAT & SUBMISSION QUESTIONS", badgeBg: "#0d1a26", badgeColor: "#7ab8f0",
+    rows: [
+      { trigger: "What platform do I post on?", icon: "📱", reply: "Any platform — TikTok, Reels, YouTube Shorts, all good. Use #AuraLayer #WhatsYourAuraLayer in your caption and drop the link here for approval. 🔥", ht: true },
+      { trigger: "Can I do faceless content?", icon: "🎭", reply: "Yes — faceless works great! Screen recording, voiceover, text overlay — all good formats. Full brief → auralayer.ai/sideshift — submit back here for approval and get your $10. Use #AuraLayer #WhatsYourAuraLayer in your caption. 🔥", ht: true },
+      { trigger: "Can I do face cam + screen demo?", icon: "🎥", reply: "Yes — that's actually the best format. Face cam intro + screen share of the app in action. Full brief → auralayer.ai/sideshift — submit back here when ready and you'll get your $10. Use #AuraLayer #WhatsYourAuraLayer in your caption. 🔥", ht: true },
+      { trigger: "Do I need a script?", icon: "📝", reply: "No script needed — just show yourself using it naturally. Your real reaction is what makes it work. Use #AuraLayer #WhatsYourAuraLayer in your caption. Full brief → auralayer.ai/sideshift 🔥", ht: true },
+      { trigger: "How do I submit the video?", icon: "📤", reply: "Just drop the link to your posted video right here in this SideShift chat. We'll review it and once approved you get your $10. Make sure you have #AuraLayer #WhatsYourAuraLayer in your caption. 🔥", ht: true },
+      { trigger: "Can I see an example?", icon: "👀", reply: "Yes — show yourself using AuraLayer. Open the app, blend your tools, show the output. Real screen content performs best. Full brief → auralayer.ai/sideshift — submit back here when ready. Use #AuraLayer #WhatsYourAuraLayer in your caption. 🔥", ht: true },
+      { trigger: "When can I start?", icon: "🚀", reply: "Right now! Full brief and video formats here → auralayer.ai/sideshift — submit your video back here for approval and get your $10. Use #AuraLayer #WhatsYourAuraLayer in your caption. 🔥", ht: true },
+      { trigger: "Main account or new account?", icon: "🔀", reply: "Main account always — that's where your real audience is, that's what makes the video worth something. Post it there, use #AuraLayer #WhatsYourAuraLayer in your caption, drop the link here for approval and you're good. 🔥", ht: true },
+    ]
+  },
+  {
+    title: "PAY & LIMITS QUESTIONS", badgeBg: "#0d1f0d", badgeColor: "#7ac97a",
+    rows: [
+      { trigger: "Is there a limit on how many videos?", icon: "♾️", reply: "No cap — make as many as you want, every approved video gets $10. Just make sure to use #AuraLayer #WhatsYourAuraLayer in your caption. Drop the link back here when you post and you're good. 🔥", ht: true },
+      { trigger: "What's the pay rate after the first video?", icon: "💵", reply: "Same rate — $10 per approved video, every time. No cap on how many you can submit. 🔥", ht: false },
+      { trigger: "Do I need a minimum follower count?", icon: "👥", reply: "No follower minimum — just make the video, submit it, get paid. Full brief → auralayer.ai/sideshift 🔥", ht: false },
+    ]
+  },
+  {
+    title: "VIDEO QUALITY & RESHOOT", badgeBg: "#1a1020", badgeColor: "#b07ad8",
+    rows: [
+      { trigger: "Video too short / silent / no voiceover or text", icon: "🎬", reply: "Love the visual approach, the shots had a real vibe. To get it approved though we need at least some context — even just a voiceover or on-screen text showing what you're doing in the app. 30–60 seconds works best. Re-shoot with a quick walkthrough of how you use it, use #AuraLayer #WhatsYourAuraLayer in your caption, and drop it back here — you'll get your $10. 🔥", ht: true },
+      { trigger: "Video doesn't show AuraLayer at all", icon: "📵", reply: "Love the energy! To get approved we need to see AuraLayer in action — just open the app, show yourself using it, blend some tools. Even 30 seconds of real usage works. Re-shoot and drop it back here. Use #AuraLayer #WhatsYourAuraLayer in your caption. 🔥", ht: true },
+    ]
+  },
+  {
+    title: "EDGE CASES", badgeBg: "#200f0a", badgeColor: "#e08060",
+    rows: [
+      { trigger: "$10 is too low for me", icon: "🚫", reply: "Totally respect that — this one's for creators who want quick easy content and love the app. If you're looking for bigger brand deals, this probably isn't the right fit. No worries either way!", ht: false },
+      { trigger: "Large following (500k+) / wants to negotiate", icon: "⭐", reply: "For something at your scale we'd want to talk affiliate — 50% recurring commission on every signup through your link, forever. Check it out at auralayer.ai/affiliate and let me know if that fits better. 🔥", ht: false },
+      { trigger: "I only sometimes use AI tools", icon: "🤔", reply: "That's fine — even occasional use counts! If you use ChatGPT, Canva AI, or any AI tool even sometimes, that's all we need. Full brief → auralayer.ai/sideshift — submit back here for approval and get your $10. Use #AuraLayer #WhatsYourAuraLayer in your caption. 🔥", ht: true },
+      { trigger: "Went quiet after MSG 2 — follow up", icon: "🔔", reply: "Hey — just checking in! The brief is still live at auralayer.ai/sideshift whenever you're ready. Drop the link here once you post and you'll get your $10. Use #AuraLayer #WhatsYourAuraLayer in your caption. 🔥", ht: true },
+      { trigger: "What is AuraLayer?", icon: "❓", reply: "AuraLayer lets you blend multiple AI tools by weighted percentage — so instead of switching between ChatGPT, Claude, Canva AI etc., you set your mix once and get one personalized output. Free to try at auralayer.ai 🔥", ht: false },
+    ]
+  }
+];
+
+function highlightHashtags(text) {
+  return text.replace(/(#\w+)/g, '<span class="hashtag">$1</span>');
+}
+
+const main = document.getElementById('main');
+
+sections.forEach(s => {
+  const sec = document.createElement('div');
+  sec.className = 'section';
+  const hdr = document.createElement('div');
+  hdr.className = 'section-header';
+  hdr.innerHTML = `<span class="section-badge" style="background:${s.badgeBg};color:${s.badgeColor}">${s.title}</span><span class="section-count">${s.rows.length} replies</span>`;
+  sec.appendChild(hdr);
+
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+
+  s.rows.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'row' + (r.ht ? ' has-hashtag' : '');
+    row.dataset.trigger = r.trigger.toLowerCase();
+    row.dataset.reply = r.reply.toLowerCase();
+    const preview = r.reply.length > 130 ? r.reply.slice(0, 130) + '…' : r.reply;
+    row.innerHTML = `
+      <div class="trigger">
+        <span class="trigger-icon">${r.icon}</span>
+        <span class="trigger-text">${r.trigger}</span>
+      </div>
+      <div class="reply-side">
+        <div class="reply-preview">${highlightHashtags(preview)}</div>
+        <button class="copy-btn" data-full="${r.reply.replace(/"/g,'&quot;').replace(/`/g,"'")}">COPY</button>
+      </div>`;
+    grid.appendChild(row);
+  });
+
+  sec.appendChild(grid);
+  main.appendChild(sec);
+});
+
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    navigator.clipboard.writeText(this.getAttribute('data-full')).then(() => {
+      this.textContent = 'COPIED'; this.classList.add('ok');
+      document.getElementById('toast').classList.add('show');
+      setTimeout(() => {
+        this.textContent = 'COPY'; this.classList.remove('ok');
+        document.getElementById('toast').classList.remove('show');
+      }, 2000);
+    });
+  });
+});
+
+function filterRows(q) {
+  const lower = q.toLowerCase();
+  document.querySelectorAll('.row').forEach(row => {
+    row.classList.toggle('hidden', !row.dataset.trigger.includes(lower) && !row.dataset.reply.includes(lower));
+  });
+  document.querySelectorAll('.section').forEach(sec => {
+    sec.classList.toggle('hidden', ![...sec.querySelectorAll('.row')].some(r => !r.classList.contains('hidden')));
+  });
+}
+</script>
+</body>
+</html>
