@@ -3323,7 +3323,7 @@ let activeIntegrations=JSON.parse(localStorage.getItem('aura_integrations')||'[]
 let settingsBannerDismissed=false;
 let sel=[], mode='guidance', userName='', userRole='', userEmail='', sbsMode=false, sbsRunB=false;
 
-// ── QUIZ DEEP LINK — synchronous pre-population ──
+// ── QUIZ DEEP LINK — read params synchronously before anything else runs ──
 (function(){
   var _p=new URLSearchParams(window.location.search);
   if(_p.get('from')==='quiz'){
@@ -3336,6 +3336,15 @@ let sel=[], mode='guidance', userName='', userRole='', userEmail='', sbsMode=fal
     }
   }
 })();
+
+// ── QUIZ LAUNCH — fires for ALL quiz arrivals (new user, returning, incognito) ──
+document.addEventListener('DOMContentLoaded', function(){
+  if(window._quizBlend){
+    var _savedEmail=localStorage.getItem('auralayer_email');
+    launchApp();
+    if(_savedEmail) verifySubscription(_savedEmail);
+  }
+});
 let sessions=[], lastResult=null, lastPrompt='', obSelectedTools=[];
 let lastResultA=null, lastResultB=null, blendA=[], blendB=[];
 let ytData=null;
@@ -3509,7 +3518,7 @@ function launchApp(){
   _ob.style.visibility='hidden';
   document.getElementById('main-app').style.display='flex';
   localStorage.setItem('auralayer_onboarding_done','1');
-  // ── QUIZ BLEND OVERRIDE ──
+  // ── QUIZ BLEND OVERRIDE — always wins over defaults ──
   if(window._quizBlend){
     sel=[];
     var _qb=window._quizBlend;
@@ -3517,24 +3526,20 @@ function launchApp(){
       var t=TOOLS.find(function(x){return x.id===pair[0];});
       if(t) sel.push(Object.assign({},t,{pct:pair[1],locked:false}));
     });
-    // Pre-fill prompt with Gen Z-styled suggestion based on creator type
-    var _QUIZ_PROMPTS={
-      music:     "I make music and post on TikTok but my streams aren't converting to income. Help me build a real strategy to get paid from my sound.",
-      content:   "I'm a content creator growing on TikTok and IG but haven't monetized yet. Help me turn my audience into actual recurring income.",
-      freelance: "I'm freelancing but stuck trading time for money. Help me position myself to get better clients and charge what I'm actually worth.",
-      seller:    "I sell products online but my conversion is low and ads are eating my margin. Help me fix my content and positioning strategy.",
-      educator:  "I know my stuff and want to turn it into a course people will pay for. Help me launch something that generates real recurring income.",
-      builder:   "I'm building a product with limited runway. Help me nail my positioning, reach my first customers, and move faster with less."
+    // Pre-fill prompt based on creator type
+    var _QPROMPTS={
+      music:"I make music and post on TikTok but my streams aren't converting to income. Help me build a real strategy to get paid from my sound.",
+      content:"I'm a content creator growing on TikTok and IG but haven't monetized yet. Help me turn my audience into actual recurring income.",
+      freelance:"I'm freelancing but stuck trading time for money. Help me position myself to get better clients and charge what I'm actually worth.",
+      seller:"I sell products online but my conversion is low and ads are eating my margin. Help me fix my content and positioning strategy.",
+      educator:"I know my stuff and want to turn it into a course people will pay for. Help me launch something that generates real recurring income.",
+      builder:"I'm building a product with limited runway. Help me nail my positioning, reach my first customers, and move faster with less."
     };
-    var _qType=_qb.type||'';
-    var _qPrompt=_QUIZ_PROMPTS[_qType]||"I'm building something and want to grow it — help me figure out my next move with the right AI tools at my percentages.";
+    var _qPrompt=_QPROMPTS[_qb.type]||"I want to grow and monetize my work — help me figure out my next move with the right AI tools at my exact percentages.";
     setTimeout(function(){
-      var _promptEl=document.getElementById('uprompt');
-      if(_promptEl&&!_promptEl.value.trim()){
-        _promptEl.value=_qPrompt;
-        _promptEl.dispatchEvent(new Event('input'));
-      }
-    },300);
+      var _el=document.getElementById('uprompt');
+      if(_el&&!_el.value.trim()){_el.value=_qPrompt;_el.dispatchEvent(new Event('input'));}
+    },400);
     window._quizBlend=null;
   } else if(sel.length===0){
     const defaults=[
@@ -6078,8 +6083,10 @@ function getUserKeys(){
   }
 
   // Skip onboarding for returning users OR users with saved email/tier
+  // Exception: quiz arrivals handled by DOMContentLoaded below
   const onboardingDone=localStorage.getItem('auralayer_onboarding_done');
-  if(savedEmail || savedTier || onboardingDone){
+  const _isQuiz=new URLSearchParams(window.location.search).get('from')==='quiz';
+  if(!_isQuiz && (savedEmail || savedTier || onboardingDone)){
     launchApp();
     if(savedEmail)verifySubscription(savedEmail);
   }
@@ -6438,26 +6445,20 @@ function tourDone(){
   if(ob){ob.style.display='none';ob.style.pointerEvents='none';}
 }
 
-// ── QUIZ TUTORIAL MODAL ──
 function showQuizTutorial(){
   var steps=[
-    {n:1,icon:'🎯',title:'Your blend is already set',body:'Your quiz result — Claude, Canva, and Perplexity at your exact percentages — is loaded in the left panel. Those percentages shape how much each tool influences your output.'},
-    {n:2,icon:'✍️',title:'Edit the prompt if you want',body:"We pre-filled a starting point based on your quiz answers. Edit it or replace it completely — it's yours to adjust."},
-    {n:3,icon:'⚡',title:'Hit Let's Go and see your blend work',body:"AuraLayer runs your prompt through all three tools at your exact ratios simultaneously. The output reflects your specific percentages — no one else gets this."},
-    {n:4,icon:'🎚️',title:'Tune anytime',body:'Drag the sliders in the left panel to adjust your blend. More Claude = more of your voice. More Canva = more visual structure. More Perplexity = more research depth.'}
+    {n:1,icon:'🎯',title:'Your blend is already set',body:'Your quiz result — Claude, Canva, and Perplexity at your exact percentages — is loaded in the left panel.'},
+    {n:2,icon:'✍️',title:'Edit the prompt if you want',body:"We pre-filled a starting point based on your quiz answers. Edit it or replace it — it's yours."},
+    {n:3,icon:'⚡',title:"Hit Let's Go and see your blend work",body:'AuraLayer runs your prompt through all three tools at your exact ratios. The output reflects your specific percentages.'},
+    {n:4,icon:'🎚️',title:'Tune anytime',body:'Drag the sliders in the left panel to adjust your blend. More Claude = more voice. More Canva = more visual structure.'}
   ];
-  var cur=0;
-  var overlay=document.createElement('div');
+  var cur=0;var overlay=document.createElement('div');
   overlay.style.cssText='position:fixed;inset:0;background:rgba(10,10,15,0.88);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);';
-  function renderT(){
-    var s=steps[cur];
-    overlay.innerHTML='<div style="background:#16161F;border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:36px 32px;max-width:420px;width:100%;text-align:center;position:relative;"><div style="font-family:DM Mono,monospace;font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.5);margin-bottom:20px;text-transform:uppercase;">Step '+s.n+' of 4</div><div style="font-size:36px;margin-bottom:16px;">'+s.icon+'</div><div style="font-family:Syne,sans-serif;font-size:19px;font-weight:800;color:#F0EDE4;margin-bottom:12px;line-height:1.2;">'+s.title+'</div><div style="font-size:13px;color:rgba(240,237,228,0.55);line-height:1.75;margin-bottom:28px;">'+s.body+'</div><div style="display:flex;gap:10px;justify-content:center;">'+(cur>0?'<button onclick="window.__qtP()" style="padding:10px 22px;background:transparent;border:0.5px solid rgba(240,237,228,0.15);border-radius:8px;color:rgba(240,237,228,0.4);font-family:Syne,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">← Back</button>':'')+'<button onclick="window.__qtN()" style="padding:10px 28px;background:linear-gradient(135deg,#E8C96B,#C9922A);border:none;border-radius:8px;color:#0A0A0F;font-family:Syne,sans-serif;font-size:12px;font-weight:800;cursor:pointer;">'+(cur<3?'Next →':'Start blending →')+'</button></div><div style="display:flex;justify-content:center;gap:6px;margin-top:18px;">'+[0,1,2,3].map(function(i){return'<div style="width:'+(i===cur?20:6)+'px;height:5px;border-radius:3px;background:'+(i===cur?'#C9922A':'rgba(201,168,76,0.2)')+'"></div>';}).join('')+'</div><button onclick="window.__qtC()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(240,237,228,0.25);font-size:18px;cursor:pointer;">×</button></div>';
-  }
+  function renderT(){var s=steps[cur];overlay.innerHTML='<div style="background:#16161F;border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:36px 32px;max-width:420px;width:100%;text-align:center;position:relative;"><div style="font-family:DM Mono,monospace;font-size:10px;letter-spacing:3px;color:rgba(201,168,76,0.5);margin-bottom:20px;text-transform:uppercase;">Step '+s.n+' of 4</div><div style="font-size:36px;margin-bottom:16px;">'+s.icon+'</div><div style="font-family:Syne,sans-serif;font-size:19px;font-weight:800;color:#F0EDE4;margin-bottom:12px;line-height:1.2;">'+s.title+'</div><div style="font-size:13px;color:rgba(240,237,228,0.55);line-height:1.75;margin-bottom:28px;">'+s.body+'</div><div style="display:flex;gap:10px;justify-content:center;">'+(cur>0?'<button onclick="window.__qtP()" style="padding:10px 22px;background:transparent;border:0.5px solid rgba(240,237,228,0.15);border-radius:8px;color:rgba(240,237,228,0.4);font-family:Syne,sans-serif;font-size:12px;font-weight:700;cursor:pointer;">← Back</button>':'')+'<button onclick="window.__qtN()" style="padding:10px 28px;background:linear-gradient(135deg,#E8C96B,#C9922A);border:none;border-radius:8px;color:#0A0A0F;font-family:Syne,sans-serif;font-size:12px;font-weight:800;cursor:pointer;">'+(cur<3?'Next →':'Start blending →')+'</button></div><div style="display:flex;justify-content:center;gap:6px;margin-top:18px;">'+[0,1,2,3].map(function(i){return'<div style="width:'+(i===cur?20:6)+'px;height:5px;border-radius:3px;background:'+(i===cur?'#C9922A':'rgba(201,168,76,0.2)')+'"></div>';}).join('')+'</div><button onclick="window.__qtC()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(240,237,228,0.25);font-size:18px;cursor:pointer;">×</button></div>';}
   window.__qtN=function(){if(cur<3){cur++;renderT();}else window.__qtC();};
   window.__qtP=function(){if(cur>0){cur--;renderT();}};
   window.__qtC=function(){overlay.remove();localStorage.setItem('auralayer_quiz_tutorial_done','1');};
-  renderT();
-  document.body.appendChild(overlay);
+  renderT();document.body.appendChild(overlay);
 }
 </script>
 </body>
