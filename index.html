@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraLayer.ai — The missing AI layer for every creator.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:    #F5EFE4;
+  --black-2:  #EDE7DB;
+  --black-3:  #E5DDD0;
+  --gold:     #C9922A;
+  --gold-lt:  #E8B84A;
+  --gold-dim: rgba(201,146,42,0.12);
+  --gold-g:   rgba(201,146,42,0.1);
+  --gold-gs:  rgba(201,146,42,0.18);
+  --cream:    #FFF8EC;
+  --cream-d:  #FAF3E4;
+  --white:    #1A1510;
+  --white-d:  #5A4E40;
+  --white-m:  #8A7E70;
+  --border:   rgba(201,146,42,0.25);
+  --border-d: rgba(0,0,0,0.07);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* GRAIN */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:9999; opacity:.18;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 20px 60px;
+  background: rgba(245,239,228,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.nav-logo {
+  font-family:'Syne',sans-serif;
+  font-size:22px; font-weight:600; letter-spacing:1px;
+  color:var(--white); text-decoration:none;
+}
+.nav-logo span { color:var(--gold); }
+.nav-badge {
+  font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:2px; color:var(--gold);
+  border:1px solid var(--border); padding:2px 7px;
+  margin-left:8px; vertical-align:middle;
+}
+
+.nav-links { display:flex; gap:36px; list-style:none; }
+.nav-links a { font-size:13px; color:var(--white-d); text-decoration:none; letter-spacing:.5px; transition:color .2s; }
+.nav-links a:hover { color:var(--gold); }
+
+.nav-cta {
+  font-size:12px; font-weight:500; letter-spacing:2px;
+  text-transform:uppercase; color:var(--black);
+  background:var(--gold); padding:10px 24px;
+  text-decoration:none; transition:background .2s;
+}
+.nav-cta:hover { background:var(--gold-lt); }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:flex-start;
+  text-align:center;
+  padding: 80px 60px 80px;
+  position:relative; overflow:hidden;
+}
+
+/* Two-column hero layout */
+.hero-inner {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:60px;
+  max-width:1100px;
+  width:100%;
+  text-align:left;
+  margin-top:20px;
+}
+.hero-copy {
+  flex:1;
+  min-width:0;
+}
+.hero-visual {
+  flex:0 0 460px;
+  position:relative;
+}
+@media(max-width:960px){
+  .hero-inner { flex-direction:column; text-align:center; gap:40px; }
+  .hero-copy { text-align:center; }
+  .hero-visual { flex:none; width:100%; max-width:480px; }
+  .hero-ctas { justify-content:center !important; }
+  .hero-trust { text-align:center !important; }
+  .hero-eyebrow { display:inline-flex !important; }
+}
+
+/* radial glow behind hero */
+.hero::before {
+  content:'';
+  position:absolute; top:10%; left:50%;
+  transform:translateX(-50%);
+  width:700px; height:400px;
+  background: radial-gradient(ellipse, rgba(201,146,42,0.08) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+/* horizontal lines */
+.hero-lines {
+  position:absolute; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
+}
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); border:1px solid var(--border);
+  padding:8px 20px; margin-bottom:40px;
+  background:rgba(201,146,42,0.06);
+  animation: fadeUp .8s ease both;
+}
+
+.hero-h1 {
+  font-family:'Syne',sans-serif;
+  font-size: clamp(34px, 6vw, 72px);
+  font-weight:800; line-height:1.0;
+  letter-spacing:-2px;
+  margin-bottom:12px;
+  animation: fadeUp .9s .1s ease both;
+}
+
+.hero-h1 .line-1 { display:block; color:var(--white); }
+.hero-h1 .line-2 { display:block; font-style:italic; }
+
+.hero-h2 {
+  font-family:'DM Sans',sans-serif;
+  font-size: clamp(16px, 2.2vw, 22px);
+  font-weight:400;
+  color:var(--white-d); line-height:1.6;
+  margin-bottom:20px;
+  letter-spacing:.01em;
+  animation: fadeUp 1s .2s ease both;
+}
+
+.hero-sub {
+  font-size:15px; color:var(--white-m);
+  max-width:520px; margin:0 auto 48px;
+  line-height:1.8;
+  animation: fadeUp 1s .3s ease both;
+}
+.hero-sub strong { color:var(--white-d); font-weight:500; }
+
+.hero-ctas {
+  display:flex; gap:16px; align-items:center; justify-content:center;
+  flex-wrap:wrap;
+  animation: fadeUp 1s .4s ease both;
+}
+
+.btn-primary {
+  font-size:13px; font-weight:600; letter-spacing:2px;
+  text-transform:uppercase; color:var(--black);
+  background:var(--gold); padding:16px 40px;
+  text-decoration:none; transition:all .2s;
+  position:relative; overflow:hidden;
+}
+.btn-primary::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+  transform:translateX(-100%); transition:transform .4s;
+}
+.btn-primary:hover::after { transform:translateX(100%); }
+.btn-primary:hover { background:var(--gold-lt); }
+
+.btn-secondary {
+  font-size:13px; color:var(--white-d); letter-spacing:1px;
+  text-decoration:none; transition:color .2s;
+  display:flex; align-items:center; gap:6px;
+}
+.btn-secondary:hover { color:var(--white); }
+
+.hero-trust {
+  margin-top:32px; font-size:12px; color:var(--white-m);
+  letter-spacing:1px;
+  animation: fadeUp 1s .5s ease both;
+}
+.hero-trust span { color:var(--gold); }
+
+/* ── PAIN SECTION ── */
+.pain {
+  padding:100px 60px;
+  max-width:1100px; margin:0 auto;
+}
+
+.section-label {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:20px;
+  display:flex; align-items:center; gap:12px;
+}
+.section-label::after {
+  content:''; flex:1; height:1px;
+  background:linear-gradient(to right, var(--border), transparent);
+}
+
+.pain-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:1px; background:var(--border-d);
+  border:1px solid var(--border-d);
+  margin-top:48px;
+}
+
+.pain-item {
+  background:var(--black-2); padding:36px 40px;
+  transition:background .2s;
+  position:relative; overflow:hidden;
+}
+.pain-item:hover { background:#DDD5C8; }
+.pain-item::before {
+  content:''; position:absolute;
+  top:0; left:0; width:2px; height:0;
+  background:var(--gold); transition:height .3s;
+}
+.pain-item:hover::before { height:100%; }
+.pain-emoji { font-size:24px; margin-bottom:14px; display:block; }
+.pain-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:800; color:var(--white); margin-bottom:8px; letter-spacing:-.2px; }
+.pain-desc { font-size:13px; color:var(--white-d); line-height:1.7; }
+
+/* ── SOLUTION HERO ── */
+.solution {
+  padding:120px 60px;
+  text-align:center;
+  position:relative; overflow:hidden;
+}
+
+.solution::before {
+  content:'';
+  position:absolute; top:0; left:50%;
+  transform:translateX(-50%);
+  width:1px; height:80px;
+  background:linear-gradient(to bottom, transparent, var(--gold), transparent);
+}
+
+.solution-statement {
+  font-family:'Syne',sans-serif;
+  font-size: clamp(28px, 4.5vw, 56px);
+  font-weight:800; line-height:1.1;
+  max-width:800px; margin:0 auto 24px;
+  letter-spacing:-1px;
+}
+.solution-statement em { color:var(--gold); font-style:normal; }
+
+.solution-sub {
+  font-size:16px; color:var(--white-d);
+  max-width:540px; margin:0 auto 60px;
+  line-height:1.8;
+}
+
+/* Tool pills */
+/* ── TOOL CIRCLES (app-style) ── */
+.tool-pills {
+  display:flex; flex-wrap:wrap; gap:20px;
+  justify-content:center; margin-bottom:24px;
+  align-items:center;
+}
+
+.tool-pill {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  cursor:pointer; transition:transform .2s;
+  -webkit-tap-highlight-color:transparent;
+  background:none; border:none; padding:0;
+}
+.tool-pill:hover .tool-pill-circle {
+  border-color:rgba(201,146,42,0.5);
+  transform:scale(1.06);
+  box-shadow:0 0 0 3px rgba(201,146,42,0.07);
+}
+
+/* The circle itself */
+.tool-pill-circle {
+  width:80px; height:80px; border-radius:50%;
+  background:#FFFFFF;
+  border:2px solid rgba(201,146,42,0.25);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:2px;
+  transition:border-color .3s, box-shadow .3s, transform .3s cubic-bezier(.34,1.56,.64,1), background .3s;
+  position:relative;
+}
+.tool-pill.active .tool-pill-circle {
+  border-color:var(--gold);
+  background:#FFFBF4;
+  transform:scale(1.18);
+  box-shadow:0 0 0 5px rgba(201,146,42,0.12), 0 0 28px rgba(201,146,42,0.2);
+}
+
+.pill-pct {
+  font-family:'Syne',sans-serif;
+  font-size:17px; font-weight:800;
+  color:var(--gold);
+  transition:font-size .3s cubic-bezier(.34,1.56,.64,1);
+  line-height:1;
+}
+.tool-pill.active .pill-pct { font-size:22px; }
+
+.pill-name {
+  font-family:'DM Mono',monospace;
+  font-size:7px; letter-spacing:.5px;
+  text-transform:uppercase;
+  color:rgba(201,146,42,0.6);
+  line-height:1;
+}
+
+/* Label below circle */
+.pill-label {
+  font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:500;
+  color:var(--white-d);
+  transition:color .2s;
+  text-align:center;
+}
+.tool-pill.active .pill-label { color:var(--white); }
+
+/* Progress bar under label */
+.tool-pill-track {
+  width:48px; height:2px;
+  background:rgba(255,255,255,0.1);
+  border-radius:1px; overflow:hidden;
+}
+.tool-pill-fill {
+  height:100%; border-radius:1px;
+  background:linear-gradient(to right, var(--gold-dim), var(--gold));
+  transition:width .5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* CTA pill */
+.tool-pill-cta {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  cursor:pointer; transition:transform .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.tool-pill-cta:hover { transform:translateY(-3px); }
+.tool-pill-cta-circle {
+  width:80px; height:80px; border-radius:50%;
+  background:rgba(201,146,42,0.06);
+  border:1.5px dashed rgba(201,146,42,0.3);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono',monospace; font-size:11px;
+  color:var(--gold); letter-spacing:.5px;
+  transition:all .25s;
+}
+.tool-pill-cta:hover .tool-pill-cta-circle,
+.tool-pill-cta.active .tool-pill-cta-circle {
+  border-color:var(--gold); background:rgba(201,146,42,0.1);
+  box-shadow:0 0 0 4px rgba(201,146,42,0.08);
+}
+.tool-pill-cta-label {
+  font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:500; color:var(--gold);
+  text-align:center;
+}
+
+.solution-note {
+  font-size:12px; color:var(--white-m);
+  font-family:'DM Mono',monospace; letter-spacing:1px;
+}
+
+/* ── HOW IT WORKS ── */
+.how { padding:100px 60px; max-width:1100px; margin:0 auto; }
+
+.steps {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:2px; background:var(--border-d);
+  margin-top:56px;
+}
+
+.step {
+  background:var(--black-2); padding:40px 36px;
+  position:relative;
+}
+.step-num {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:3px; color:var(--gold-dim);
+  margin-bottom:20px; display:block;
+}
+.step-icon { font-size:28px; margin-bottom:16px; display:block; }
+.step-title {
+  font-family:'Syne',sans-serif;
+  font-size:18px; font-weight:800; color:var(--white);
+  margin-bottom:12px; letter-spacing:-.3px;
+}
+.step-desc { font-size:13px; color:var(--white-d); line-height:1.7; }
+
+/* ── MODES ── */
+.modes {
+  padding:100px 60px; max-width:1100px; margin:0 auto;
+}
+
+.modes-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:56px; }
+
+.mode-card {
+  background:var(--black-2); border:1px solid var(--border-d);
+  padding:48px 40px; position:relative; overflow:hidden;
+  transition:border-color .3s;
+}
+.mode-card:hover { border-color:var(--border); }
+.mode-card::after {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:2px; background:linear-gradient(to right, var(--gold), var(--gold-dim), transparent);
+  opacity:0; transition:opacity .3s;
+}
+.mode-card:hover::after { opacity:1; }
+
+.mode-label {
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:16px;
+}
+.mode-title {
+  font-family:'Syne',sans-serif;
+  font-size:28px; font-weight:800; color:var(--white);
+  line-height:1.1; margin-bottom:16px; letter-spacing:-1px;
+}
+.mode-title em { color:var(--gold); font-style:normal; }
+.mode-desc { font-size:14px; color:var(--white-d); line-height:1.8; margin-bottom:24px; }
+.mode-tags { display:flex; flex-wrap:wrap; gap:8px; }
+.mode-tag {
+  font-size:11px; letter-spacing:1px;
+  border:1px solid var(--border-d); color:var(--white-m);
+  padding:4px 12px;
+}
+
+/* ── PRICING ── */
+.pricing {
+  padding:100px 60px; max-width:1100px; margin:0 auto;
+  text-align:center;
+}
+
+.pricing-grid {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:2px; background:var(--border-d);
+  margin-top:56px; text-align:left;
+}
+
+.price-card {
+  background:var(--black-2); padding:40px 32px;
+  position:relative; overflow:hidden;
+  transition:background .3s;
+}
+.price-card:hover { background:var(--black-3); }
+.price-card.featured {
+  background:var(--black-3);
+  border-top:2px solid var(--gold);
+  animation:proCardBreath 3s ease-in-out infinite;
+}
+@keyframes proCardBreath {
+  0%,100% { border-top-color:var(--gold-dim); box-shadow:none; }
+  50%      { border-top-color:var(--gold-lt); box-shadow:0 -2px 18px rgba(201,146,42,0.2); }
+}
+.price-card.featured::before {
+  content:'MOST POPULAR';
+  position:absolute; top:16px; right:16px;
+  font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:2px; color:var(--gold);
+  border:1px solid var(--border); padding:3px 8px;
+  background:rgba(201,146,42,0.08);
+}
+
+.price-glow {
+  position:absolute; top:0; right:0;
+  width:150px; height:150px;
+  background:radial-gradient(circle, var(--gold-g) 0%, transparent 70%);
+  pointer-events:none;
+  animation:glowBreath 3s ease-in-out infinite;
+}
+@keyframes glowBreath {
+  0%,100% { opacity:0.4; }
+  50%      { opacity:1; }
+}
+
+.price-tier {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:6px;
+}
+/* Option C — split price layout */
+.price-display {
+  display:flex; align-items:center; gap:16px; margin-bottom:28px;
+}
+.price-left { flex-shrink:0; display:flex; align-items:baseline; gap:2px; }
+.price-curr {
+  font-family:'DM Mono',monospace; font-size:13px;
+  color:var(--white-m); line-height:1; margin-bottom:2px;
+}
+.price-amount {
+  font-family:'Georgia','Times New Roman',serif;
+  font-size:44px; font-weight:400;
+  color:var(--white-d); line-height:1; letter-spacing:-2px;
+}
+.price-divider {
+  width:1px; height:36px;
+  background:rgba(255,255,255,0.1);
+  flex-shrink:0;
+}
+.price-right { display:flex; flex-direction:column; gap:4px; }
+.price-period {
+  font-family:'DM Mono',monospace; font-size:9px;
+  color:var(--white-m); letter-spacing:2px; text-transform:uppercase;
+}
+.price-lock {
+  font-family:'DM Mono',monospace; font-size:8px;
+  color:rgba(201,146,42,0.6); letter-spacing:.8px;
+}
+.price-features { list-style:none; margin-bottom:32px; }
+.price-features li {
+  font-size:13px; color:var(--white-d);
+  padding:7px 0; border-bottom:1px solid var(--border-d);
+  display:flex; align-items:center; gap:10px;
+}
+.price-features li:last-child { border-bottom:none; }
+.price-features li::before { content:'✦'; color:var(--gold); font-size:8px; flex-shrink:0; }
+
+.price-btn {
+  display:block; text-align:center;
+  font-size:12px; font-weight:600; letter-spacing:2px;
+  text-transform:uppercase; text-decoration:none;
+  padding:14px 24px; transition:all .2s;
+}
+.price-btn.primary { background:var(--gold); color:#1A1208; }
+.price-btn.primary:hover { background:var(--gold-lt); }
+.price-btn.secondary { border:1px solid var(--border); color:var(--white-d); }
+.price-btn.secondary:hover { border-color:var(--gold); color:var(--gold); }
+
+.pricing-note {
+  margin-top:32px; font-size:13px; color:var(--white-m);
+  text-align:center;
+}
+.pricing-note strong { color:var(--gold); }
+
+/* ── FEATURES GRID ── */
+.features { padding:100px 60px; max-width:1100px; margin:0 auto; }
+
+.features-grid {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:2px; background:var(--border-d); margin-top:56px;
+}
+.feature-item {
+  background:var(--black-2); padding:32px 28px;
+  transition:background .2s;
+}
+.feature-item:hover { background:var(--black-3); }
+.feature-icon { font-size:22px; margin-bottom:12px; display:block; }
+.feature-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; color:var(--white); margin-bottom:8px; letter-spacing:-.1px; }
+.feature-desc { font-size:13px; color:var(--white-d); line-height:1.65; }
+
+/* ── CTA BAND ── */
+.cta-band {
+  padding:120px 60px; text-align:center;
+  position:relative; overflow:hidden;
+}
+.cta-band::before {
+  content:'';
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:600px; height:300px;
+  background:radial-gradient(ellipse, rgba(201,146,42,0.08) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+.cta-eyebrow {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:24px;
+}
+.cta-title {
+  font-family:'Syne',sans-serif;
+  font-size:clamp(30px,4.5vw,56px);
+  font-weight:800; line-height:1.05;
+  color:var(--white); margin-bottom:16px; letter-spacing:-1.5px;
+}
+.cta-title em { color:var(--gold); font-style:normal; }
+.cta-sub {
+  font-size:15px; color:var(--white-d);
+  max-width:480px; margin:0 auto 48px; line-height:1.8;
+}
+
+.cta-form {
+  display:flex; gap:0; max-width:460px; margin:0 auto 16px;
+}
+.cta-input {
+  flex:1; background:var(--black-2);
+  border:1px solid var(--border); border-right:none;
+  padding:16px 20px; font-size:14px;
+  color:var(--white); font-family:'DM Sans',sans-serif;
+  outline:none;
+}
+.cta-input::placeholder { color:var(--white-m); }
+.cta-input:focus { border-color:var(--gold); }
+.cta-submit {
+  background:var(--gold); color:var(--black);
+  border:none; padding:16px 28px;
+  font-size:12px; font-weight:600; letter-spacing:2px;
+  text-transform:uppercase; cursor:pointer; transition:background .2s;
+  font-family:'DM Sans',sans-serif;
+}
+.cta-submit:hover { background:var(--gold-lt); }
+.cta-fine { font-size:12px; color:var(--white-m); }
+
+/* ── FOOTER ── */
+footer {
+  padding:60px; border-top:1px solid var(--border-d);
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:24px;
+}
+
+.footer-brand {
+  font-family:'Syne',sans-serif;
+  font-size:20px; font-weight:600; color:var(--white);
+}
+.footer-brand span { color:var(--gold); }
+.footer-tagline { font-size:12px; color:var(--white-m); margin-top:4px; letter-spacing:1px; }
+
+.footer-links { display:flex; gap:32px; list-style:none; }
+.footer-links a { font-size:13px; color:var(--white-m); text-decoration:none; transition:color .2s; }
+.footer-links a:hover { color:var(--gold); }
+
+.footer-copy { font-size:12px; color:var(--white-m); }
+
+/* ── TICKER ── */
+.ticker {
+  background:var(--black-2); border-top:1px solid var(--border-d);
+  border-bottom:1px solid var(--border-d);
+  padding:12px 0; overflow:hidden; white-space:nowrap;
+}
+.ticker-inner {
+  display:inline-flex; gap:0;
+  animation: ticker 30s linear infinite;
+}
+.ticker-item {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--white-m); padding:0 40px;
+}
+.ticker-item span { color:var(--gold); margin-right:16px; }
+
+@keyframes ticker {
+  from { transform:translateX(0); }
+  to { transform:translateX(-50%); }
+}
+
+/* ── AFFILIATE SECTION ── */
+.affiliate-band{padding:100px 60px;max-width:1100px;margin:0 auto;text-align:center;}
+.aff-eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:24px;}
+.aff-heading{font-family:'Syne',sans-serif;font-size:clamp(32px,5vw,60px);font-weight:600;line-height:1.1;color:var(--white);margin-bottom:20px;}
+.aff-heading em{color:var(--gold);font-style:italic;}
+.aff-sub{font-size:15px;color:var(--white-d);max-width:540px;margin:0 auto 56px;line-height:1.8;}
+.aff-stats{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:56px;background:var(--black-2);border:1px solid var(--border-d);}
+.aff-stat{padding:28px 40px;text-align:center;}
+.aff-stat-val{font-family:'Syne',sans-serif;font-size:48px;font-weight:700;color:var(--gold-lt);line-height:1;margin-bottom:6px;}
+.aff-stat-lbl{font-size:11px;color:var(--white-m);letter-spacing:.5px;}
+.aff-stat-div{width:1px;background:var(--border-d);align-self:stretch;}
+.aff-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;background:var(--border-d);margin-bottom:48px;text-align:left;}
+.aff-card{background:var(--black-2);padding:32px 28px;transition:background .2s;}
+.aff-card:hover{background:var(--black-3);}
+.aff-card-icon{font-size:22px;margin-bottom:12px;}
+.aff-card-title{font-size:15px;font-weight:500;color:var(--white);margin-bottom:8px;}
+.aff-card-desc{font-size:13px;color:var(--white-d);line-height:1.7;}
+.aff-cta{display:inline-block;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--black);background:var(--gold);padding:16px 40px;text-decoration:none;transition:all .2s;margin-bottom:16px;}
+.aff-cta:hover{background:var(--gold-lt);}
+.aff-fine{font-size:12px;color:var(--white-m);}
+
+/* ── SECTION HEADING ── */
+.section-heading {
+  font-family:'Syne',sans-serif;
+  font-size:clamp(32px,4vw,52px);
+  font-weight:600; color:var(--white);
+  line-height:1.1; margin-bottom:16px;
+}
+.section-heading em { color:var(--gold); font-style:italic; }
+
+.section-sub {
+  font-size:15px; color:var(--white-d);
+  max-width:560px; line-height:1.8;
+}
+
+/* ── SOCIAL PROOF ── */
+.proof-band {
+  padding:80px 60px; max-width:1100px; margin:0 auto;
+}
+.proof-grid {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:2px; background:var(--border-d); margin-top:48px;
+}
+.proof-card {
+  background:var(--black-2); padding:32px 28px;
+  transition:background .2s;
+}
+.proof-card:hover { background:var(--black-3); }
+.proof-quote-text {
+  font-size:14px; color:var(--white-d); line-height:1.75;
+  margin-bottom:16px; font-style:italic;
+}
+.proof-quote-text em { font-style:normal; color:var(--gold); }
+.proof-author { display:flex; align-items:center; gap:10px; }
+.proof-avatar {
+  width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:600; color:var(--black);
+  flex-shrink:0;
+}
+.proof-handle { font-family:'DM Mono',monospace; font-size:10px; color:var(--white-m); }
+.proof-archetype {
+  font-size:9px; font-weight:500; letter-spacing:.08em;
+  padding:2px 8px; border:1px solid var(--border);
+  color:var(--gold); background:rgba(201,146,42,0.06);
+  margin-left:auto; flex-shrink:0;
+}
+/* ── BETA COUNTDOWN ── */
+.beta-band {
+  background:var(--black-3); border-top:1px solid var(--border-d);
+  border-bottom:1px solid var(--border-d);
+  padding:20px 60px;
+  display:flex; align-items:center; justify-content:center; gap:40px;
+  flex-wrap:wrap;
+}
+.beta-band-msg {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase; color:var(--gold);
+}
+.beta-countdown-strip { display:flex; align-items:center; gap:8px; }
+.bcs-unit { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.bcs-val {
+  font-family:'DM Mono',monospace; font-size:22px;
+  color:var(--gold-lt); line-height:1;
+}
+.bcs-lbl { font-size:8px; letter-spacing:.12em; color:var(--white-m); text-transform:uppercase; }
+.bcs-colon {
+  font-family:'DM Mono',monospace; font-size:18px;
+  color:var(--gold-dim); margin-bottom:10px;
+}
+.beta-band-cta {
+  font-size:11px; font-weight:600; letter-spacing:2px;
+  text-transform:uppercase; color:var(--black);
+  background:var(--gold); padding:10px 24px;
+  text-decoration:none; transition:background .2s; white-space:nowrap;
+}
+.beta-band-cta:hover { background:var(--gold-lt); }
+/* ── HASHTAG BAND ── */
+.hashtag-band {
+  text-align:center; padding:60px 60px 0;
+}
+.hashtag-text {
+  font-family:'Syne',sans-serif;
+  font-size:clamp(28px,4vw,52px);
+  font-weight:600; font-style:italic;
+  color:var(--gold); letter-spacing:1px;
+}
+.hashtag-sub {
+  font-size:13px; color:var(--white-m);
+  margin-top:8px; letter-spacing:1px;
+  font-family:'DM Mono',monospace;
+}
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.reveal {
+  opacity:0; transform:translateY(20px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* ── RESPONSIVE ── */
+@media (max-width:768px) {
+  nav { padding:16px 24px; }
+  .nav-links { display:none; }
+  .hero { padding:100px 24px 60px; }
+  .pain, .solution, .how, .modes, .pricing, .features, .cta-band { padding:60px 24px; }
+  .pain-grid, .steps, .modes-grid, .pricing-grid, .features-grid, .aff-cards { grid-template-columns:1fr; }
+  .aff-stats { flex-direction:column; }
+  .aff-stat-div { width:100%; height:1px; align-self:auto; }
+  footer { padding:40px 24px; flex-direction:column; align-items:flex-start; }
+  .cta-form { flex-direction:column; }
+  .cta-input { border-right:1px solid var(--border); border-bottom:none; }
+
+  /* ── Hero eyebrow — stack on two lines ── */
+  .hero-eyebrow { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .eyebrow-sep { display:none; }
+  .eyebrow-hashtag { font-size:11px; letter-spacing:.12em; }
+  .eyebrow-beta { font-size:11px; letter-spacing:.12em; }
+
+  /* ── H1 — each phrase on its own line ── */
+  .line-1 { display:block; }
+  .h1-voice { display:block; }
+  .line-2 { display:block; margin-top:4px; }
+
+  /* ── Hero sub — split tool list onto two lines ── */
+  .sub-break { display:block; }
+}
+</style>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','936492782314915');fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=936492782314915&ev=PageView&noscript=1"/></noscript>
+<script>(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}}(window,'rewardful'));
+</script>
+<script async src='https://r.wdfl.co/rw.js' data-rewardful='953752'></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;">
+    <span style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;flex-shrink:0;">
+      <span style="display:block;width:22px;height:4px;background:linear-gradient(90deg,#E8B84A,#C9922A);border-radius:20px;opacity:1;"></span>
+      <span style="display:block;width:16px;height:4px;background:linear-gradient(90deg,#E8B84A,#C9922A);border-radius:20px;opacity:.65;"></span>
+      <span style="display:block;width:10px;height:4px;background:#A07518;border-radius:20px;opacity:.35;"></span>
+    </span>
+    <span style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.5px;line-height:1;"><span style="color:var(--white);">Aura</span><span style="color:var(--gold);">Layer</span></span>
+    <span class="nav-badge">BETA</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how" data-t="nav_how">How it works</a></li>
+    <li><a href="#pricing" data-t="nav_pricing">Pricing</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button id="langBtn" onclick="toggleLang()" style="display:flex;align-items:center;gap:6px;background:rgba(245,239,228,0.95);border:1px solid rgba(201,146,42,0.28);border-radius:4px;padding:6px 10px;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#8A7E70;transition:border-color .2s,color .2s;" onmouseover="this.style.borderColor='#C9922A';this.style.color='#1A1510'" onmouseout="this.style.borderColor='rgba(201,146,42,0.28)';this.style.color='#8A7E70'">
+      <span id="langFlag" style="font-size:14px;">🇪🇸</span>
+      <span id="langLabel">ES</span>
+    </button>
+    <a href="https://www.auralayer.ai/app" class="nav-cta" id="nav-cta-btn">Enter App →</a>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div style="position:fixed; top:60px; left:0; right:0; z-index:99;">
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item"><span>✦</span> <span data-t="tick1">BETA PRICING CLOSES APRIL 30TH</span></span>
+      <span class="ticker-item"><span>✦</span> <span data-t="tick2">LOCK IN $9/$39/$92/MONTH FOREVER</span></span>
+      <span class="ticker-item"><span>✦</span> <span data-t="tick3">NO CREDIT CARD REQUIRED</span></span>
+      <span class="ticker-item"><span>✦</span> <span data-t="tick4">PRICES INCREASE MAY 1ST</span></span>
+      <span class="ticker-item"><span>✦</span> <span data-t="tick1">BETA PRICING CLOSES APRIL 30TH</span></span>
+      <span class="ticker-item"><span>✦</span> <span data-t="tick2">LOCK IN $9/$39/$92/MONTH FOREVER</span></span>
+      <span class="ticker-item"><span>✦</span> <span data-t="tick3">NO CREDIT CARD REQUIRED</span></span>
+      <span class="ticker-item"><span>✦</span> <span data-t="tick4">PRICES INCREASE MAY 1ST</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" style="padding-top:160px;">
+  <div class="hero-lines"></div>
+
+  <div class="hero-inner">
+
+    <!-- LEFT: Copy -->
+    <div class="hero-copy">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-hashtag">#WhatsYourAuraLayer</span>
+        <span class="eyebrow-sep"> &nbsp; ✦ &nbsp; </span>
+        <span class="eyebrow-beta" data-t="hero_beta">Beta closes April 30</span>
+      </div>
+
+      <h1 class="hero-h1">
+        <span class="line-1" data-t="hero_line1">AI output that<span class="h1-voice"> finally sounds like you.</span></span>
+        <span class="line-2"><em style="color:var(--gold)" data-t="hero_zero">It was never possible.</em><span style="color:#707070" data-t="hero_switching"> Until now.</span></span>
+      </h1>
+
+      <p class="hero-h2" data-t="hero_h2">9 tools. One output. Finally sounds like you.</p>
+
+      <p class="hero-sub">
+        <span class="sub-line1" data-t="hero_sub1">You use AI. But the output never<span class="sub-break"> sounds like you. Until now.</span></span><br>
+        <strong data-t="hero_sub2">AI output that sounds like you.</strong> <span data-t="hero_sub3">Beta price locks in forever on April 30th.</span>
+      </p>
+
+      <div class="hero-ctas" style="justify-content:flex-start;">
+        <a href="https://www.auralayer.ai/app" class="btn-primary" data-t="hero_cta_primary">✦ &nbsp; Try It Free →</a>
+        <a href="#how" class="btn-secondary" data-t="hero_cta_secondary">See how it works ↓</a>
+      </div>
+
+      <p class="hero-trust" style="text-align:left;" data-t="hero_trust">Free to try &nbsp;·&nbsp; No credit card required &nbsp;·&nbsp; <span>Beta closes April 30th — price locks forever</span></p>
+    </div>
+
+    <!-- RIGHT: App UI Mockup -->
+    <div class="hero-visual">
+      <svg viewBox="0 0 400 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;filter:drop-shadow(0 24px 48px rgba(0,0,0,0.4));">
+        <defs>
+          <linearGradient id="gld" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#E8B84A"/>
+            <stop offset="100%" stop-color="#C9922A"/>
+          </linearGradient>
+          <linearGradient id="btnGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#E8B84A"/>
+            <stop offset="100%" stop-color="#C9922A"/>
+          </linearGradient>
+          <clipPath id="card-clip">
+            <rect width="400" height="520" rx="20"/>
+          </clipPath>
+          <!-- Orbit path for animation -->
+          <style>
+            @keyframes orbit1{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+            @keyframes orbit2{from{transform:rotate(180deg);}to{transform:rotate(540deg);}}
+            @keyframes auraP{0%,100%{opacity:.5;}50%{opacity:1;}}
+            .orbit-group-1{transform-origin:200px 175px;animation:orbit1 2.8s linear infinite;}
+            .orbit-group-2{transform-origin:200px 175px;animation:orbit2 4.2s linear infinite;}
+            .aura-ring{animation:auraP 3s ease-in-out infinite;}
+          </style>
+        </defs>
+
+        <!-- App card — warm white background -->
+        <rect width="400" height="520" rx="20" fill="#FAFAF8" clip-path="url(#card-clip)"/>
+        <rect width="400" height="520" rx="20" fill="none" stroke="rgba(201,146,42,0.2)" stroke-width="1.5"/>
+
+        <!-- Nav bar -->
+        <rect width="400" height="44" fill="#FFFFFF"/>
+        <rect y="44" width="400" height="1" fill="rgba(0,0,0,0.06)"/>
+        <!-- Logo bars -->
+        <rect x="14" y="16" width="16" height="3.5" rx="10" fill="url(#gld)" opacity="1"/>
+        <rect x="14" y="22" width="12" height="3.5" rx="10" fill="url(#gld)" opacity=".65"/>
+        <rect x="14" y="28" width="8"  height="3.5" rx="10" fill="#A07518" opacity=".35"/>
+        <!-- Wordmark -->
+        <text x="36" y="29" font-family="sans-serif" font-size="13" font-weight="800" fill="#111111" letter-spacing="-.3">Aura<tspan fill="#C9922A">Layer</tspan></text>
+        <!-- BETA badge -->
+        <rect x="104" y="18" width="28" height="14" rx="3" fill="rgba(201,146,42,0.1)" stroke="rgba(201,146,42,0.3)" stroke-width=".75"/>
+        <text x="118" y="28.5" font-family="monospace" font-size="7" fill="#C9922A" text-anchor="middle" letter-spacing=".5">BETA</text>
+        <!-- Lang + tier -->
+        <rect x="290" y="14" width="24" height="16" rx="4" fill="rgba(201,146,42,0.08)" stroke="rgba(201,146,42,0.2)" stroke-width=".75"/>
+        <text x="302" y="25.5" font-family="monospace" font-size="8" fill="#C9922A" text-anchor="middle">EN</text>
+        <rect x="320" y="13" width="68" height="18" rx="9" fill="rgba(201,146,42,0.1)" stroke="rgba(201,146,42,0.25)" stroke-width=".75"/>
+        <text x="354" y="25.5" font-family="monospace" font-size="8" fill="#C9922A" text-anchor="middle" letter-spacing=".5">★ STARTER</text>
+
+        <!-- Free badge -->
+        <rect x="145" y="52" width="110" height="20" rx="10" fill="rgba(201,146,42,0.08)" stroke="rgba(201,146,42,0.2)" stroke-width=".75"/>
+        <text x="200" y="65.5" font-family="sans-serif" font-size="8.5" font-weight="600" fill="#C9922A" text-anchor="middle">✦ 3 free generations</text>
+
+        <!-- ── ORBITAL BLEND CIRCLES ── -->
+        <!-- Outer orbit track 2 -->
+        <circle cx="200" cy="175" r="66" fill="none" stroke="rgba(112,80,200,0.12)" stroke-width="1" stroke-dasharray="3 4"/>
+        <!-- Inner orbit track 1 -->
+        <circle cx="200" cy="175" r="52" fill="none" stroke="rgba(200,110,40,0.15)" stroke-width="1" stroke-dasharray="3 4"/>
+        <!-- Aura glow rings -->
+        <circle class="aura-ring" cx="200" cy="175" r="30" fill="none" stroke="rgba(201,146,42,0.18)" stroke-width="6"/>
+        <!-- Main circle -->
+        <circle cx="200" cy="175" r="28" fill="#FFFBF4" stroke="#C9922A" stroke-width="2"/>
+        <text x="200" y="172" font-family="sans-serif" font-size="12" font-weight="800" fill="#C9922A" text-anchor="middle">40%</text>
+        <text x="200" y="183" font-family="monospace" font-size="6.5" fill="#C9922A" text-anchor="middle" letter-spacing=".5">Claude</text>
+        <text x="200" y="192" font-family="monospace" font-size="5.5" fill="rgba(201,146,42,0.5)" text-anchor="middle" letter-spacing=".5">PRIMARY</text>
+        <!-- Satellite 1 — CapCut (inner orbit r=52, starts top) -->
+        <g class="orbit-group-1">
+          <circle cx="200" cy="123" r="13" fill="#F0FAF8" stroke="#2AB5A0" stroke-width="1.5"/>
+          <text x="200" y="125.5" font-family="sans-serif" font-size="7.5" font-weight="700" fill="#2AB5A0" text-anchor="middle">40%</text>
+          <text x="200" y="134" font-family="monospace" font-size="5.5" fill="#2AB5A0" text-anchor="middle">CapCut</text>
+        </g>
+        <!-- Satellite 2 — Midjourney (outer orbit r=66, starts bottom) -->
+        <g class="orbit-group-2">
+          <circle cx="200" cy="241" r="10" fill="#FDF0F9" stroke="#C87AB0" stroke-width="1.5"/>
+          <text x="200" y="243" font-family="sans-serif" font-size="7" font-weight="700" fill="#C87AB0" text-anchor="middle">20%</text>
+          <text x="200" y="251" font-family="monospace" font-size="5" fill="#C87AB0" text-anchor="middle">Midj.</text>
+        </g>
+
+
+        <!-- Prompt area -->
+        <rect x="16" y="240" width="368" height="64" rx="12" fill="#F5F0E8" stroke="rgba(201,146,42,0.15)" stroke-width=".75"/>
+        <text x="28" y="258" font-family="sans-serif" font-size="8" fill="rgba(0,0,0,0.35)" letter-spacing=".3">What are you working on?</text>
+        <text x="28" y="274" font-family="sans-serif" font-size="9" fill="rgba(0,0,0,0.55)">I'm a content creator growing on TikTok</text>
+        <text x="28" y="286" font-family="sans-serif" font-size="9" fill="rgba(0,0,0,0.55)">and IG but haven't monetized yet…</text>
+        <!-- Video pill -->
+        <rect x="325" y="248" width="44" height="18" rx="9" fill="rgba(200,80,80,0.1)" stroke="rgba(200,80,80,0.25)" stroke-width=".75"/>
+        <text x="347" y="260.5" font-family="sans-serif" font-size="7.5" fill="#C83232" text-anchor="middle" font-weight="600">▶ VIDEO</text>
+
+        <!-- Let's Go button -->
+        <rect x="16" y="314" width="368" height="42" rx="12" fill="url(#btnGrad)"/>
+        <text x="200" y="339" font-family="sans-serif" font-size="13" font-weight="800" fill="#1A1208" text-anchor="middle" letter-spacing=".5">✦ Let's Go →</text>
+
+        <!-- Archetype chips row -->
+        <text x="200" y="373" font-family="monospace" font-size="7.5" fill="rgba(0,0,0,0.3)" text-anchor="middle" letter-spacing="1.5">I AM A...</text>
+        <!-- Row of 3 chips -->
+        <rect x="28" y="380" width="96" height="52" rx="12" fill="#F5F0E8" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>
+        <text x="76" y="402" font-size="16" text-anchor="middle">🎵</text>
+        <text x="76" y="419" font-family="sans-serif" font-size="8.5" fill="rgba(0,0,0,0.5)" text-anchor="middle">Musician</text>
+
+        <rect x="152" y="380" width="96" height="52" rx="12" fill="#FFF8EC" stroke="#C9922A" stroke-width="1.5"/>
+        <text x="200" y="402" font-size="16" text-anchor="middle">📱</text>
+        <text x="200" y="419" font-family="sans-serif" font-size="8.5" fill="#C9922A" text-anchor="middle" font-weight="700">Content Creator</text>
+
+        <rect x="276" y="380" width="96" height="52" rx="12" fill="#F5F0E8" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>
+        <text x="324" y="402" font-size="16" text-anchor="middle">💼</text>
+        <text x="324" y="419" font-family="sans-serif" font-size="8.5" fill="rgba(0,0,0,0.5)" text-anchor="middle">Freelancer</text>
+      </svg>
+
+      <!-- Floating badge -->
+      <div style="position:absolute;top:-12px;right:-12px;background:linear-gradient(135deg,#E8B84A,#C9922A);border-radius:8px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1px;color:#1A1208;box-shadow:0 4px 12px rgba(201,146,42,0.3);">BETA · LIVE NOW</div>
+    </div>
+
+  </div><!-- end hero-inner -->
+
+</section>
+
+
+<!-- PAIN SECTION -->
+<section class="pain reveal" id="pain">
+  <div class="section-label">✦ &nbsp; Sound familiar?</div>
+  <h2 class="section-heading">You're not lazy. The tools are just <em>broken.</em></h2>
+  <p class="section-sub">Every creator knows they should be using AI. The problem isn't motivation — it's the chaos of managing six different apps just to get one thing done.</p>
+
+  <div class="pain-grid" style="margin-top:48px;">
+    <div class="pain-item">
+      <span class="pain-emoji">🎭</span>
+      <div class="pain-title">Your AI output sounds like everyone else's</div>
+      <div class="pain-desc">You run the same prompt. You get the same answer your competitor gets. Safe, polished, forgettable. It doesn't sound like you — because it wasn't built for you.</div>
+    </div>
+    <div class="pain-item">
+      <span class="pain-emoji">✏️</span>
+      <div class="pain-title">You spend more time editing than creating</div>
+      <div class="pain-desc">You take what AI gives you and spend an hour making it sound like yourself. The rewriting never ends. The output is always almost right — but never actually yours.</div>
+    </div>
+    <div class="pain-item">
+      <span class="pain-emoji">🤷</span>
+      <div class="pain-title">Generic outputs that sound like everyone else</div>
+      <div class="pain-desc">You ask AI for help and get the same answer your competitor gets. Nothing sounds like you. Nothing fits your niche. It all feels off.</div>
+    </div>
+    <div class="pain-item">
+      <span class="pain-emoji">🧠</span>
+      <div class="pain-title">The tools don't know how you think</div>
+      <div class="pain-desc">Every AI tool gives you its output, shaped by its defaults. None of them know your voice, your niche, your audience. You're fitting your thinking into their mold — not the other way around.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="solution reveal">
+  <div style="font-family:'DM Mono',monospace; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:32px;">✦ &nbsp; The missing layer</div>
+
+  <h2 class="solution-statement">
+    The AI layer that makes<br>
+    every tool sound like <em>you.</em>
+  </h2>
+
+  <p class="solution-sub">
+    Pick your tools. Set your percentages. Hit Let's Go — and get output that finally sounds like you made it. Because you did. <strong style="color:var(--white-d);">AI output that sounds like you. It was never possible. Until now.</strong>
+  </p>
+
+  <div class="tool-pills" id="tool-pills">
+
+    <div class="tool-pill" data-tool="claude" data-pct="40" onmouseenter="hoverTool(this)" onmouseleave="unhoverTool(this)">
+      <div class="tool-pill-circle">
+        <div class="pill-pct" id="pct-claude">40%</div>
+        <div class="pill-name">Claude</div>
+      </div>
+      <div class="pill-label">Claude</div>
+      <div class="tool-pill-track"><div class="tool-pill-fill" style="width:40%;"></div></div>
+    </div>
+
+    <div class="tool-pill" data-tool="canva" data-pct="30" onmouseenter="hoverTool(this)" onmouseleave="unhoverTool(this)">
+      <div class="tool-pill-circle">
+        <div class="pill-pct" id="pct-canva">30%</div>
+        <div class="pill-name">Canva</div>
+      </div>
+      <div class="pill-label">Canva AI</div>
+      <div class="tool-pill-track"><div class="tool-pill-fill" style="width:30%;"></div></div>
+    </div>
+
+    <div class="tool-pill" data-tool="chatgpt" data-pct="20" onmouseenter="hoverTool(this)" onmouseleave="unhoverTool(this)">
+      <div class="tool-pill-circle">
+        <div class="pill-pct" id="pct-chatgpt">20%</div>
+        <div class="pill-name">ChatGPT</div>
+      </div>
+      <div class="pill-label">ChatGPT</div>
+      <div class="tool-pill-track"><div class="tool-pill-fill" style="width:20%;"></div></div>
+    </div>
+
+    <div class="tool-pill" data-tool="perplexity" data-pct="10" onmouseenter="hoverTool(this)" onmouseleave="unhoverTool(this)">
+      <div class="tool-pill-circle">
+        <div class="pill-pct" id="pct-perplexity">10%</div>
+        <div class="pill-name">Perplexity</div>
+      </div>
+      <div class="pill-label">Perplexity</div>
+      <div class="tool-pill-track"><div class="tool-pill-fill" style="width:10%;"></div></div>
+    </div>
+
+    <div class="tool-pill-cta" onclick="window.location.href='https://www.auralayer.ai/app'">
+      <div class="tool-pill-cta-circle">+ more</div>
+      <div class="tool-pill-cta-label">Your stack →</div>
+    </div>
+
+  </div>
+
+  <p class="solution-note">Drag. Blend. Activate. #WhatsYourAuraLayer</p>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how reveal" id="how">
+  <div class="section-label" data-t="how_label">✦ &nbsp; How it works</div>
+  <h2 class="section-heading" data-t="how_h2">Your blend. Your output. <em>No one else gets the same result.</em></h2>
+  <p class="section-sub" data-t="how_sub">No prompting expertise needed. No generic outputs. Just tell it what you want, pick your tools, and let your AuraLayer do the work.</p>
+  <div style="background:rgba(201,146,42,0.05);border-left:3px solid var(--gold);padding:20px 28px;margin:32px 0;max-width:680px;border-radius:0 8px 8px 0;">
+    <p style="font-family:'Syne',sans-serif;font-size:clamp(17px,2vw,22px);font-weight:400;color:var(--white);line-height:1.6;font-style:italic;" data-t="how_quote">Every creator who runs AuraLayer gets a different result. Not because the product is different — because <em style="color:var(--gold);">you are.</em> Your blend of AI tools at your percentages produces something no one else can replicate. That's not a feature. That's your AuraLayer.</p>
+    <p style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);margin-top:12px;letter-spacing:.05em;" data-t="how_quote_q">What's yours?</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">STEP 01</span>
+      <span class="step-icon">✍️</span>
+      <div class="step-title" data-t="step1_title">Tell it what you're trying to do</div>
+      <p class="step-desc" data-t="step1_desc">Type your goal in plain English. "I make beats and want to hit $1k/mo." "I post Reels daily but can't grow." "I want to launch a course this month." The more real, the better the output.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">STEP 02</span>
+      <span class="step-icon">⚡</span>
+      <div class="step-title" data-t="step2_title">Pick your tools and set your blend</div>
+      <p class="step-desc" data-t="step2_desc">Choose the AI tools you already use. Slide the percentages to match how you think — 40% strategy, 35% design, 25% research. Lock what matters most to you.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">STEP 03</span>
+      <span class="step-icon">✦</span>
+      <div class="step-title" data-t="step3_title">Get your game plan — not a template</div>
+      <p class="step-desc" data-t="step3_desc">AuraLayer generates a strategy, blueprint, or workflow shaped entirely by your blend. It sounds like you. It fits your niche. It's ready to act on — not just read.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MODES -->
+<section class="modes reveal" id="modes">
+  <div class="section-label" data-t="modes_label">✦ &nbsp; Two modes</div>
+  <h2 class="section-heading" data-t="modes_h2">Get your strategy.<br><em>Or build your app.</em></h2>
+
+  <div class="modes-grid">
+    <div class="mode-card">
+      <div class="mode-label">Mode 01</div>
+      <div class="mode-title" data-t="mode1_title">Get My<br><em>Strategy</em></div>
+      <p class="mode-desc" data-t="mode1_desc">Tell AuraLayer what you're trying to accomplish. Your weighted tool blend shapes every recommendation, opportunity, and next step — so the advice actually fits your life, not someone else's.</p>
+      <div class="mode-tags">
+        <span class="mode-tag" data-t="mode1_t1">Opportunities</span>
+        <span class="mode-tag" data-t="mode1_t2">Recommendations</span>
+        <span class="mode-tag" data-t="mode1_t3">Next steps</span>
+        <span class="mode-tag" data-t="mode1_t4">Tool workflow</span>
+      </div>
+    </div>
+    <div class="mode-card">
+      <div class="mode-label">Mode 02</div>
+      <div class="mode-title" data-t="mode2_title">Build My<br><em>App</em></div>
+      <p class="mode-desc" data-t="mode2_desc">Got an idea? Describe it. Choose your blend. AuraLayer generates a complete app concept — name ideas, features, monetization strategy, and an MVP roadmap — built around your DNA.</p>
+      <div class="mode-tags">
+        <span class="mode-tag" data-t="mode2_t1">App concepts</span>
+        <span class="mode-tag" data-t="mode2_t2">MVP roadmap</span>
+        <span class="mode-tag" data-t="mode2_t3">Monetization</span>
+        <span class="mode-tag" data-t="mode2_t4">Go-to-market</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF — hidden until real affiliate quotes received. Restore when 5+ affiliates submit via support@auralayer.ai "My Quote"
+<section class="proof-band reveal">
+  <div class="section-label">✦ &nbsp; Real creators. Real results.</div>
+  <div class="proof-grid">
+    <div class="proof-card">
+      <p class="proof-quote-text">"I used to have <em>6 tabs open</em> just to write one TikTok caption. Now I do it all in here in like 10 minutes. I cancelled three subscriptions the same week."</p>
+      <div class="proof-author">
+        <div class="proof-avatar" style="background:linear-gradient(135deg,#E8B84A,#C9922A);">J</div>
+        <span class="proof-handle">@jaylnmusic</span>
+        <span class="proof-archetype">Music Creator</span>
+      </div>
+    </div>
+    <div class="proof-card">
+      <p class="proof-quote-text">"Cancelled ChatGPT, Notion AI, and Jasper the same week. <em>AuraLayer does all of it</em> and the output actually sounds like my brand — not some random AI."</p>
+      <div class="proof-author">
+        <div class="proof-avatar" style="background:linear-gradient(135deg,#7050C8,#7B6FB4);">S</div>
+        <span class="proof-handle">@shopwithsophia</span>
+        <span class="proof-archetype">E-commerce</span>
+      </div>
+    </div>
+    <div class="proof-card">
+      <p class="proof-quote-text">"Went from idea to <em>first paying student in 4 days.</em> Not exaggerating. I used the app blueprint mode and just executed. This thing is a cheat code."</p>
+      <div class="proof-author">
+        <div class="proof-avatar" style="background:linear-gradient(135deg,#4E9E8F,#3A7A6F);">M</div>
+        <span class="proof-handle">@marcusbuilds</span>
+        <span class="proof-archetype">Course Creator</span>
+      </div>
+    </div>
+  </div>
+</section>
+END SOCIAL PROOF -->
+
+<!-- BETA COUNTDOWN BAND -->
+<div class="beta-band" id="beta-band">
+  <span class="beta-band-msg" data-t="beta_msg">🔥 Beta drop — price locks forever</span>
+  <div class="beta-countdown-strip">
+    <div class="bcs-unit"><span class="bcs-val" id="lcd-days">--</span><span class="bcs-lbl" data-t="cd_days">days</span></div>
+    <span class="bcs-colon">:</span>
+    <div class="bcs-unit"><span class="bcs-val" id="lcd-hrs">--</span><span class="bcs-lbl" data-t="cd_hrs">hrs</span></div>
+    <span class="bcs-colon">:</span>
+    <div class="bcs-unit"><span class="bcs-val" id="lcd-min">--</span><span class="bcs-lbl" data-t="cd_min">min</span></div>
+    <span class="bcs-colon">:</span>
+    <div class="bcs-unit"><span class="bcs-val" id="lcd-sec">--</span><span class="bcs-lbl" data-t="cd_sec">sec</span></div>
+  </div>
+  <a href="https://www.auralayer.ai/app" class="beta-band-cta" data-t="beta_cta">Lock My Price →</a>
+</div>
+
+<!-- FEATURES -->
+<section class="features reveal">
+  <div class="section-label" data-t="feat_label">✦ &nbsp; Everything included</div>
+  <h2 class="section-heading" data-t="feat_h2">Built for creators who are done getting <em>generic output.</em></h2>
+
+  <div class="features-grid">
+    <div class="feature-item">
+      <span class="feature-icon">🔒</span>
+      <div class="feature-title" data-t="f1_title">Lock your blend</div>
+      <p class="feature-desc" data-t="f1_desc">Pin a tool's influence and let the others redistribute around it. Your creative DNA, locked in exactly how you want it.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">📱</span>
+      <div class="feature-title" data-t="f2_title">Creator archetypes</div>
+      <p class="feature-desc" data-t="f2_desc">Music creator, content creator, freelancer, seller, educator, builder — pick your type and your stack loads instantly.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">↺</span>
+      <div class="feature-title" data-t="f3_title">Push it further</div>
+      <p class="feature-desc" data-t="f3_desc">Not feeling the output? Adjust your blend and refine without starting over. Evolve your results in real time.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">↗</span>
+      <div class="feature-title" data-t="f4_title">#WhatsYourAuraLayer</div>
+      <p class="feature-desc" data-t="f4_desc">Share your blend with one click. Pre-written TikTok/IG caption ready to copy. Show the world your creative DNA.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">⬡</span>
+      <div class="feature-title" data-t="f5_title">Two Blends. You Pick.</div>
+      <p class="feature-desc" data-t="f5_desc">Run two different blends side by side and compare results. Pick the one that hits — or combine the best of both.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">🌍</span>
+      <div class="feature-title" data-t="f6_title">32 languages</div>
+      <p class="feature-desc" data-t="f6_desc">Generate results in English, Spanish, French, Japanese, Arabic, Hindi and 26 more. Your audience is global — your output should be too.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="5" fill="#FF0000"/><path d="M9.5 7.5L17 12L9.5 16.5V7.5Z" fill="white"/></svg></span>
+      <div class="feature-title" data-t="f7_title">YouTube Intelligence</div>
+      <p class="feature-desc" data-t="f7_desc">Paste any YouTube URL. AuraLayer extracts the transcript and folds the creator's approach directly into your output.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">📎</span>
+      <div class="feature-title" data-t="f8_title">Drop a brief</div>
+      <p class="feature-desc" data-t="f8_desc">Upload a business plan, brief, or doc and AuraLayer factors it into your blend. Your strategy, not a generic one.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">⚡</span>
+      <div class="feature-title" data-t="f9_title">API integrations</div>
+      <p class="feature-desc" data-t="f9_desc">Connect Claude, ChatGPT, Canva and more directly via your own API keys. Pro & Visionary tiers unlock full access.</p>
+    </div>
+  </div>
+</section>
+
+<!-- AFFILIATE SECTION — Rec #7 — ACTIVATE POST-BETA (May 1 2026). Search "affiliate-band" to restore.
+<section class="affiliate-band reveal" id="affiliates">
+  <div class="aff-eyebrow">✦ &nbsp; Founding Creator Program</div>
+  <h2 class="aff-heading">Get paid to share it.<br><em>50% commission. Forever.</em></h2>
+  <p class="aff-sub">You discovered AuraLayer early. That's worth something. Beta affiliates lock in 50% commission — the highest rate we'll ever offer. After April 30, it drops. Join now while you still can.</p>
+
+  <div class="aff-stats">
+    <div class="aff-stat">
+      <div class="aff-stat-val">50%</div>
+      <div class="aff-stat-lbl">Commission — Standard</div>
+    </div>
+    <div class="aff-stat-div"></div>
+    <div class="aff-stat">
+      <div class="aff-stat-val">55%</div>
+      <div class="aff-stat-lbl">Commission — Power (20+ referrals)</div>
+    </div>
+    <div class="aff-stat-div"></div>
+    <div class="aff-stat">
+      <div class="aff-stat-val">60%</div>
+      <div class="aff-stat-lbl">Commission — Ambassador (75+ referrals)</div>
+    </div>
+  </div>
+
+  <div class="aff-cards">
+    <div class="aff-card">
+      <div class="aff-card-icon">📱</div>
+      <div class="aff-card-title">Made for creators</div>
+      <div class="aff-card-desc">Screen-record your blend. Post it. Tag #WhatsYourAuraLayer. Your content is already the ad — we just pay you for it.</div>
+    </div>
+    <div class="aff-card">
+      <div class="aff-card-icon">🔒</div>
+      <div class="aff-card-title">Your rate locks in forever</div>
+      <div class="aff-card-desc">Join before April 30 and your 50% commission never decreases — even as we grow and standard rates change after launch.</div>
+    </div>
+    <div class="aff-card">
+      <div class="aff-card-icon">⚡</div>
+      <div class="aff-card-title">Tiers upgrade automatically</div>
+      <div class="aff-card-desc">Hit 20 active referrals and you jump to 55%. Hit 75 and you're at 60%. No applications. No waiting. It's automatic.</div>
+    </div>
+  </div>
+
+  <a href="https://auralayer-ai.getrewardful.com/signup" class="aff-cta" target="_blank">✦ &nbsp; Join the Founding Creator Program →</a>
+  <p class="aff-fine">Free to join &nbsp;·&nbsp; No minimum payout threshold to start &nbsp;·&nbsp; Paid via Stripe</p>
+</section>
+END AFFILIATE SECTION -->
+
+<!-- PRICING -->
+<section class="pricing reveal" id="pricing">
+  <div class="section-label" style="justify-content:center;" data-t="price_label">✦ &nbsp; Beta drop pricing</div>
+  <h2 class="section-heading" data-t="price_h2">This price disappears <em>April 30th.</em></h2>
+  <p class="section-sub" style="margin:0 auto;" data-t="price_sub">Subscribe before April 30 and your rate locks in forever. After launch, these prices are gone. Permanently. No exceptions.</p>
+
+  <div class="pricing-grid">
+
+    <!-- STARTER -->
+    <div class="price-card">
+      <div class="price-tier" data-t="p1_tier">Starter</div>
+      <div style="font-size:12px;color:var(--white-m);margin-bottom:16px;font-style:italic;font-family:'Syne',sans-serif;" data-t="p1_sub">Try the blend. See what it does.</div>
+      <div class="price-display">
+        <div class="price-left">
+          <span class="price-curr">$</span>
+          <span class="price-amount">9</span>
+        </div>
+        <div class="price-divider"></div>
+        <div class="price-right">
+          <span class="price-period" data-t="price_period">per month</span>
+          <span class="price-lock" data-t="price_lock">✦ beta price — locks forever</span>
+        </div>
+      </div>
+      <ul class="price-features">
+        <li data-t="p1_f1">Aura Guidance — personalized strategy from your blend</li>
+        <li data-t="p1_f2">Choose from 9 tools — build your Creator DNA</li>
+        <li data-t="p1_f3">3 free generations to start, 10/day after</li>
+        <li data-t="p1_f4">Export, copy + share your results</li>
+        <li data-t="p1_f5">5 saved sessions</li>
+        <li data-t="p1_f6">32 languages supported</li>
+      </ul>
+      <a href="https://buy.stripe.com/9B68wP3kq1te64I9T5ejK00" class="price-btn secondary" data-t="p1_cta">Lock In $9/month →</a>
+    </div>
+
+    <!-- PRO -->
+    <div class="price-card featured">
+      <div class="price-glow"></div>
+      <div class="price-tier" data-t="p2_tier">Pro</div>
+      <div style="font-size:12px;color:var(--white-m);margin-bottom:16px;font-style:italic;font-family:'Syne',sans-serif;" data-t="p2_sub">For creators who are serious about output.</div>
+      <div class="price-display">
+        <div class="price-left">
+          <span class="price-curr">$</span>
+          <span class="price-amount">39</span>
+        </div>
+        <div class="price-divider"></div>
+        <div class="price-right">
+          <span class="price-period" data-t="price_period">per month</span>
+          <span class="price-lock" data-t="price_lock">✦ beta price — locks forever</span>
+        </div>
+      </div>
+      <ul class="price-features">
+        <li data-t="p2_f1">Everything in Starter</li>
+        <li data-t="p2_f2">Build My App — turn your blend into a full product blueprint</li>
+        <li data-t="p2_f3">All 9 tools — build a richer, more nuanced DNA</li>
+        <li data-t="p2_f4">YouTube Intelligence — feed any video into your strategy</li>
+        <li data-t="p2_f5">Side-by-side blend comparison — test two strategies at once</li>
+        <li data-t="p2_f6">30 generations per day + unlimited saved sessions</li>
+        <li data-t="p2_f7">Up to 3 API integrations</li>
+      </ul>
+      <a href="https://buy.stripe.com/7sYaEX6wCeg0eBefdpejK01" class="price-btn primary" data-t="p2_cta">Lock In $39/month →</a>
+    </div>
+
+    <!-- VISIONARY -->
+    <div class="price-card">
+      <div class="price-tier" data-t="p3_tier">Visionary</div>
+      <div style="font-size:12px;color:var(--white-m);margin-bottom:16px;font-style:italic;font-family:'Syne',sans-serif;" data-t="p3_sub">For builders shipping with AI — not just using it.</div>
+      <div class="price-display">
+        <div class="price-left">
+          <span class="price-curr">$</span>
+          <span class="price-amount">92</span>
+        </div>
+        <div class="price-divider"></div>
+        <div class="price-right">
+          <span class="price-period" data-t="price_period">per month</span>
+          <span class="price-lock" data-t="price_lock">✦ beta price — locks forever</span>
+        </div>
+      </div>
+      <ul class="price-features">
+        <li data-t="p3_f1">Everything in Pro</li>
+        <li data-t="p3_f2">Unlimited generations — no daily cap, ever</li>
+        <li data-t="p3_f3">Unlimited API integrations — connect every tool in your stack</li>
+        <li data-t="p3_f4">Upload briefs + business plans — give your blend more context</li>
+        <li data-t="p3_f5">Collaboration mode — build strategy with your team</li>
+        <li data-t="p3_f6">Full app blueprint mode — name, features, MVP roadmap, monetization in one click</li>
+        <li data-t="p3_f7">Weekly Aura Pulse — curated AI news matched to your blend</li>
+        <li data-t="p3_f8">Priority support + first access to every new integration</li>
+      </ul>
+      <a href="https://buy.stripe.com/aFa4gz8EKc7Sct6c1dejK02" class="price-btn secondary" data-t="p3_cta">Lock In $92/month →</a>
+    </div>
+
+  </div>
+
+  <p class="pricing-note" data-t="price_note">3 free generations to start · No credit card required · Cancel anytime</p>
+</section>
+
+<!-- FOUNDING CREATOR BADGE SECTION — REMOVED April 1, 2026
+     DO NOT restore automatically. Manny reviews every 14 days and decides manually.
+     Search "FOUNDING CREATOR BADGE SECTION" to find this block.
+     To restore: uncomment the <section> below and remove these comment tags.
+
+<section style="padding:60px 60px;max-width:1100px;margin:0 auto;text-align:center;" class="reveal">
+  <div style="display:inline-flex;flex-direction:column;align-items:center;gap:16px;">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);">✦ &nbsp; Closes April 30, 2026 — Never offered again</div>
+    <p style="font-size:15px;color:var(--white-d);max-width:480px;line-height:1.8;">Join the affiliate program before April 30 and lock in as a <strong style="color:var(--white);">#FoundingCreator</strong> — 50% recurring commission, forever.</p>
+    <a href="https://auralayer-ai.getrewardful.com/signup" target="_blank" style="display:inline-flex;align-items:stretch;border-radius:6px;border:1.5px solid var(--gold);overflow:hidden;text-decoration:none;transition:all .2s;">
+      <span style="background:rgba(201,146,42,0.1);color:var(--gold);padding:15px 20px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;font-weight:500;display:flex;align-items:center;border-right:1px solid rgba(201,146,42,0.3);white-space:nowrap;">#FoundingCreator</span>
+      <span style="background:var(--gold);color:var(--black);padding:15px 28px;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.08em;display:flex;align-items:center;justify-content:center;white-space:nowrap;">Claim your badge →</span>
+    </a>
+    <p style="font-size:12px;color:var(--white-m);">Free to join &nbsp;·&nbsp; No minimum to start &nbsp;·&nbsp; Paid via Stripe</p>
+  </div>
+</section>
+
+END FOUNDING CREATOR BADGE SECTION -->
+
+<!-- HASHTAG BAND -->
+<section class="hashtag-band reveal">
+  <div class="hashtag-text">#WhatsYourAuraLayer</div>
+  <p class="hashtag-sub" data-t="hashtag_sub">✦ &nbsp; your blend · your voice · your results</p>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band reveal">
+  <p class="cta-eyebrow" data-t="cta_eyebrow">✦ &nbsp; Beta drop — 33 days left</p>
+  <h2 class="cta-title" data-t="cta_title">AI output that<br><em>finally sounds like you.</em></h2>
+  <p class="cta-sub" data-t="cta_sub">The AI layer that finally works for how you actually think. Your output. Your voice. Beta price locks in forever on April 30th — after that, it's gone.</p>
+
+  <a href="https://www.auralayer.ai/app" class="final-cta-btn" style="display:inline-block;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--black);background:var(--gold);padding:18px 48px;text-decoration:none;transition:all .2s;margin-bottom:16px;" data-t="cta_btn">✦ &nbsp; Enter AuraLayer →</a>
+  <p class="cta-fine" data-t="cta_fine">No credit card &nbsp;·&nbsp; Free to try &nbsp;·&nbsp; Beta price locks forever</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand" style="display:inline-flex;align-items:center;gap:10px;">
+      <span style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;flex-shrink:0;">
+        <span style="display:block;width:22px;height:4px;background:linear-gradient(90deg,#E8B84A,#C9922A);border-radius:20px;opacity:1;"></span>
+        <span style="display:block;width:16px;height:4px;background:linear-gradient(90deg,#E8B84A,#C9922A);border-radius:20px;opacity:.65;"></span>
+        <span style="display:block;width:10px;height:4px;background:#A07518;border-radius:20px;opacity:.35;"></span>
+      </span>
+      <span style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:-.3px;line-height:1;"><span style="color:var(--white);">Aura</span><span style="color:var(--gold);">Layer</span></span>
+    </div>
+    <div class="footer-tagline" data-t="footer_tagline">AI output that sounds like you. · #WhatsYourAuraLayer</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#how" data-t="nav_how">How it works</a></li>
+    <li><a href="#pricing" data-t="nav_pricing">Pricing</a></li>
+    <li><a href="https://www.auralayer.ai/app" data-t="footer_app">Enter App</a></li>
+  </ul>
+  <div class="footer-copy" data-t="footer_copy">© 2026 AuraLayer.ai · All rights reserved</div>
+</footer>
+
+<script>
+// Interactive tool pills — auto-cycle + hover
+const TOOL_BASE = { claude:40, canva:30, chatgpt:20, perplexity:10 };
+
+function updatePill(el, pct) {
+  const pctEl = el.querySelector('.pill-pct');
+  const fillEl = el.querySelector('.tool-pill-fill');
+  if(pctEl) pctEl.textContent = pct + '%';
+  if(fillEl) fillEl.style.width = pct + '%';
+}
+
+function activatePill(el) {
+  const tool = el.dataset.tool;
+  const pills = document.querySelectorAll('.tool-pill[data-tool]');
+
+  // Reset all first
+  pills.forEach(p => {
+    p.classList.remove('active');
+    if(p.dataset.tool) updatePill(p, TOOL_BASE[p.dataset.tool]);
+  });
+
+  if(!tool) {
+    el.classList.add('active');
+    return;
+  }
+
+  const boosted = Math.min(TOOL_BASE[tool] + 18, 75);
+  const diff = boosted - TOOL_BASE[tool];
+
+  const others = Array.from(pills).filter(p => p.dataset.tool && p.dataset.tool !== tool);
+  const target = others[Math.floor(Math.random() * others.length)];
+  const targetNew = Math.max(TOOL_BASE[target.dataset.tool] - diff, 5);
+
+  el.classList.add('active');
+  updatePill(el, boosted);
+  updatePill(target, targetNew);
+}
+
+function deactivateAll() {
+  document.querySelectorAll('.tool-pill[data-tool], .tool-pill-cta').forEach(p => {
+    p.classList.remove('active');
+    if(p.dataset.tool) updatePill(p, TOOL_BASE[p.dataset.tool]);
+  });
+}
+
+function hoverTool(el) {
+  clearInterval(autoCycle);
+  activatePill(el);
+}
+function unhoverTool(el) {
+  deactivateAll();
+  startAutoCycle();
+}
+
+let autoCycle;
+let cycleIndex = 0;
+
+function startAutoCycle() {
+  const allPills = [
+    ...document.querySelectorAll('.tool-pill[data-tool]'),
+    document.querySelector('.tool-pill-cta')
+  ].filter(Boolean);
+
+  autoCycle = setInterval(() => {
+    deactivateAll();
+    const el = allPills[cycleIndex % allPills.length];
+    if(el) activatePill(el);
+    cycleIndex++;
+  }, 1200);
+}
+
+setTimeout(startAutoCycle, 800);
+
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(r => observer.observe(r));
+
+
+// Beta countdown
+const BETA_END = new Date('2026-04-30T23:59:59-04:00');
+function pad2(n){ return String(n).padStart(2,'0'); }
+function tickLanding(){
+  const now = new Date();
+  const diff = BETA_END - now;
+  if(diff <= 0){
+    const band = document.getElementById('beta-band');
+    if(band) band.style.display = 'none';
+    return;
+  }
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hrs  = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const min  = Math.floor((diff % (1000*60*60)) / (1000*60));
+  const sec  = Math.floor((diff % (1000*60)) / 1000);
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=pad2(v); };
+  set('lcd-days', days);
+  set('lcd-hrs',  hrs);
+  set('lcd-min',  min);
+  set('lcd-sec',  sec);
+  const eyebrow = document.querySelector('.cta-eyebrow');
+  if(eyebrow) {
+    const isEs = sessionStorage.getItem('idx_lang') === 'es';
+    eyebrow.textContent = isEs
+      ? `✦  Beta — ${days} días restantes`
+      : `✦  Beta drop — ${days} days left`;
+  }
+}
+tickLanding();
+setInterval(tickLanding, 1000);
+
+// ── SVG MOCK: ARCHETYPE CHIP + SLIDER + TOP BLEND BAR ANIMATION ──
+// LOCKED: do not remove — this powers the hero demo animation on auralayer.ai
+// IDs required in SVG: chip-rect-{music|content|freelance|seller}
+//   svg-bar-{claude|canva|perplexity}, svg-pct-{claude|canva|perplexity}
+//   svg-result-title, svg-ov1, svg-ov2, svg-ov3
+//   blend-bar-{claude|canva|perplexity}
+(function(){
+  var MAX_W     = 175;
+  var BB_X      = 196;
+  var BB_TOT    = 264;
+  var ANIM_DUR  = 400;
+  var HOLD_DUR  = 900;
+  var INIT_DELAY = 600;
+
+  var archetypes = ['music','content','freelance','seller'];
+  var frames = [
+    {arch:'music',     c:45, cv:33, p:22,
+     title:'Your Music Strategy',
+     ov1:'Your music creator blend is optimized for',
+     ov2:'independent monetization. Claude 45% drives',
+     ov3:'strategy while Canva handles visual brand.'},
+    {arch:'content',   c:40, cv:30, p:30,
+     title:'Your Content Strategy',
+     ov1:'Your content blend is optimized for growth.',
+     ov2:'Claude 40% drives copy & strategy while',
+     ov3:'Perplexity 30% keeps research sharp.'},
+    {arch:'freelance', c:50, cv:28, p:22,
+     title:'Your Freelance Strategy',
+     ov1:'Your freelance blend is built for client wins.',
+     ov2:'Claude 50% drives positioning & proposals',
+     ov3:'while Canva handles your creative portfolio.'},
+    {arch:'seller',    c:35, cv:45, p:20,
+     title:'Your Seller Strategy',
+     ov1:'Your seller blend is optimized for conversion.',
+     ov2:'Canva 45% drives visual brand & listings',
+     ov3:'while Claude handles copy & ad strategy.'},
+  ];
+  var idx = 0;
+
+  function g(id){ return document.getElementById(id); }
+
+  function setChips(active){
+    archetypes.forEach(function(a){
+      var rect = g('chip-rect-'+a);
+      if(!rect) return;
+      if(a === active){
+        rect.setAttribute('fill','rgba(201,146,42,0.12)');
+        rect.setAttribute('stroke','rgba(201,146,42,0.55)');
+      } else {
+        rect.setAttribute('fill','rgba(255,255,255,0.02)');
+        rect.setAttribute('stroke','rgba(255,255,255,0.08)');
+      }
+    });
+  }
+
+  function animateBars(toC, toCv, toP, onDone){
+    var barC  = g('svg-bar-claude'),  barCv = g('svg-bar-canva'),  barP  = g('svg-bar-perplexity');
+    var pctC  = g('svg-pct-claude'),  pctCv = g('svg-pct-canva'),  pctP  = g('svg-pct-perplexity');
+    var bbC   = g('blend-bar-claude'),bbCv  = g('blend-bar-canva'),bbP   = g('blend-bar-perplexity');
+    if(!barC) return;
+    var fromC  = parseFloat(barC.getAttribute('width'))  || 79;
+    var fromCv = parseFloat(barCv.getAttribute('width')) || 58;
+    var fromP  = parseFloat(barP.getAttribute('width'))  || 38;
+    var toWC   = Math.round(toC  / 100 * MAX_W);
+    var toWCv  = Math.round(toCv / 100 * MAX_W);
+    var toWP   = Math.round(toP  / 100 * MAX_W);
+    var t = 0; var step = 16;
+    var iv = setInterval(function(){
+      t += step;
+      var p = Math.min(t / ANIM_DUR, 1);
+      var e = p < 0.5 ? 2*p*p : -1 + (4 - 2*p)*p;
+      var wC  = Math.round(fromC  + (toWC  - fromC)  * e);
+      var wCv = Math.round(fromCv + (toWCv - fromCv) * e);
+      var wP  = Math.round(fromP  + (toWP  - fromP)  * e);
+      barC.setAttribute('width', wC);
+      barCv.setAttribute('width', wCv);
+      barP.setAttribute('width', wP);
+      pctC.textContent  = Math.round(wC  / MAX_W * 100) + '%';
+      pctCv.textContent = Math.round(wCv / MAX_W * 100) + '%';
+      pctP.textContent  = Math.round(wP  / MAX_W * 100) + '%';
+      if(bbC && bbCv && bbP){
+        var tot  = (wC + wCv + wP) || 1;
+        var wBC  = Math.round(BB_TOT * wC  / tot);
+        var wBCv = Math.round(BB_TOT * wCv / tot);
+        var wBP  = Math.max(0, BB_TOT - wBC - wBCv);
+        bbC.setAttribute('width',  wBC);
+        bbCv.setAttribute('x',     String(BB_X + wBC));
+        bbCv.setAttribute('width', wBCv);
+        bbP.setAttribute('x',      String(BB_X + wBC + wBCv));
+        bbP.setAttribute('width',  String(wBP));
+      }
+      if(t >= ANIM_DUR){ clearInterval(iv); if(onDone) onDone(); }
+    }, step);
+  }
+
+  function runNext(){
+    var f = frames[idx % frames.length];
+    setChips(f.arch);
+    var el;
+    el = g('svg-result-title'); if(el) el.textContent = f.title;
+    el = g('svg-ov1');          if(el) el.textContent = f.ov1;
+    el = g('svg-ov2');          if(el) el.textContent = f.ov2;
+    el = g('svg-ov3');          if(el) el.textContent = f.ov3;
+    animateBars(f.c, f.cv, f.p, function(){
+      idx++;
+      setTimeout(runNext, HOLD_DUR);
+    });
+  }
+
+  setTimeout(runNext, INIT_DELAY);
+})();
+// END SVG MOCK ANIMATION — LOCKED
+</script>
+
+
+
+
+<script>
+// ── EN/ES LANGUAGE TOGGLE ──
+const IDX_T = {
+  en: {
+    nav_how:"How it works", nav_pricing:"Pricing", nav_cta_btn:"Enter App →",
+    tick1:"BETA PRICING CLOSES APRIL 30TH", tick2:"LOCK IN $9/$39/$92/MONTH FOREVER",
+    tick3:"NO CREDIT CARD REQUIRED", tick4:"PRICES INCREASE MAY 1ST",
+    hero_beta:"Beta closes April 30",
+    hero_line1:"AI output that<span class=\"h1-voice\"> finally sounds like you.</span>",
+    hero_zero:"It was never possible.",
+    hero_switching:" Until now.",
+    hero_h2:"9 tools. One output. Finally sounds like you.",
+    hero_sub1:"You use AI. But the output never sounds like you. Until now.",
+    hero_sub2:"AI output that sounds like you.",
+    hero_sub3:"Beta price locks in forever on April 30th.",
+    hero_cta_primary:"✦ &nbsp; Try It Free →", hero_cta_secondary:"See how it works ↓",
+    hero_trust:"Free to try &nbsp;·&nbsp; No credit card required &nbsp;·&nbsp; Beta closes April 30th — price locks forever",
+    how_label:"✦ &nbsp; How it works",
+    how_h2:"Your blend. Your output. <em>No one else gets the same result.</em>",
+    how_sub:"No prompting expertise needed. No generic outputs. Just tell it what you want, pick your tools, and let your AuraLayer do the work.",
+    how_quote:"Every creator who runs AuraLayer gets a different result. Not because the product is different — because <em style='color:var(--gold);'>you are.</em> Your blend of AI tools at your percentages produces something no one else can replicate. That's not a feature. That's your AuraLayer.",
+    how_quote_q:"What's yours?",
+    step1_title:"Tell it what you're trying to do",
+    step1_desc:"Type your goal in plain English. \"I make beats and want to hit $1k/mo.\" \"I post Reels daily but can't grow.\" \"I want to launch a course this month.\" The more real, the better the output.",
+    step2_title:"Pick your tools and set your blend",
+    step2_desc:"Choose the AI tools you already use. Slide the percentages to match how you think — 40% strategy, 35% design, 25% research. Lock what matters most to you.",
+    step3_title:"Get your game plan — not a template",
+    step3_desc:"AuraLayer generates a strategy, blueprint, or workflow shaped entirely by your blend. It sounds like you. It fits your niche. It's ready to act on — not just read.",
+    modes_label:"✦ &nbsp; Two modes",
+    modes_h2:"Get your strategy.<br><em>Or build your app.</em>",
+    mode1_title:"Get My<br><em>Strategy</em>", mode1_desc:"Tell AuraLayer what you're trying to accomplish. Your weighted tool blend shapes every recommendation, opportunity, and next step — so the advice actually fits your life, not someone else's.",
+    mode1_t1:"Opportunities", mode1_t2:"Recommendations", mode1_t3:"Next steps", mode1_t4:"Tool workflow",
+    mode2_title:"Build My<br><em>App</em>", mode2_desc:"Got an idea? Describe it. Choose your blend. AuraLayer generates a complete app concept — name ideas, features, monetization strategy, and an MVP roadmap — built around your DNA.",
+    mode2_t1:"App concepts", mode2_t2:"MVP roadmap", mode2_t3:"Monetization", mode2_t4:"Go-to-market",
+    beta_msg:"🔥 Beta drop — price locks forever", beta_cta:"Lock My Price →",
+    cd_days:"days", cd_hrs:"hrs", cd_min:"min", cd_sec:"sec",
+    feat_label:"✦ &nbsp; Everything included",
+    feat_h2:"Built for creators who are done getting <em>generic output.</em>",
+    f1_title:"Lock your blend", f1_desc:"Pin a tool's influence and let the others redistribute around it. Your creative DNA, locked in exactly how you want it.",
+    f2_title:"Creator archetypes", f2_desc:"Music creator, content creator, freelancer, seller, educator, builder — pick your type and your stack loads instantly.",
+    f3_title:"Push it further", f3_desc:"Not feeling the output? Adjust your blend and refine without starting over. Evolve your results in real time.",
+    f4_title:"#WhatsYourAuraLayer", f4_desc:"Share your blend with one click. Pre-written TikTok/IG caption ready to copy. Show the world your creative DNA.",
+    f5_title:"Two Blends. You Pick.", f5_desc:"Run two different blends side by side and compare results. Pick the one that hits — or combine the best of both.",
+    f6_title:"32 languages", f6_desc:"Generate results in English, Spanish, French, Japanese, Arabic, Hindi and 26 more. Your audience is global — your output should be too.",
+    f7_title:"YouTube Intelligence", f7_desc:"Paste any YouTube URL. AuraLayer extracts the transcript and folds the creator's approach directly into your output.",
+    f8_title:"Drop a brief", f8_desc:"Upload a business plan, brief, or doc and AuraLayer factors it into your blend. Your strategy, not a generic one.",
+    f9_title:"API integrations", f9_desc:"Connect Claude, ChatGPT, Canva and more directly via your own API keys. Pro & Visionary tiers unlock full access.",
+    price_label:"✦ &nbsp; Beta drop pricing",
+    price_h2:"This price disappears <em>April 30th.</em>",
+    price_sub:"Subscribe before April 30 and your rate locks in forever. After launch, these prices are gone. Permanently. No exceptions.",
+    price_period:"per month", price_lock:"✦ beta price — locks forever",
+    p1_tier:"Starter", p1_sub:"Try the blend. See what it does.",
+    p1_f1:"Aura Guidance — personalized strategy from your blend", p1_f2:"Choose from 9 tools — build your Creator DNA",
+    p1_f3:"3 free generations to start, 10/day after", p1_f4:"Export, copy + share your results",
+    p1_f5:"5 saved sessions", p1_f6:"32 languages supported", p1_cta:"Lock In $9/month →",
+    p2_tier:"Pro", p2_sub:"For creators who are serious about output.",
+    p2_f1:"Everything in Starter", p2_f2:"Build My App — turn your blend into a full product blueprint",
+    p2_f3:"All 9 tools — build a richer, more nuanced DNA",
+    p2_f4:"YouTube Intelligence — feed any video into your strategy",
+    p2_f5:"Side-by-side blend comparison — test two strategies at once",
+    p2_f6:"30 generations per day + unlimited saved sessions", p2_f7:"Up to 3 API integrations",
+    p2_cta:"Lock In $39/month →",
+    p3_tier:"Visionary", p3_sub:"For builders shipping with AI — not just using it.",
+    p3_f1:"Everything in Pro", p3_f2:"Unlimited generations — no daily cap, ever",
+    p3_f3:"Unlimited API integrations — connect every tool in your stack",
+    p3_f4:"Upload briefs + business plans — give your blend more context",
+    p3_f5:"Collaboration mode — build strategy with your team",
+    p3_f6:"Full app blueprint mode — name, features, MVP roadmap, monetization in one click",
+    p3_f7:"Weekly Aura Pulse — curated AI news matched to your blend",
+    p3_f8:"Priority support + first access to every new integration",
+    p3_cta:"Lock In $92/month →",
+    price_note:"3 free generations to start · No credit card required · Cancel anytime",
+    hashtag_sub:"✦ &nbsp; your blend · your voice · your results",
+    cta_eyebrow:"✦ &nbsp; Beta drop — 33 days left",
+    cta_title:"AI output that<br><em>finally sounds like you.</em>",
+    cta_sub:"The AI layer that finally works for how you actually think. Your output. Your voice. Beta price locks in forever on April 30th — after that, it's gone.",
+    cta_btn:"✦ &nbsp; Enter AuraLayer →",
+    cta_fine:"No credit card &nbsp;·&nbsp; Free to try &nbsp;·&nbsp; Beta price locks forever",
+    footer_tagline:"AI output that sounds like you. · #WhatsYourAuraLayer",
+    footer_app:"Enter App", footer_copy:"© 2026 AuraLayer.ai · All rights reserved"
+  },
+  es: {
+    nav_how:"Cómo funciona", nav_pricing:"Precios", nav_cta_btn:"Entrar →",
+    tick1:"BETA DROP — PRECIO CIERRA EL 30 DE ABRIL", tick2:"BLOQUEA $9/$39/$92/MES PARA SIEMPRE",
+    tick3:"SIN TARJETA DE CRÉDITO REQUERIDA", tick4:"LOS PRECIOS SUBEN EL 1 DE MAYO",
+    hero_beta:"Beta cierra el 30 de abril",
+    hero_line1:"El resultado de IA que<span class=\"h1-voice\"> por fin suena como tú.</span>",
+    hero_zero:"Nunca fue posible.",
+    hero_switching:" Hasta ahora.",
+    hero_h2:"9 herramientas. Un resultado. Por fin suena como tú.",
+    hero_sub1:"Usas IA. Pero el resultado nunca suena como tú. Hasta ahora.",
+    hero_sub2:"El resultado de IA que suena como tú.",
+    hero_sub3:"El precio beta se bloquea para siempre el 30 de abril.",
+    hero_cta_primary:"✦ &nbsp; Pruébalo Gratis →", hero_cta_secondary:"Ver cómo funciona ↓",
+    hero_trust:"Gratis para probar &nbsp;·&nbsp; Sin tarjeta de crédito &nbsp;·&nbsp; Beta cierra el 30 de abril — el precio se bloquea para siempre",
+    how_label:"✦ &nbsp; Cómo funciona",
+    how_h2:"Tu mezcla. Tu resultado. <em>Nadie más obtiene lo mismo.</em>",
+    how_sub:"Sin necesidad de ser experto en prompts. Sin resultados genéricos. Solo dile qué quieres, elige tus herramientas y deja que tu AuraLayer haga el trabajo.",
+    how_quote:"Cada creador que usa AuraLayer obtiene un resultado diferente. No porque el producto sea diferente — sino porque <em style='color:var(--gold);'>tú lo eres.</em> Tu mezcla de herramientas de IA en tus porcentajes produce algo que nadie más puede replicar. Eso no es una función. Eso es tu AuraLayer.",
+    how_quote_q:"¿Cuál es el tuyo?",
+    step1_title:"Dile qué estás intentando hacer",
+    step1_desc:"Escribe tu objetivo en lenguaje natural. \"Hago beats y quiero ganar $1k/mes.\" \"Publico Reels a diario pero no crezco.\" \"Quiero lanzar un curso este mes.\" Cuanto más real, mejor el resultado.",
+    step2_title:"Elige tus herramientas y configura tu mezcla",
+    step2_desc:"Selecciona las herramientas de IA que ya usas. Desliza los porcentajes para que reflejen cómo piensas — 40% estrategia, 35% diseño, 25% investigación. Bloquea lo que más te importa.",
+    step3_title:"Obtén tu plan — no una plantilla",
+    step3_desc:"AuraLayer genera una estrategia, blueprint o flujo de trabajo moldeado completamente por tu mezcla. Suena como tú. Encaja con tu nicho. Listo para actuar — no solo para leer.",
+    modes_label:"✦ &nbsp; Dos modos",
+    modes_h2:"Obtén tu estrategia.<br><em>O construye tu app.</em>",
+    mode1_title:"Mi<br><em>Estrategia</em>", mode1_desc:"Dile a AuraLayer qué estás intentando lograr. Tu mezcla de herramientas moldea cada recomendación, oportunidad y siguiente paso — para que el consejo realmente se adapte a tu vida.",
+    mode1_t1:"Oportunidades", mode1_t2:"Recomendaciones", mode1_t3:"Próximos pasos", mode1_t4:"Flujo de trabajo",
+    mode2_title:"Mi<br><em>App</em>", mode2_desc:"¿Tienes una idea? Descríbela. Elige tu mezcla. AuraLayer genera un concepto de app completo — nombres, funciones, estrategia de monetización y hoja de ruta MVP — construido alrededor de tu ADN.",
+    mode2_t1:"Conceptos de app", mode2_t2:"Hoja de ruta MVP", mode2_t3:"Monetización", mode2_t4:"Go-to-market",
+    beta_msg:"🔥 Beta drop — precio bloqueado para siempre", beta_cta:"Bloquear Mi Precio →",
+    cd_days:"días", cd_hrs:"hrs", cd_min:"min", cd_sec:"seg",
+    feat_label:"✦ &nbsp; Todo incluido",
+    feat_h2:"Para creadores que están hartos de resultados <em>genéricos.</em>",
+    f1_title:"Bloquea tu mezcla", f1_desc:"Fija la influencia de una herramienta y deja que las demás se redistribuyan alrededor. Tu ADN creativo, bloqueado exactamente como lo quieres.",
+    f2_title:"Arquetipos de creador", f2_desc:"Creador musical, creador de contenido, freelancer, seller, educator, builder — elige tu tipo y tu stack se carga al instante.",
+    f3_title:"Llévalo más lejos", f3_desc:"¿No te convence el resultado? Ajusta tu mezcla y refina sin empezar de cero. Evoluciona tus resultados en tiempo real.",
+    f4_title:"#WhatsYourAuraLayer", f4_desc:"Comparte tu mezcla con un clic. Subtítulo pre-escrito para TikTok/IG listo para copiar. Muéstrale al mundo tu ADN creativo.",
+    f5_title:"Dos Mezclas. Tú Eliges.", f5_desc:"Ejecuta dos mezclas diferentes lado a lado y compara resultados. Elige la que funciona — o combina lo mejor de ambas.",
+    f6_title:"32 idiomas", f6_desc:"Genera resultados en inglés, español, francés, japonés, árabe, hindi y 26 más. Tu audiencia es global — tu resultado también debería serlo.",
+    f7_title:"YouTube Intelligence", f7_desc:"Pega cualquier URL de YouTube. AuraLayer extrae la transcripción e incorpora el enfoque del creador directamente en tu resultado.",
+    f8_title:"Sube un brief", f8_desc:"Sube un plan de negocio, brief o documento y AuraLayer lo incorpora a tu mezcla. Tu estrategia, no una genérica.",
+    f9_title:"Integraciones API", f9_desc:"Conecta Claude, ChatGPT, Canva y más directamente con tus propias claves API. Los planes Pro y Visionary desbloquean acceso completo.",
+    price_label:"✦ &nbsp; Precios beta",
+    price_h2:"Este precio desaparece <em>el 30 de abril.</em>",
+    price_sub:"Suscríbete antes del 30 de abril y tu tarifa se bloquea para siempre. Después del lanzamiento, estos precios desaparecen. Permanentemente. Sin excepciones.",
+    price_period:"por mes", price_lock:"✦ precio beta — se bloquea para siempre",
+    p1_tier:"Starter", p1_sub:"Prueba la mezcla. Descubre lo que hace.",
+    p1_f1:"Aura Guidance — estrategia personalizada de tu mezcla", p1_f2:"Elige entre 9 herramientas — construye tu ADN Creador",
+    p1_f3:"3 generaciones gratis para empezar, 10/día después", p1_f4:"Exporta, copia y comparte tus resultados",
+    p1_f5:"5 sesiones guardadas", p1_f6:"32 idiomas soportados", p1_cta:"Bloquear $9/mes →",
+    p2_tier:"Pro", p2_sub:"Para creadores que exigen más de su mezcla.",
+    p2_f1:"Todo lo de Starter", p2_f2:"Build My App — convierte tu mezcla en un blueprint completo",
+    p2_f3:"Hasta 6 herramientas — construye un ADN más rico y matizado",
+    p2_f4:"YouTube Intelligence — incorpora cualquier video a tu estrategia",
+    p2_f5:"Comparación lado a lado — prueba dos estrategias a la vez",
+    p2_f6:"30 generaciones por día + sesiones guardadas ilimitadas", p2_f7:"Hasta 3 integraciones API",
+    p2_cta:"Bloquear $39/mes →",
+    p3_tier:"Visionary", p3_sub:"Para builders que construyen con IA — no solo la usan.",
+    p3_f1:"Todo lo de Pro", p3_f2:"Generaciones ilimitadas — sin cap diario, nunca",
+    p3_f3:"Integraciones API ilimitadas — conecta cada herramienta de tu stack",
+    p3_f4:"Sube briefs y planes de negocio — da más contexto a tu mezcla",
+    p3_f5:"Modo colaboración — construye estrategia con tu equipo",
+    p3_f6:"Blueprint completo de app — nombre, funciones, hoja de ruta MVP, monetización en un clic",
+    p3_f7:"Aura Pulse semanal — noticias de IA curadas según tu mezcla",
+    p3_f8:"Soporte prioritario + primer acceso a cada nueva integración",
+    p3_cta:"Bloquear $92/mes →",
+    price_note:"3 generaciones gratis para empezar · Sin tarjeta de crédito · Cancela cuando quieras",
+    hashtag_sub:"✦ &nbsp; tu mezcla · tu voz · tus resultados",
+    cta_eyebrow:"✦ &nbsp; Beta — 33 días restantes",
+    cta_title:"El resultado de IA que<br><em>por fin suena como tú.</em>",
+    cta_sub:"La capa de IA que por fin funciona como tú piensas. Tu resultado. Tu voz. El precio beta se bloquea para siempre el 30 de abril — después, desaparece.",
+    cta_btn:"✦ &nbsp; Entrar a AuraLayer →",
+    cta_fine:"Sin tarjeta de crédito &nbsp;·&nbsp; Gratis para probar &nbsp;·&nbsp; El precio beta se bloquea para siempre",
+    footer_tagline:"El resultado de IA que suena como tú. · #WhatsYourAuraLayer",
+    footer_app:"Entrar a la App", footer_copy:"© 2026 AuraLayer.ai · Todos los derechos reservados"
+  }
+};
+
+let _lang = sessionStorage.getItem('idx_lang') || 'en';
+
+function applyIdxLang() {
+  const t = IDX_T[_lang];
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const k = el.getAttribute('data-t');
+    if (t[k] !== undefined) el.innerHTML = t[k];
+  });
+  const flag = document.getElementById('langFlag');
+  const lbl  = document.getElementById('langLabel');
+  if (flag) flag.textContent = _lang === 'en' ? '🇪🇸' : '🇺🇸';
+  if (lbl)  lbl.textContent  = _lang === 'en' ? 'ES' : 'EN';
+  document.documentElement.lang = _lang;
+}
+
+function toggleLang() {
+  _lang = _lang === 'en' ? 'es' : 'en';
+  sessionStorage.setItem('idx_lang', _lang);
+  applyIdxLang();
+}
+
+applyIdxLang();
+</script>
+
+</body>
+</html>
