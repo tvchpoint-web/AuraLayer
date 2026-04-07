@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AuraLayer · UGC Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gold:#C9922A;--gold-lt:#E8B84A;--gold-dim:rgba(201,146,42,0.45);
+  --green:#3DA870;--red:#E87B74;--purple:#7050C8;
+  --bg:#000;--surface:#0A0A0A;--surface2:#111;
+  --border:rgba(245,243,238,0.12);--border2:rgba(245,243,238,0.25);
+  --text:#F5F3EE;--text-dim:rgba(245,243,238,0.5);--text-faint:rgba(245,243,238,0.25);
+}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;overflow-x:hidden;}
+
+/* ── HEADER ── */
+#header{padding:28px 32px 0;display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-bars{display:flex;flex-direction:column;gap:3px;}
+.logo-bars span{display:block;border-radius:20px;background:linear-gradient(90deg,var(--gold-lt),var(--gold));}
+.logo-name{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:22px;letter-spacing:-.5px;}
+.logo-name em{color:var(--gold);font-style:normal;}
+.portal-badge{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);border:1px solid var(--border2);padding:5px 12px;}
+@media(max-width:900px){.portal-badge{display:none;}}
+
+/* ── STREAK ── */
+#streak-bar{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border2);padding:5px 12px;}
+@media(max-width:600px){
+  #header{flex-wrap:wrap;gap:8px;}
+  #streak-bar{margin-left:auto;font-size:7px;padding:4px 10px;letter-spacing:1px;}
+  .streak-unit{font-size:7px;}
+  #streak-count{font-size:18px;}
+  .card-streak{padding:6px 14px;}
+}
+.streak-fire{font-size:12px;}
+#streak-count{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);line-height:1;}
+.streak-unit{color:var(--gold-dim);}
+.card-streak{display:flex;align-items:center;gap:8px;padding:6px 20px;border-top:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);}
+.streak-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.1);flex-shrink:0;transition:background .3s;}
+.streak-dot.today{background:#3DA870;animation:pulse 2s infinite;}
+.streak-dot.due{background:#E8B84A;}
+.streak-lbl{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.25);flex:1;}
+.streak-lbl.today{color:#3DA870;}
+.streak-lbl.due{color:#E8B84A;}
+.btn-posted{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;text-transform:uppercase;padding:5px 10px;border:1px solid rgba(255,255,255,0.1);background:none;color:rgba(255,255,255,0.25);cursor:pointer;transition:all .2s;flex-shrink:0;}
+.btn-posted:hover{border-color:#3DA870;color:#3DA870;}
+.btn-posted.done{border-color:#3DA870;color:#3DA870;background:rgba(116,197,155,0.08);}
+#lang-toggle{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(245,243,238,0.5);background:none;color:rgba(245,243,238,0.85);padding:5px 14px;cursor:pointer;transition:all .2s;flex-shrink:0;white-space:nowrap;}
+#lang-toggle:hover{border-color:#F5F3EE;color:#F5F3EE;}
+#lang-toggle.es{border-color:#F5F3EE;color:#F5F3EE;background:rgba(245,243,238,0.08);}
+/* ── HERO ── */
+#hero{padding:40px 32px 28px;max-width:1100px;margin:0 auto;}
+.hero-eyebrow{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold-dim);margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.hero-eyebrow::after{content:'';flex:1;height:1px;background:var(--border2);}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,80px);line-height:.88;letter-spacing:.02em;margin-bottom:16px;}
+.hero-title em{color:var(--gold);font-style:normal;display:block;}
+.hero-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:20px;color:var(--text-dim);max-width:480px;line-height:1.5;}
+
+/* ── REF LINK BAR ── */
+#refbar{padding:0 32px;max-width:1100px;margin:0 auto 20px;}
+.ref-inner{display:flex;align-items:center;gap:12px;border:1px solid var(--border2);background:rgba(245,243,238,0.03);padding:10px 16px;}
+.ref-left{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.ref-status{width:6px;height:6px;border-radius:50%;background:rgba(245,243,238,0.2);flex-shrink:0;transition:background .3s;}
+.ref-status.active{background:#3DA870;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.ref-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;}
+.ref-label.active{color:#3DA870;}
+.ref-input-wrap{display:flex;align-items:center;flex:1;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);}
+.ref-input{flex:1;background:none;border:none;outline:none;font-family:'DM Mono',monospace;font-size:11px;color:rgba(245,243,238,0.5);padding:7px 10px;min-width:0;}
+.ref-input::placeholder{color:rgba(255,255,255,0.18);font-style:italic;}
+.ref-input:focus{color:#E8B84A;}
+.ref-input.has-val{color:#E8B84A;}
+.ref-save{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;border:none;background:var(--gold);color:#000;padding:8px 14px;cursor:pointer;flex-shrink:0;transition:background .2s;}
+.ref-save:hover{background:var(--gold-lt);}
+.ref-save.saved{background:#3DA870;color:#000;}
+@media(max-width:600px){
+  #refbar{padding:0 16px;margin-bottom:14px;}
+  .ref-prefix{font-size:10px;}
+  .ref-input{font-size:10px;}
+  .ref-label{display:none;}
+}
+/* ── TABS ── */
+#tabs{padding:0 32px;max-width:1100px;margin:0 auto 32px;}
+.tab-row{display:flex;gap:0;border:1px solid var(--border2);width:fit-content;}
+.tab{padding:10px 24px;font-size:9px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;border:none;background:none;color:var(--text-faint);font-family:'DM Mono',monospace;transition:all .2s;position:relative;}
+.tab:not(:last-child){border-right:1px solid var(--border);}
+.tab.active{background:rgba(201,146,42,0.1);color:var(--gold);}
+.tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold);}
+.tab[data-tab="virality"].active{background:rgba(116,197,155,0.08);color:var(--green);}
+.tab[data-tab="virality"].active::after{background:var(--green);}
+.tab[data-tab="convert"].active{background:rgba(201,146,42,0.08);color:var(--gold-lt);}
+.tab[data-tab="convert"].active::after{background:var(--gold-lt);}
+
+.tab-hint{font-size:11px;letter-spacing:.5px;color:rgba(245,243,238,0.65);margin-top:10px;font-family:'DM Mono',monospace;padding-left:2px;border-left:2px solid var(--gold);padding-left:10px;}
+@keyframes tabpulse{0%,100%{opacity:1;}50%{opacity:.7;}}
+.tab.active.rotating{animation:tabpulse 2s ease-in-out infinite;}
+/* ── CAROUSEL ── */
+#carousel-wrap{position:relative;overflow:hidden;padding:0 32px;scroll-snap-type:x mandatory;}
+#carousel{display:flex;gap:20px;transition:transform .45s cubic-bezier(.25,.46,.45,.94);will-change:transform;}
+.card{flex-shrink:0;width:320px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:border-color .2s;scroll-snap-align:start;}
+.card:hover{border-color:var(--border2);}
+
+/* Stage preview */
+.card-stage{position:relative;width:100%;aspect-ratio:9/16;overflow:hidden;background:#000;cursor:pointer;border-bottom:1px solid var(--border);}
+.card-stage iframe{width:100%;height:100%;border:none;pointer-events:none;transform-origin:top left;}
+.card-stage-overlay{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0);transition:background .2s;}
+.card-stage:hover .card-stage-overlay{background:rgba(0,0,0,0.4);}
+.preview-btn{font-size:8px;letter-spacing:3px;text-transform:uppercase;border:1px solid var(--text);color:var(--text);padding:8px 16px;opacity:0;transition:opacity .2s;background:none;cursor:pointer;font-family:'DM Mono',monospace;}
+.card-stage:hover .preview-btn{opacity:1;}
+.rank-badge{position:absolute;top:12px;left:12px;z-index:20;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:16px;}
+.rank-badge.r1{background:var(--gold);color:#000;}
+.rank-badge.r2{background:rgba(201,146,42,0.25);color:var(--gold);border:1px solid var(--gold);}
+.rank-badge.r3{background:rgba(201,146,42,0.1);color:var(--gold-dim);border:1px solid rgba(201,146,42,0.3);}
+.rank-badge.rn{background:rgba(255,255,255,0.05);color:var(--text-faint);border:1px solid rgba(255,255,255,0.1);}
+.fav-badge{position:absolute;top:12px;right:12px;z-index:20;font-size:9px;letter-spacing:2px;color:var(--gold);border:1px solid rgba(201,146,42,0.4);padding:3px 8px;background:rgba(0,0,0,0.7);}
+
+/* Card body */
+.card-body{padding:18px 20px;flex:1;display:flex;flex-direction:column;gap:14px;}
+.card-type{font-size:7px;letter-spacing:3px;text-transform:uppercase;color:var(--text-faint);}
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:.9;letter-spacing:.02em;}
+.card-name em{color:var(--gold);font-style:normal;}
+
+/* Score bars */
+.scores{display:flex;flex-direction:column;gap:8px;}
+.score-row{display:flex;align-items:center;gap:10px;}
+.score-lbl{font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint);min-width:52px;}
+.score-track{flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;}
+.score-fill{height:100%;border-radius:40px;transition:width .8s cubic-bezier(.25,.46,.45,.94);}
+.score-fill.impact{background:linear-gradient(90deg,var(--gold-lt),var(--gold));}
+.score-fill.virality{background:var(--green);}
+.score-fill.convert{background:var(--gold-lt);}
+.score-val{font-family:'Bebas Neue',sans-serif;font-size:14px;min-width:24px;text-align:right;}
+.score-val.impact{color:var(--gold);}
+.score-val.virality{color:var(--green);}
+.score-val.convert{color:var(--gold-lt);}
+
+/* Card footer */
+.card-footer{padding:0 20px 18px;display:flex;gap:8px;}
+.btn-use{flex:1;padding:10px;font-size:8px;letter-spacing:2px;text-transform:uppercase;font-family:'DM Mono',monospace;cursor:pointer;border:none;background:var(--gold);color:#000;transition:background .2s;}
+.btn-use:hover{background:var(--gold-lt);}
+.btn-copy{padding:10px 14px;font-size:8px;letter-spacing:1px;text-transform:uppercase;font-family:'DM Mono',monospace;cursor:pointer;border:1px solid var(--border2);background:none;color:var(--gold-dim);transition:all .2s;}
+.btn-copy:hover{border-color:var(--gold);color:var(--gold);}
+.btn-copy.copied{color:var(--green);border-color:var(--green);}
+
+/* ── NAV ARROWS ── */
+.nav-wrap{display:flex;align-items:center;justify-content:space-between;padding:20px 32px 0;max-width:1100px;margin:0 auto;}
+.nav-arrows{display:flex;gap:8px;}
+.nav-btn{width:40px;height:40px;border:1px solid var(--border2);background:none;color:var(--gold);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'DM Mono',monospace;}
+.nav-btn:hover{background:rgba(245,243,238,0.08);}
+.nav-btn:disabled{opacity:.25;cursor:default;}
+.nav-dots{display:flex;gap:3px;align-items:center;width:100%;max-width:320px;}
+.dot{flex:1;height:3px;border-radius:40px;background:rgba(245,243,238,0.12);cursor:pointer;transition:all .3s;}
+.dot.active{background:var(--gold);}
+/* Mobile progress bar full width */
+@media(max-width:600px){
+  .nav-dots{max-width:100%;padding:0 16px;}
+  .dot{height:2px;}
+}
+
+/* ── STATS BAR ── */
+#statsbar{margin:40px 32px 0;padding:20px 24px;border:1px solid var(--border);background:var(--surface);max-width:1100px;}
+.stats-inner{display:flex;gap:0;flex-wrap:wrap;}
+.stat-item{flex:1;min-width:120px;padding:0 24px;border-right:1px solid var(--border);}
+.stat-item:first-child{padding-left:0;}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold);line-height:1;}
+.stat-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint);margin-top:2px;}
+
+/* ── LIGHTBOX ── */
+#lightbox{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;}
+#lightbox.open{display:flex;}
+#lb-inner{position:relative;width:390px;max-height:90vh;}
+#lb-frame{width:390px;height:calc(390px * 16/9);border:none;background:#000;}
+#lb-close{position:absolute;top:-40px;right:0;background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;font-family:'DM Mono',monospace;letter-spacing:2px;font-size:9px;text-transform:uppercase;}
+
+.btn-caption{padding:10px 12px;font-size:8px;letter-spacing:2px;text-transform:uppercase;font-family:'DM Mono',monospace;cursor:pointer;border:1px solid rgba(116,197,155,0.3);background:none;color:rgba(116,197,155,0.6);transition:all .2s;flex-shrink:0;}
+.btn-caption:hover{border-color:var(--green);color:var(--green);}
+/* Caption Modal */
+#caption-modal{position:fixed;inset:0;z-index:1001;background:rgba(0,0,0,0.88);display:none;align-items:flex-end;justify-content:center;}
+#caption-modal.open{display:flex;}
+#cm-inner{width:100%;max-width:540px;background:#0E0E14;border:1px solid var(--border2);border-bottom:none;padding:24px 24px 32px;display:flex;flex-direction:column;gap:14px;animation:slideup .3s ease;}
+@keyframes slideup{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+#cm-header{display:flex;align-items:center;justify-content:space-between;}
+#cm-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);letter-spacing:.02em;}
+#cm-close{background:none;border:none;color:rgba(255,255,255,0.4);font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:'DM Mono',monospace;}
+#cm-close:hover{color:var(--text);}
+#cm-sub{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);font-family:'DM Mono',monospace;}
+#cm-text{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;line-height:1.7;padding:14px;outline:none;resize:none;}
+#cm-text:focus{border-color:var(--gold);}
+#cm-footer{display:flex;gap:8px;}
+#cm-copy{flex:1;padding:11px;background:var(--gold);border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#000;cursor:pointer;transition:background .2s;}
+#cm-copy:hover{background:var(--gold-lt);}
+#cm-copy.copied{background:var(--green);}
+#cm-regen{padding:11px 16px;border:1px solid rgba(201,146,42,0.3);background:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-dim);cursor:pointer;transition:all .2s;}
+#cm-regen:hover{border-color:var(--gold);color:var(--gold);}
+@media(max-width:600px){#cm-inner{padding:20px 16px 28px;}}
+/* ── FOOTER ── */
+#footer{padding:40px 32px;max-width:1100px;margin:0 auto;border-top:1px solid var(--border);margin-top:48px;display:flex;align-items:center;justify-content:space-between;}
+.footer-note{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text-faint);}
+
+.card-preview-inner{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:24px 20px;background:linear-gradient(180deg,rgba(0,0,0,0.96),rgba(10,10,10,0.98));}
+.pv-wrap{display:flex;flex-direction:column;gap:10px;width:100%;}
+.pv-center{align-items:center;justify-content:center;text-align:center;}
+.pv-ey{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,146,42,0.5);display:flex;align-items:center;gap:8px;}
+.pv-ey::after{content:'';flex:1;height:1px;background:rgba(201,146,42,0.15);}
+.pv-row{display:flex;align-items:center;gap:8px;width:100%;}
+.pv-pct{font-family:'Bebas Neue',sans-serif;font-size:32px;line-height:1;min-width:52px;}
+.pv-tool{flex:1;display:flex;flex-direction:column;gap:5px;}
+.pv-name{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;text-transform:uppercase;}
+.pv-track{width:100%;height:2px;background:rgba(255,255,255,0.06);border-radius:40px;overflow:hidden;}
+.pv-fill{height:100%;border-radius:40px;width:0%;}
+.pv-fill-gold{background:linear-gradient(90deg,#E8B84A,#C9922A);}
+.pv-fill-green{background:#3DA870;}
+.pv-fill-purple{background:#7050C8;}
+.pv-gold{color:#E8B84A;}.pv-green{color:#3DA870;}.pv-purple{color:#7050C8;}.pv-red{color:#E87B74;}
+.pv-div{width:100%;height:1px;background:rgba(255,255,255,0.04);}
+.pv-big-num{font-family:'Bebas Neue',sans-serif;font-size:64px;line-height:1;}
+.pv-sub{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--text-dim);}
+.pv-crossed{font-family:'Bebas Neue',sans-serif;font-size:40px;line-height:1;color:rgba(232,123,116,0.3);text-decoration:line-through;text-decoration-color:rgba(232,123,116,0.4);}
+.pv-tiny{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1px;text-transform:uppercase;}
+.pv-typing{font-family:'DM Mono',monospace;font-size:9px;color:rgba(245,243,238,0.6);letter-spacing:.5px;line-height:1.5;min-height:40px;}
+.pv-cursor{width:1px;height:14px;background:#C9922A;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.card-preview-inner::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;mix-blend-mode:overlay;z-index:1;}
+.card-preview-inner::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;mix-blend-mode:overlay;z-index:1;}
+
+@media(max-width:600px){
+  #header{padding:16px 16px 0;}
+  #hero{padding:14px 16px 10px;}
+  .hero-title{font-size:32px;}
+  .hero-sub{font-size:14px;margin-bottom:0;}
+  #tabs{padding:0 16px;margin-bottom:14px;}
+  .tab{padding:8px 14px;font-size:8px;}
+  .nav-arrows{display:none;}
+  .nav-wrap{justify-content:center;padding:8px 0 0;width:100%;}
+  .nav-dots{max-width:100%;padding:0 16px;}
+  #carousel-wrap{padding:0 18vw;overflow-x:scroll;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  #carousel-wrap::-webkit-scrollbar{display:none;}
+  #carousel{display:flex;gap:10px;transition:none;}
+  .card{width:64vw;min-width:64vw;flex-shrink:0;scroll-snap-align:center;border-radius:0;opacity:0.35;transition:opacity .35s;}
+  .card.mob-active{opacity:1;}
+  .card-stage{aspect-ratio:unset;height:160px;}
+  .card-preview-inner{padding:14px 16px;}
+  .pv-big-num{font-size:44px;}
+  .pv-pct{font-size:24px;min-width:38px;}
+  .card-body{padding:10px 14px;gap:7px;}
+  .card-name{font-size:19px;}
+  .card-type{font-size:7px;}
+  .score-lbl{font-size:6px;min-width:40px;}
+  .scores{gap:4px;}
+  .card-footer{padding:0 14px 12px;gap:6px;}
+  .btn-use{padding:8px;font-size:7px;}
+  .btn-copy{padding:8px 10px;font-size:7px;}
+  #statsbar{display:none;}
+  #footer{padding:20px 16px;flex-direction:column;gap:6px;text-align:center;margin-top:16px;}
+}
+</style>
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','936492782314915');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=936492782314915&ev=PageView&noscript=1"/></noscript>
+<body>
+
+<!-- Header -->
+<div id="header">
+  <div class="logo">
+    <div class="logo-bars">
+      <span style="width:20px;height:3px;"></span>
+      <span style="width:15px;height:3px;opacity:.65;"></span>
+      <span style="width:10px;height:3px;opacity:.35;"></span>
+    </div>
+    <div class="logo-name"><span style="color:var(--text)">Aura</span><em>Layer</em><span style="color:var(--gold);font-size:11px;">.ai</span></div>
+  </div>
+  <div class="portal-badge" id="portal-badge">UGC Portal</div>
+  <div id="streak-bar">
+    <span class="streak-fire">🔥</span>
+    <span id="streak-count">0</span>
+    <span class="streak-unit" id="streak-unit">day streak</span>
+  </div>
+  <button id="lang-toggle" onclick="toggleLang()">🇪🇸 ES</button>
+</div>
+
+<!-- Hero -->
+<div id="hero">
+  <div class="hero-eyebrow" id="hero-eyebrow">Creator Assets — All 8 Types</div>
+  <h1 class="hero-title" id="hero-title">Your content.<br><em id="hero-em">Your commission.</em></h1>
+  <p class="hero-sub" id="hero-sub">Pick your goal. Get the right asset. Post and earn.</p>
+</div>
+
+<!-- Ref Link Bar -->
+<div id="refbar">
+  <div class="ref-inner">
+    <div class="ref-left">
+      <div class="ref-status" id="ref-status-dot"></div>
+      <span class="ref-label" id="ref-label">Your affiliate link</span>
+    </div>
+    <div class="ref-input-wrap">
+      <input class="ref-input" id="ref-input" type="text" placeholder="Paste your affiliate link" maxlength="120" autocomplete="off" spellcheck="false">
+    </div>
+    <button class="ref-save" id="ref-save" onclick="saveRef()">Save</button>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div id="tabs">
+  <div class="tab-row">
+    <button class="tab active" data-tab="convert" id="tab-convert">$ Get Paid</button>
+    <button class="tab" data-tab="virality" id="tab-virality">↑ Virality</button>
+    <button class="tab" data-tab="impact" id="tab-impact">✦ Impact</button>
+  </div>
+  <div class="tab-hint" id="tab-hint"></div>
+</div>
+
+<!-- Carousel -->
+<div id="carousel-wrap">
+  <div id="carousel"></div>
+</div>
+
+<!-- Nav -->
+<div class="nav-wrap">
+  <div class="nav-arrows">
+    <button class="nav-btn" id="prev">←</button>
+    <button class="nav-btn" id="next">→</button>
+  </div>
+  <div class="nav-dots" id="dots"></div>
+</div>
+
+<!-- Stats bar -->
+<div id="statsbar" style="max-width:calc(100% - 64px);">
+  <div class="stats-inner">
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-lbl">Total Assets</div></div>
+    <div class="stat-item"><div class="stat-num">3</div><div class="stat-lbl">Favorites</div></div>
+    <div class="stat-item"><div class="stat-num">97</div><div class="stat-lbl">Avg Score</div></div>
+    <div class="stat-item"><div class="stat-num">∞</div><div class="stat-lbl">Post Potential</div></div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div id="footer">
+  <div class="footer-note">AuraLayer · UGC Asset Portal · Beta 2026</div>
+  <div class="footer-note" style="color:var(--gold-dim);">Your blend. Your voice. Zero switching.</div>
+</div>
+
+<!-- Caption Modal -->
+<div id="caption-modal">
+  <div id="cm-inner">
+    <div id="cm-header">
+      <div id="cm-title">Caption</div>
+      <button id="cm-close" onclick="closeCaption()">✕</button>
+    </div>
+    <div id="cm-sub">Edit your caption then copy</div>
+    <textarea id="cm-text" rows="8" spellcheck="true"></textarea>
+    <div id="cm-footer">
+      <button id="cm-copy" onclick="copyCaption()">⎘ Copy Caption</button>
+      <button id="cm-regen" onclick="regenCaption()">↺ Regenerate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <div id="lb-inner">
+    <button id="lb-close" onclick="closeLB()">✕ Close</button>
+    <iframe id="lb-frame" src="" allowfullscreen></iframe>
+  </div>
+</div>
+
+<script>
+const g = id => document.getElementById(id);
+
+let currentLang = sessionStorage.getItem('al_ugc_lang') || 'en';
+const TRANSLATIONS = {
+  en: {
+    heroTitle: 'Your content.',heroEm: 'Your commission.',heroSub: 'Pick your goal. Get the right asset. Post and earn.',
+    eyebrow: 'Creator Assets — All 8 Types',tab1: '$ Get Paid',tab2: '↑ Virality',tab3: '✦ Impact',
+    hint1: 'Best assets for driving signups & commission',hint2: 'Best assets for reach, shares & comments',hint3: 'Best assets for brand credibility & trust',
+    refLabel: 'Your affiliate link',refActive: 'Link active',refPlaceholder: 'Paste your affiliate link',refSave: 'Save',
+    streakUnit: 'day streak',portalBadge: 'UGC Portal',
+    btnUse: '↗ Use This',btnCaption: '✎ Caption',btnEarn: '$ Earn',btnPosted: '✓ Posted',postedToday: '✓ Posted today',
+    neverPosted: 'Never posted',postedYesterday: 'Posted yesterday',
+    copyCaption: '⎘ Copy Caption',regen: '↺ Regenerate',editSub: 'Edit your caption then copy',
+    previewBtn: '▶ Preview',footerTagline: 'Your blend. Your voice. Zero switching.',footerNote: 'AuraLayer · UGC Asset Portal · Beta 2026',langBtn: '🇪🇸 ES',
+  },
+  es: {
+    heroTitle: 'Tu contenido.',heroEm: 'Tu comisión.',heroSub: 'Elige tu objetivo. Usa el asset correcto. Publica y gana.',
+    eyebrow: 'Assets para Creadores — 8 Tipos',tab1: '$ Cobrar',tab2: '↑ Viralidad',tab3: '✦ Impacto',
+    hint1: 'Los mejores assets para conseguir registros y comisión',hint2: 'Los mejores assets para alcance, compartidos y comentarios',hint3: 'Los mejores assets para credibilidad y confianza',
+    refLabel: 'Tu enlace de afiliado',refActive: 'Enlace activo',refPlaceholder: 'Pega tu link de afiliado',refSave: 'Guardar',
+    streakUnit: 'días seguidos',portalBadge: 'Portal UGC',
+    btnUse: '↗ Usar Este',btnCaption: '✎ Subtítulo',btnEarn: '$ Ganar',btnPosted: '✓ Publicado',postedToday: '✓ Publicado hoy',
+    neverPosted: 'Sin publicar',postedYesterday: 'Publicado ayer',
+    copyCaption: '⎘ Copiar Subtítulo',regen: '↺ Regenerar',editSub: 'Edita tu subtítulo y cópialo',
+    previewBtn: '▶ Vista Previa',footerTagline: 'Tu blend. Tu voz. Sin cambiar de app.',footerNote: 'AuraLayer · Portal de Assets UGC · Beta 2026',langBtn: '🇺🇸 EN',
+  }
+};
+function t(key){return TRANSLATIONS[currentLang][key]||TRANSLATIONS.en[key];}
+
+const ASSETS = [
+  {
+    id:'01', name:'Blend', subtitle:'Reveal', fav:false,
+    file:'Type01_BlendReveal_v10.html',
+    desc:'Show your exact blend — the visual centrepiece of AuraLayer.',
+    impact:6, virality:5, convert:4,
+    ranks:{impact:7, virality:8, convert:7}
+  },
+  {
+    id:'02', name:'First', subtitle:'Reaction', fav:false,
+    file:'Type02_FirstReaction_v6.html',
+    desc:'Authentic "I just tried this" energy. Best for cold audiences.',
+    impact:5, virality:4, convert:5,
+    ranks:{impact:6, virality:7, convert:5}
+  },
+  {
+    id:'03', name:'Cancel-', subtitle:'lation', fav:true,
+    file:'Type03_Cancellation_v4.html',
+    desc:'$9 replaced $97. The clearest ROI argument in the folder.',
+    impact:5, virality:6, convert:9,
+    ranks:{impact:5, virality:4, convert:1}
+  },
+  {
+    id:'04', name:'Before', subtitle:'After', fav:true,
+    file:'Type04_BeforeAfter_v7.html',
+    desc:'2hrs → 20min. Universal format. Save-worthy content.',
+    impact:7, virality:8, convert:8,
+    ranks:{impact:3, virality:2, convert:3}
+  },
+  {
+    id:'05', name:'Niche', subtitle:'Deep Dive', fav:false,
+    file:'Type05_NicheDive_v6.html',
+    desc:'Your exact niche blend + real output. Undeniable proof.',
+    impact:9, virality:6, convert:7,
+    ranks:{impact:1, virality:5, convert:4}
+  },
+  {
+    id:'06', name:'Chal-', subtitle:'lenge', fav:true,
+    file:'Type06_Challenge_v6.html',
+    desc:'Every comment = free algorithmic reach. Built to go viral.',
+    impact:4, virality:10, convert:3,
+    ranks:{impact:8, virality:1, convert:8}
+  },
+  {
+    id:'07', name:'POV', subtitle:'Statement', fav:false,
+    file:'Type07_POV_v2.html',
+    desc:'Gary Vee-style conviction. The accusation hook triggers shares.',
+    impact:7, virality:7, convert:6,
+    ranks:{impact:4, virality:3, convert:6}
+  },
+  {
+    id:'08', name:'Real', subtitle:'Results', fav:false,
+    file:'Type08_RealResults_v7.html',
+    desc:'30 days in. Time-stamped credibility is hard to fake.',
+    impact:8, virality:5, convert:8,
+    ranks:{impact:2, virality:6, convert:2}
+  }
+];
+
+let currentTab = 'convert';
+let currentIndex = 0;
+const CARD_W = 320;
+const GAP = 20;
+
+function getRankClass(rank){
+  if(rank===1)return 'r1';
+  if(rank===2)return 'r2';
+  if(rank===3)return 'r3';
+  return 'rn';
+}
+
+function getScoresByTab(tab){
+  return {
+    impact: a => ({v:a.impact, label:currentLang==='es'?'Impacto':'Impact', cls:'impact'}),
+    virality: a => ({v:a.virality, label:currentLang==='es'?'Viralidad':'Virality', cls:'virality'}),
+    convert: a => ({v:a.convert, label:currentLang==='es'?'Conversión':'Convert', cls:'convert'})
+  }[tab];
+}
+
+function buildCards(){
+  const carousel = document.getElementById('carousel');
+  carousel.innerHTML = '';
+
+  // Sort by current tab rank
+  const sorted = [...ASSETS].sort((a,b) => a.ranks[currentTab] - b.ranks[currentTab]);
+
+  sorted.forEach((asset, idx) => {
+    const rank = asset.ranks[currentTab];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-stage" onclick="openLB('${asset.file}')">
+        <div class="rank-badge ${getRankClass(rank)}">${rank}</div>
+        ${asset.fav ? '<div class="fav-badge">✦ FAV</div>' : ''}
+        <div class="card-preview-inner" id="prev-${asset.id}">
+          ${getL2Preview(asset)}
+        </div>
+        <div class="card-stage-overlay">
+          <button class="preview-btn">${t('previewBtn')}</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-type">Type ${asset.id}</div>
+        <div class="card-name">${asset.name}<br><em>${asset.subtitle}</em></div>
+        <div class="scores">
+          <div class="score-row">
+            <span class="score-lbl">${currentLang==='es'?'Impacto':'Impact'}</span>
+            <div class="score-track"><div class="score-fill impact" style="width:0%" data-val="${asset.impact * 10}"></div></div>
+            <span class="score-val impact">${asset.impact}</span>
+          </div>
+          <div class="score-row">
+            <span class="score-lbl">${currentLang==='es'?'Viralidad':'Virality'}</span>
+            <div class="score-track"><div class="score-fill virality" style="width:0%" data-val="${asset.virality * 10}"></div></div>
+            <span class="score-val virality">${asset.virality}</span>
+          </div>
+          <div class="score-row">
+            <span class="score-lbl">${currentLang==='es'?'Conversión':'Convert'}</span>
+            <div class="score-track"><div class="score-fill convert" style="width:0%" data-val="${asset.convert * 10}"></div></div>
+            <span class="score-val convert">${asset.convert}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-streak" id="streak-${asset.id}">
+        <span class="streak-dot" id="sdot-${asset.id}"></span>
+        <span class="streak-lbl" id="slbl-${asset.id}">${t('neverPosted')}</span>
+        <button class="btn-posted" onclick="markPosted('${asset.id}',this)">${t('btnPosted')}</button>
+      </div>
+      <div class="card-footer">
+        <button class="btn-use" onclick="openLB('${asset.file}')">${t('btnUse')}</button>
+        <button class="btn-caption" onclick="openCaption('${asset.id}','')">${t('btnCaption')}</button>
+        <button class="btn-copy" data-file="${asset.file}" onclick="copyLink(this,'${asset.file}')">${t('btnEarn')}</button>
+      </div>
+    `;
+    carousel.appendChild(card);
+  });
+
+  // Animate score bars
+  setTimeout(()=>{
+    document.querySelectorAll('.score-fill').forEach(el=>{
+      el.style.width = el.dataset.val + '%';
+    });
+  }, 100);
+
+  buildDots(sorted.length);
+  goTo(0);
+}
+
+function buildDots(n){
+  const dots = document.getElementById('dots');
+  dots.innerHTML = '';
+  for(let i=0;i<n;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' active':'');
+    d.onclick = ()=>{ goTo(i); document.getElementById('carousel-wrap').scrollTo({left: i*(window.innerWidth*0.64+10), behavior:'smooth'}); };
+    dots.appendChild(d);
+  }
+}
+
+function goTo(idx){
+  const cards = document.querySelectorAll('.card');
+  currentIndex = Math.max(0, Math.min(idx, cards.length-1));
+  const offset = currentIndex * (CARD_W + GAP);
+  document.getElementById('carousel').style.transform = `translateX(-${offset}px)`;
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===currentIndex));
+  document.getElementById('prev').disabled = currentIndex === 0;
+  document.getElementById('next').disabled = currentIndex >= cards.length-1;
+}
+
+document.getElementById('prev').onclick = ()=>goTo(currentIndex-1);
+document.getElementById('next').onclick = ()=>goTo(currentIndex+1);
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.onclick = function(){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    this.classList.add('active');
+    currentTab = this.dataset.tab;
+    buildCards();
+  };
+});
+
+function openLB(file){
+  document.getElementById('lb-frame').src = 'UGC_Vault/' + file;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLB(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lb-frame').src = '';
+}
+document.getElementById('lightbox').onclick = function(e){
+  if(e.target===this)closeLB();
+};
+
+// ── STREAK TRACKER ──
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function daysAgo(dateStr){
+  if(!dateStr)return null;
+  const diff=Math.floor((new Date(todayStr())-new Date(dateStr))/(86400000));
+  return diff;
+}
+function getPostLog(){try{return JSON.parse(localStorage.getItem('al_post_log')||'{}');}catch{return {};}}
+function savePostLog(log){localStorage.setItem('al_post_log',JSON.stringify(log));}
+
+function markPosted(assetId, btn){
+  const log=getPostLog();
+  const today=todayStr();
+  if(!log[assetId])log[assetId]=[];
+  if(!log[assetId].includes(today))log[assetId].push(today);
+  savePostLog(log);
+  if(typeof fbq!=='undefined')fbq('trackCustom','AssetPosted',{asset_id:assetId,asset_name:ASSET_NAMES[assetId]||assetId,post_date:today});
+  updateStreakUI();
+  btn.textContent=t('postedToday');btn.classList.add('done');
+}
+
+function updateStreakUI(){
+  const log=getPostLog();
+  const today=todayStr();
+  // Update per-card indicators
+  document.querySelectorAll('.card-streak').forEach(el=>{
+    const id=el.id.replace('streak-','');
+    const dates=log[id]||[];
+    const last=dates.length?dates[dates.length-1]:null;
+    const ago=daysAgo(last);
+    const dot=document.getElementById('sdot-'+id);
+    const lbl=document.getElementById('slbl-'+id);
+    const btn=el.querySelector('.btn-posted');
+    if(!dot||!lbl)return;
+    dot.className='streak-dot';lbl.className='streak-lbl';
+    if(ago===0){
+      dot.classList.add('today');lbl.classList.add('today');
+      lbl.textContent=t('postedToday').replace('✓ ','');
+      if(btn){btn.textContent=t('postedToday');btn.classList.add('done');}
+    } else if(ago===1){
+      lbl.textContent=t('postedYesterday');
+      if(btn)btn.classList.remove('done');
+    } else if(ago!==null && ago>=7){
+      dot.classList.add('due');lbl.classList.add('due');
+      lbl.textContent=currentLang==='es'?'Hace '+ago+' días — publica ya':'Due — '+ago+' days ago';
+      if(btn)btn.classList.remove('done');
+    } else if(ago!==null){
+      lbl.textContent=currentLang==='es'?'Hace '+ago+' días':ago+' days ago';
+      if(btn)btn.classList.remove('done');
+    } else {
+      lbl.textContent=t('neverPosted');
+      if(btn)btn.classList.remove('done');
+    }
+  });
+  // Calculate streak — consecutive days any asset was posted
+  const allDates=new Set();
+  Object.values(log).forEach(dates=>dates.forEach(d=>allDates.add(d)));
+  let streak=0;
+  let check=new Date(today);
+  while(allDates.has(check.toISOString().slice(0,10))){
+    streak++;
+    check.setDate(check.getDate()-1);
+  }
+  const sc=document.getElementById('streak-count');
+  if(sc)sc.textContent=streak;
+}
+
+
+let currentCaptionId = null;
+const CAPTIONS = {
+  en:{
+    '01':[`POV: you finally stopped juggling 4 AI tools and just built your blend instead.\n\nClaude for strategy. Canva for visuals. Perplexity for research. All weighted to MY voice.\n\nThis is my AuraLayer blend. What's yours?\n\n#WhatsYourAuraLayer #AuraLayer #AItools #ContentCreator`,`I stopped using AI tools separately and started blending them.\n\nThe difference? Everything sounds like ME now.\n\nHere's my exact blend 👇\n\n#WhatsYourAuraLayer #AuraLayer #CreatorTools`],
+    '02':[`I tried AuraLayer for the first time and I wasn't ready for what happened.\n\nMy content finally sounds like me — not like a robot.\n\nFree to start 👉 link in bio\n\n#AuraLayer #AItools #ContentCreator #WhatsYourAuraLayer`,`First reaction to AuraLayer: this is it.\n\nNo more copy-pasting between tools. No more sounding generic.\n\nJust my voice, my blend, my output.\n\nLink in bio → free to start\n\n#AuraLayer #ContentCreator`],
+    '03':[`I was getting AI results. Just not MY results.\n\nThen I found my AuraLayer.\n\nSame tools. Finally sounds like me.\n\nFree to start → link in bio\n\n#WhatsYourAuraLayer #AuraLayer #AItools`,`My AI output always sounded like everyone else's…\n\nUntil I discovered my AuraLayer.\n\n9 tools. My percentages. My voice.\n\nLink in bio\n\n#AuraLayer #ContentCreator #WhatsYourAuraLayer`],
+    '04':[`Before AuraLayer: 2 hours per workflow. 6 tabs open. Nothing sounding like me.\n\nAfter AuraLayer: 20 minutes. One blend. My voice.\n\nSame output. Zero switching.\n\nFree to start → link in bio\n\n#WhatsYourAuraLayer #AuraLayer #Productivity`,`2 hours → 20 minutes.\n\nThat's what happens when you stop switching between AI tools and start blending them.\n\nAuraLayer changed how I create. Link in bio.\n\n#AuraLayer #ContentCreator #AItools`],
+    '05':[`Here's exactly how I use AuraLayer as a creator in my niche.\n\nClaude: strategy & planning\nCanva: visuals & brand\nPerplexity: research\n\nAll blended to MY percentages. My voice. My output.\n\nBuild your blend free → link in bio\n\n#WhatsYourAuraLayer #AuraLayer`,`Every creator's blend is different.\n\nHere's mine for my niche 👇\n\nWhat would yours look like?\n\n#WhatsYourAuraLayer #AuraLayer #ContentCreator`],
+    '06':[`What's your AuraLayer blend? 👇\n\nEvery creator uses AI differently. Show me yours in the comments.\n\nMine is in the video — Claude, Canva, Perplexity, weighted to my voice.\n\nBuild yours free → link in bio\n\n#WhatsYourAuraLayer #AuraLayer #ContentCreator`,`I'll start. This is my AuraLayer blend.\n\nNow you go. Drop yours in the comments 👇\n\nEvery blend is different. That's the point.\n\n#WhatsYourAuraLayer #AuraLayer`],
+    '07':[`You're still switching between AI tools and wondering why nothing sounds like you.\n\nIt's not the tools. It's the blend.\n\n87% of creators use 3+ AI tools and still sound generic.\n\nStop switching. Start blending. Free → link in bio\n\n#AuraLayer #AItools #ContentCreator`,`POV: you're copy-pasting between ChatGPT, Canva, and Perplexity every single day.\n\nThere's a better way.\n\nOne blend. Your voice. Zero switching.\n\nauralayer.ai → free to start\n\n#AuraLayer #ContentCreator`],
+    '08':[`30 days with my AuraLayer. Here's what changed.\n\n✓ Output finally sounds like me\n✓ Strategy + action plan in one prompt\n✓ 9 tools, my blend, my voice\n✓ $9/mo\n\nZero regrets.\n\nFree to start → link in bio\n\n#AuraLayer #ContentCreator #AItools`,`Real results after 30 days of AuraLayer:\n\nI don't sound like a robot anymore.\n\nThat's it. That's the review.\n\nLink in bio → free to start\n\n#AuraLayer #WhatsYourAuraLayer`]
+  },
+  es:{
+    '01':[`POV: por fin dejé de usar 4 herramientas de IA por separado y construí mi blend.\n\nClaude para estrategia. Canva para visuales. Perplexity para investigación. Todo ajustado a MI voz.\n\nEste es mi blend de AuraLayer. ¿Cuál es el tuyo?\n\n#WhatsYourAuraLayer #AuraLayer #HerramientasIA #Creador`,`Dejé de usar las herramientas de IA por separado y empecé a mezclarlas.\n\n¿La diferencia? Todo suena como YO ahora.\n\nAquí está mi blend exacto 👇\n\n#WhatsYourAuraLayer #AuraLayer #CreadorDeContenido`],
+    '02':[`Probé AuraLayer por primera vez y no estaba listo para lo que pasó.\n\nMi contenido por fin suena como yo — no como un robot.\n\nGratis para empezar 👉 link en bio\n\n#AuraLayer #HerramientasIA #Creador #WhatsYourAuraLayer`,`Primera reacción a AuraLayer: esto es todo.\n\nSin más copiar y pegar entre herramientas. Sin sonar genérico.\n\nSolo mi voz, mi blend, mi contenido.\n\nLink en bio → gratis para empezar\n\n#AuraLayer #CreadorDeContenido`],
+    '03':[`Usaba IA todos los días. Pero el resultado nunca sonaba como yo.\n\nHasta que encontré mi AuraLayer.\n\nMismas herramientas. Por fin suena como yo.\n\nGratis para empezar → link en bio\n\n#WhatsYourAuraLayer #AuraLayer #HerramientasIA`,`Mi contenido con IA siempre sonaba igual que el de todos…\n\nHasta que descubrí mi AuraLayer.\n\n9 herramientas. Mis porcentajes. Mi voz.\n\nLink en bio\n\n#AuraLayer #CreadorDeContenido #WhatsYourAuraLayer`],
+    '04':[`Antes de AuraLayer: 2 horas por flujo de trabajo. 6 pestañas abiertas. Nada sonaba como yo.\n\nCon AuraLayer: 20 minutos. Un blend. Mi voz.\n\nMismo resultado. Sin cambiar de app.\n\nGratis para empezar → link en bio\n\n#WhatsYourAuraLayer #AuraLayer #Productividad`,`2 horas → 20 minutos.\n\nEso es lo que pasa cuando dejas de cambiar entre herramientas de IA y empiezas a mezclarlas.\n\nAuraLayer cambió cómo creo. Link en bio.\n\n#AuraLayer #CreadorDeContenido #HerramientasIA`],
+    '05':[`Así es exactamente cómo uso AuraLayer como creador en mi nicho.\n\nClaude: estrategia y planificación\nCanva: visuales y marca\nPerplexity: investigación\n\nTodo mezclado a MIS porcentajes. Mi voz. Mi contenido.\n\nConstruye tu blend gratis → link en bio\n\n#WhatsYourAuraLayer #AuraLayer`,`El blend de cada creador es diferente.\n\nAquí está el mío para mi nicho 👇\n\n¿Cómo sería el tuyo?\n\n#WhatsYourAuraLayer #AuraLayer #CreadorDeContenido`],
+    '06':[`¿Cuál es tu blend de AuraLayer? 👇\n\nCada creador usa la IA de forma diferente. Muéstrame el tuyo en los comentarios.\n\nEl mío está en el video — Claude, Canva, Perplexity, ajustado a mi voz.\n\nConstruye el tuyo gratis → link en bio\n\n#WhatsYourAuraLayer #AuraLayer #CreadorDeContenido`,`Yo empiezo. Este es mi blend de AuraLayer.\n\nAhora te toca a ti. Deja el tuyo en los comentarios 👇\n\nCada blend es diferente. Ese es el punto.\n\n#WhatsYourAuraLayer #AuraLayer`],
+    '07':[`Sigues cambiando entre herramientas de IA y te preguntas por qué nada suena como tú.\n\nNo son las herramientas. Es el blend.\n\n87% de los creadores usan 3+ herramientas de IA y siguen sonando genéricos.\n\nDeja de cambiar. Empieza a mezclar. Gratis → link en bio\n\n#AuraLayer #HerramientasIA #CreadorDeContenido`,`POV: copias y pegas entre ChatGPT, Canva y Perplexity todos los días.\n\nHay una mejor manera.\n\nUn blend. Tu voz. Sin cambiar de app.\n\nauralayer.ai → gratis para empezar\n\n#AuraLayer #CreadorDeContenido`],
+    '08':[`30 días con AuraLayer. Esto es lo que cambió de verdad.\n\n✓ 3x más rápido\n✓ Todo suena como yo\n✓ Cancelé 3 suscripciones\n✓ $9/mes en vez de $97\n\nSigo usándolo. Cero arrepentimientos.\n\nGratis para empezar → link en bio\n\n#AuraLayer #CreadorDeContenido #HerramientasIA`,`Resultados reales después de 30 días con AuraLayer:\n\nYa no sueno como un robot.\n\nEso es todo. Esa es la reseña.\n\nLink en bio → gratis para empezar\n\n#AuraLayer #WhatsYourAuraLayer`]
+  }
+};
+let captionVariantIdx=0;
+
+const ASSET_NAMES = {
+  '01':'Blend Reveal','02':'First Reaction','03':'Cancellation',
+  '04':'Before / After','05':'Niche Deep Dive','06':'Challenge',
+  '07':'POV Statement','08':'Real Results'
+};
+
+function openCaption(assetId,assetName){
+  currentCaptionId=assetId;captionVariantIdx=0;
+  const handle=g('ref-input')?g('ref-input').value.trim():'';
+  document.getElementById('cm-title').textContent=(ASSET_NAMES[assetId]||assetName)+' · '+(currentLang==='es'?'Subtítulo':'Caption');
+  document.getElementById('cm-sub').textContent=t('editSub');
+  document.getElementById('cm-copy').textContent=t('copyCaption');
+  document.getElementById('cm-regen').textContent=t('regen');
+  setCaption(assetId,handle,0);
+  document.getElementById('caption-modal').classList.add('open');
+}
+function setCaption(id,handle,idx){
+  const langCaps=CAPTIONS[currentLang]||CAPTIONS.en;
+  const caps=langCaps[id]||langCaps['01'];
+  let cap=caps[idx%caps.length];
+  if(handle)cap=cap.replace(/@yourcreatorname/g,handle);
+  document.getElementById('cm-text').value=cap;
+}
+function regenCaption(){
+  captionVariantIdx++;
+  const handle=g('ref-input')?g('ref-input').value.trim():'';
+  setCaption(currentCaptionId,handle,captionVariantIdx);
+  const btn=document.getElementById('cm-regen');
+  btn.textContent=currentLang==='es'?'↺ Nueva versión':'↺ New version';
+  setTimeout(()=>btn.textContent=t('regen'),1200);
+}
+function closeCaption(){document.getElementById('caption-modal').classList.remove('open');currentCaptionId=null;}
+function copyCaption(){
+  const text=document.getElementById('cm-text').value;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('cm-copy');
+    btn.textContent='✓ '+(currentLang==='es'?'Copiado':'Copied');btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent=t('copyCaption');btn.classList.remove('copied');},2000);
+  });
+}
+document.getElementById('caption-modal').addEventListener('click',function(e){if(e.target===this)closeCaption();});
+
+
+function getRefCode(){
+  return localStorage.getItem('al_ref_url')||'';
+}
+function saveRef(){
+  const val = document.getElementById('ref-input').value.trim();
+  if(!val)return;
+  localStorage.setItem('al_ref_url', val);
+  updateRefStatus(val);
+  document.getElementById('ref-input').classList.add('has-val');
+  const btn = document.getElementById('ref-save');
+  btn.textContent='✓ Saved';btn.classList.add('saved');
+  setTimeout(()=>{btn.textContent='Save';btn.classList.remove('saved');},1800);
+}
+function loadRef(){
+  const val = getRefCode();
+  if(val){
+    document.getElementById('ref-input').value = val;
+    document.getElementById('ref-input').classList.add('has-val');
+    updateRefStatus(val);
+  }
+}
+function updateRefStatus(val){
+  const dot = document.getElementById('ref-status-dot');
+  const lbl = document.getElementById('ref-label');
+  if(val){
+    dot.classList.add('active');
+    lbl.textContent=t('refActive');
+    lbl.classList.add('active');
+  } else {
+    dot.classList.remove('active');
+    lbl.textContent=t('refLabel');
+    lbl.classList.remove('active');
+  }
+}
+function copyLink(btn, file){
+  const refUrl = getRefCode();
+  const url = refUrl || 'https://auralayer.ai/ugc/'+file.replace('.html','');
+  navigator.clipboard.writeText(url).then(()=>{
+    if(typeof fbq!=='undefined')fbq('track','Lead',{content_name:'affiliate_link_copied',content_category:'ugc_portal'});
+    btn.textContent='✓ Copied';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='$ Earn';btn.classList.remove('copied');},2000);
+  }).catch(()=>{btn.textContent='⎘ Link';});
+}
+
+// Keyboard nav
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')goTo(currentIndex+1);
+  if(e.key==='ArrowLeft')goTo(currentIndex-1);
+  if(e.key==='Escape')closeLB();
+});
+
+// Sync dots + active card with native scroll on mobile
+document.getElementById('carousel-wrap').addEventListener('scroll', function(){
+  if(window.innerWidth > 600) return;
+  const cardW = window.innerWidth * 0.64 + 10;
+  const idx = Math.round(this.scrollLeft / cardW);
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.querySelectorAll('.card').forEach((c,i)=>c.classList.toggle('mob-active',i===idx));
+});
+// Set first card active on load
+function initMobActive(){
+  if(window.innerWidth > 600) return;
+  document.querySelectorAll('.card').forEach((c,i)=>c.classList.toggle('mob-active',i===0));
+}
+
+const PV_TEXT = {
+  en:{
+    myBlend:'My blend', typing:'Typing...', replaceWith:'Replace it all with',
+    starter:'/mo · AuraLayer Starter', before:'before', after:'after',
+    withAL:'with AuraLayer.', myNiche:'My blend for this niche',
+    honestTruth:'The honest truth —', notTools:"It's not the tools.",
+    itsBlend:"It's the", blend:'blend.', ofCreators:'of creators',
+    realOutput:'Real output ↓', optimized:'Your blend is optimized for independent monetization.'
+  },
+  es:{
+    myBlend:'Mi blend', typing:'Escribiendo...', replaceWith:'Cambia todo por',
+    starter:'/mes · AuraLayer Starter', before:'antes', after:'después',
+    withAL:'usando AuraLayer.', myNiche:'Mi blend para mi nicho',
+    honestTruth:'La neta —', notTools:'No son las herramientas.',
+    itsBlend:'Es el', blend:'blend.', ofCreators:'de creadores',
+    realOutput:'Resultado real ↓', optimized:'Tu blend está optimizado para monetización independiente.'
+  }
+};
+
+function pv(key){return (PV_TEXT[currentLang]||PV_TEXT.en)[key];}
+
+function getL2Preview(a){
+  const id = a.id;
+  if(id==='01') return `
+    <div class="pv-wrap">
+      <div class="pv-ey">${pv('myBlend')}</div>
+      <div class="pv-row"><span class="pv-pct pv-gold" id="pv01-c">0%</span><div class="pv-tool"><div class="pv-name pv-gold">Claude</div><div class="pv-track"><div class="pv-fill pv-fill-gold" id="pv01-bc" style="width:0%"></div></div></div></div>
+      <div class="pv-div"></div>
+      <div class="pv-row"><span class="pv-pct pv-green" id="pv01-cv">0%</span><div class="pv-tool"><div class="pv-name pv-green">Canva</div><div class="pv-track"><div class="pv-fill pv-fill-green" id="pv01-bcv" style="width:0%"></div></div></div></div>
+      <div class="pv-div"></div>
+      <div class="pv-row"><span class="pv-pct pv-purple" id="pv01-p">0%</span><div class="pv-tool"><div class="pv-name pv-purple">Perplexity</div><div class="pv-track"><div class="pv-fill pv-fill-purple" id="pv01-bp" style="width:0%"></div></div></div></div>
+    </div>`;
+  if(id==='02') return `
+    <div class="pv-wrap pv-center">
+      <div class="pv-ey" style="margin-bottom:16px;">${pv('typing')}</div>
+      <div class="pv-typing" id="pv02-txt"></div>
+      <div class="pv-cursor" id="pv02-cur"></div>
+    </div>`;
+  if(id==='03') return `
+    <div class="pv-wrap pv-center">
+      <div class="pv-ey" style="margin-bottom:8px;">${pv('replaceWith')}</div>
+      <div class="pv-big-num pv-gold">$9</div>
+      <div class="pv-sub">${pv('starter')}</div>
+    </div>`;
+  if(id==='04') return `
+    <div class="pv-wrap" style="justify-content:center;">
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px;">
+        <span class="pv-crossed">2hrs</span><span class="pv-tiny pv-red">${pv('before')}</span>
+      </div>
+      <div style="width:100%;height:1px;background:rgba(255,255,255,0.05);margin-bottom:12px;"></div>
+      <div style="display:flex;align-items:baseline;gap:8px;">
+        <span class="pv-big-num pv-gold" id="pv04-n">20min</span><span class="pv-tiny" style="color:rgba(201,146,42,0.5)">${pv('after')}</span>
+      </div>
+      <div class="pv-sub" style="margin-top:12px;font-style:italic;">${pv('withAL')}</div>
+    </div>`;
+  if(id==='05') return `
+    <div class="pv-wrap">
+      <div class="pv-ey">${pv('myNiche')}</div>
+      <div class="pv-row"><span class="pv-pct pv-gold" id="pv05-c">0%</span><div class="pv-tool"><div class="pv-name pv-gold">Claude</div><div class="pv-track"><div class="pv-fill pv-fill-gold" id="pv05-bc" style="width:0%"></div></div></div></div>
+      <div class="pv-div"></div>
+      <div class="pv-row"><span class="pv-pct pv-green" id="pv05-cv">0%</span><div class="pv-tool"><div class="pv-name pv-green">Canva</div><div class="pv-track"><div class="pv-fill pv-fill-green" id="pv05-bcv" style="width:0%"></div></div></div></div>
+      <div class="pv-div"></div>
+      <div class="pv-row"><span class="pv-pct pv-purple" id="pv05-p">0%</span><div class="pv-tool"><div class="pv-name pv-purple">Perplexity</div><div class="pv-track"><div class="pv-fill pv-fill-purple" id="pv05-bp" style="width:0%"></div></div></div></div>
+    </div>`;
+  if(id==='06') return `
+    <div class="pv-wrap">
+      <div class="pv-ey">${pv('myBlend')}</div>
+      <div class="pv-row"><span class="pv-pct pv-gold" id="pv06-c">0%</span><div class="pv-tool"><div class="pv-name pv-gold">Claude</div><div class="pv-track"><div class="pv-fill pv-fill-gold" id="pv06-bc" style="width:0%"></div></div></div></div>
+      <div class="pv-div"></div>
+      <div class="pv-row"><span class="pv-pct pv-green" id="pv06-cv">0%</span><div class="pv-tool"><div class="pv-name pv-green">Canva</div><div class="pv-track"><div class="pv-fill pv-fill-green" id="pv06-bcv" style="width:0%"></div></div></div></div>
+      <div class="pv-div"></div>
+      <div class="pv-row"><span class="pv-pct pv-purple" id="pv06-p">0%</span><div class="pv-tool"><div class="pv-name pv-purple">Perplexity</div><div class="pv-track"><div class="pv-fill pv-fill-purple" id="pv06-bp" style="width:0%"></div></div></div></div>
+    </div>`;
+  if(id==='07') return `
+    <div class="pv-wrap" style="justify-content:center;">
+      <div class="pv-ey" style="margin-bottom:16px;">${pv('honestTruth')}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(245,243,238,0.2);margin-bottom:4px;letter-spacing:.5px;">${pv('notTools')}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#F5F3EE;line-height:1;margin-bottom:14px;">${pv('itsBlend')} <span style="color:#C9922A;">${pv('blend')}</span></div>
+      <div style="display:flex;align-items:baseline;gap:6px;">
+        <span class="pv-big-num pv-gold" id="pv07-stat" style="font-size:52px;">0%</span>
+        <span class="pv-tiny" style="color:var(--text-faint);">${pv('ofCreators')}</span>
+      </div>
+    </div>`;
+  if(id==='08') return `
+    <div class="pv-wrap">
+      <div class="pv-ey">${pv('realOutput')}</div>
+      <div style="width:100%;border:1px solid rgba(116,197,155,0.2);border-top:2px solid rgba(116,197,155,0.4);background:rgba(116,197,155,0.03);padding:10px 12px;margin-bottom:12px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(245,243,238,0.7);line-height:1.4;margin-bottom:8px;">${pv('optimized')}</div>
+        <div class="pv-row" style="margin-bottom:4px;"><span class="pv-tiny pv-gold" style="min-width:40px;">Claude</span><div class="pv-track" style="flex:1;"><div class="pv-fill pv-fill-gold" id="pv08-bc" style="width:0%"></div></div><span class="pv-tiny pv-gold" id="pv08-c" style="min-width:22px;text-align:right;">0%</span></div>
+        <div class="pv-row" style="margin-bottom:4px;"><span class="pv-tiny pv-green" style="min-width:40px;">Canva</span><div class="pv-track" style="flex:1;"><div class="pv-fill pv-fill-green" id="pv08-bcv" style="width:0%"></div></div><span class="pv-tiny pv-green" id="pv08-cv" style="min-width:22px;text-align:right;">0%</span></div>
+        <div class="pv-row"><span class="pv-tiny pv-purple" style="min-width:40px;">Perp.</span><div class="pv-track" style="flex:1;"><div class="pv-fill pv-fill-purple" id="pv08-bp" style="width:0%"></div></div><span class="pv-tiny pv-purple" id="pv08-p" style="min-width:22px;text-align:right;">0%</span></div>
+      </div>
+    </div>`;
+  return `<div class="pv-wrap pv-center"><div class="pv-big-num pv-gold">${a.name}</div></div>`;
+}
+
+// Spring easing
+function springEase(t){
+  if(t<0.6){const p=t/0.6;return 1.1*(p<0.5?2*p*p:-1+(4-2*p)*p);}
+  else if(t<0.8){const p=(t-0.6)/0.2;return 1.1-(0.15*(p<0.5?2*p*p:-1+(4-2*p)*p));}
+  else{const p=(t-0.8)/0.2;return 0.95+(0.05*(p<0.5?2*p*p:-1+(4-2*p)*p));}
+}
+
+let pvTimers = [];
+let pvAnimActive = false;
+
+function clearPvAnimations(){
+  pvTimers.forEach(t=>clearTimeout(t));
+  pvTimers=[];
+  pvAnimActive=false;
+}
+
+function pvTimeout(fn,d){const t=setTimeout(fn,d);pvTimers.push(t);return t;}
+
+function animPvBars(ids, vals, dur, delay){
+  if(!pvAnimActive)return;
+  const [bc,bcv,bp,pc,pcv,pp] = ids;
+  const [vc,vcv,vp] = vals;
+  pvTimeout(()=>{
+    if(!pvAnimActive)return;
+    const t0=performance.now();
+    function tick(now){
+      if(!pvAnimActive)return;
+      const t=Math.min((now-t0)/dur,1);
+      const s=springEase(t);
+      const gc=g(bc),gcv=g(bcv),gp=g(bp);
+      if(gc)gc.style.width=Math.min(Math.round(vc*s),100)+'%';
+      if(gcv)gcv.style.width=Math.min(Math.round(vcv*s),100)+'%';
+      if(gp)gp.style.width=Math.min(Math.round(vp*s),100)+'%';
+      if(g(pc))g(pc).textContent=Math.round(vc*s)+'%';
+      if(g(pcv))g(pcv).textContent=Math.round(vcv*s)+'%';
+      if(g(pp))g(pp).textContent=Math.round(vp*s)+'%';
+      if(t<1){requestAnimationFrame(tick);}
+      else{
+        if(gc)gc.style.width=vc+'%';if(gcv)gcv.style.width=vcv+'%';if(gp)gp.style.width=vp+'%';
+        if(g(pc))g(pc).textContent=vc+'%';if(g(pcv))g(pcv).textContent=vcv+'%';if(g(pp))g(pp).textContent=vp+'%';
+        pvTimeout(()=>{
+          if(!pvAnimActive)return;
+          if(gc)gc.style.width='0%';if(gcv)gcv.style.width='0%';if(gp)gp.style.width='0%';
+          if(g(pc))g(pc).textContent='0%';if(g(pcv))g(pcv).textContent='0%';if(g(pp))g(pp).textContent='0%';
+          animPvBars(ids,vals,dur,800);
+        },2000);
+      }
+    }
+    requestAnimationFrame(tick);
+  }, delay);
+}
+
+function animPvStat(elId, target, dur, delay){
+  if(!pvAnimActive)return;
+  pvTimeout(()=>{
+    if(!pvAnimActive)return;
+    const t0=performance.now();
+    function tick(now){
+      if(!pvAnimActive)return;
+      const t=Math.min((now-t0)/dur,1);
+      const s=springEase(t);
+      const el=g(elId);
+      if(el)el.textContent=Math.round(target*s)+'%';
+      if(t<1){requestAnimationFrame(tick);}
+      else{
+        if(el)el.textContent=target+'%';
+        pvTimeout(()=>{if(!pvAnimActive)return;if(el)el.textContent='0%';animPvStat(elId,target,dur,800);},2000);
+      }
+    }
+    requestAnimationFrame(tick);
+  },delay);
+}
+
+function animTyping(elId, text, dur, delay){
+  if(!pvAnimActive)return;
+  pvTimeout(()=>{
+    if(!pvAnimActive)return;
+    let i=0;const el=g(elId);if(!el)return;el.textContent='';
+    const interval=setInterval(()=>{
+      if(!pvAnimActive){clearInterval(interval);return;}
+      if(i<text.length){el.textContent+=text[i];i++;}
+      else{clearInterval(interval);pvTimeout(()=>animTyping(elId,text,dur,400),1800);}
+    }, dur/text.length);
+  }, delay);
+}
+
+function initPreviews(){
+  clearPvAnimations();
+  pvAnimActive=true;
+  animPvBars(['pv01-bc','pv01-bcv','pv01-bp','pv01-c','pv01-cv','pv01-p'],[45,33,22],2800,400);
+  animPvBars(['pv05-bc','pv05-bcv','pv05-bp','pv05-c','pv05-cv','pv05-p'],[45,33,22],2800,700);
+  animPvBars(['pv06-bc','pv06-bcv','pv06-bp','pv06-c','pv06-cv','pv06-p'],[45,33,22],2800,1000);
+  animPvBars(['pv08-bc','pv08-bcv','pv08-bp','pv08-c','pv08-cv','pv08-p'],[45,33,22],2800,1300);
+  animPvStat('pv07-stat', 87, 2800, 600);
+  const typingText = currentLang === 'es'
+    ? 'Estrategia + planificación para Creadores de Música.'
+    : 'Strategy + release planning for Music Creators.';
+  animTyping('pv02-txt', typingText, 55, 300);
+}
+
+// ── LANGUAGE SYSTEM ──
+function applyLang(){
+  const T = TRANSLATIONS[currentLang];
+  // Tabs
+  const tabs = document.querySelectorAll('.tab');
+  if(tabs[0]) tabs[0].textContent = T.tab1;
+  if(tabs[1]) tabs[1].textContent = T.tab2;
+  if(tabs[2]) tabs[2].textContent = T.tab3;
+  // Tab hint
+  const hint = document.getElementById('tab-hint');
+  if(hint) hint.textContent = getTabHints()[currentTab]||'';
+  // Hero
+  const ht = document.getElementById('hero-title');
+  if(ht){ ht.childNodes[0].textContent = T.heroTitle; }
+  const hem = document.getElementById('hero-em');
+  if(hem) hem.textContent = T.heroEm;
+  const hs = document.getElementById('hero-sub');
+  if(hs) hs.textContent = T.heroSub;
+  const ey = document.getElementById('hero-eyebrow');
+  if(ey) ey.textContent = T.eyebrow;
+  // Ref bar
+  const rl = document.getElementById('ref-label');
+  if(rl) rl.textContent = getRefCode() ? T.refActive : T.refLabel;
+  const ri = document.getElementById('ref-input');
+  if(ri) ri.placeholder = T.refPlaceholder;
+  const rs = document.getElementById('ref-save');
+  if(rs) rs.textContent = T.refSave;
+  // Streak
+  const su = document.getElementById('streak-unit');
+  if(su) su.textContent = T.streakUnit;
+  // Portal badge
+  const pb = document.getElementById('portal-badge');
+  if(pb) pb.textContent = T.portalBadge;
+  // Lang toggle
+  const lt = document.getElementById('lang-toggle');
+  if(lt){ lt.textContent = T.langBtn; lt.classList.toggle('es', currentLang==='es'); }
+  // Caption modal buttons
+  const cmc = document.getElementById('cm-copy');
+  if(cmc) cmc.textContent = T.copyCaption;
+  const cmr = document.getElementById('cm-regen');
+  if(cmr) cmr.textContent = T.regen;
+  const cms = document.getElementById('cm-sub');
+  if(cms) cms.textContent = T.editSub;
+  // Footer
+  const fn = document.querySelector('.footer-note');
+  if(fn) fn.textContent = T.footerNote;
+  const ft = document.querySelector('.footer-tagline');
+  if(ft) ft.textContent = T.footerTagline;
+  // Rebuild cards to pick up new button labels
+  buildCards();
+  setTimeout(updateStreakUI, 100);
+}
+
+function toggleLang(){
+  currentLang = currentLang === 'en' ? 'es' : 'en';
+  sessionStorage.setItem('al_ugc_lang', currentLang);
+  applyLang();
+}
+
+function getTabHints(){
+  return {
+    convert: t('hint1'),
+    virality: t('hint2'),
+    impact: t('hint3')
+  };
+}
+
+buildCards();
+setTimeout(initPreviews, 300);
+setTimeout(initMobActive, 100);
+setTimeout(updateStreakUI, 200);
+loadRef();
+setTimeout(()=>{
+  applyLang();
+  const hint=document.getElementById('tab-hint');
+  if(hint)hint.textContent=getTabHints()[currentTab]||'';
+}, 50);
+
+const TAB_ORDER = ['convert','virality','impact'];
+const TAB_HINTS = {convert:'Best assets for driving signups & commission',virality:'Best assets for reach, shares & comments',impact:'Best assets for brand credibility & trust'};
+let rotateTimer = null;
+let userInteracted = false;
+
+function switchTab(tabKey, isRotating){
+  document.querySelectorAll('.tab').forEach(t=>{t.classList.remove('active');t.classList.remove('rotating');});
+  const tab = document.querySelector(`.tab[data-tab="${tabKey}"]`);
+  if(!tab) return;
+  tab.classList.add('active');
+  if(isRotating) tab.classList.add('rotating');
+  currentTab = tabKey;
+  const hint = document.getElementById('tab-hint');
+  if(hint) hint.textContent = getTabHints()[tabKey]||'';
+  buildCards();
+  setTimeout(initPreviews, 300);
+  setTimeout(initMobActive, 100);
+  setTimeout(updateStreakUI, 200);
+  const wrap = document.getElementById('carousel-wrap');
+  wrap.scrollTo({left:0, behavior:'instant'});
+  goTo(0);
+}
+
+function rotateToTab(tabKey){ switchTab(tabKey, true); }
+
+function startRotation(){
+  if(userInteracted) return;
+  let idx = 0;
+  rotateTimer = setInterval(()=>{
+    if(userInteracted){clearInterval(rotateTimer);return;}
+    idx = (idx + 1) % TAB_ORDER.length;
+    rotateToTab(TAB_ORDER[idx]);
+  }, 4000);
+}
+
+function stopRotation(){
+  userInteracted = true;
+  clearInterval(rotateTimer);
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('rotating'));
+}
+
+setTimeout(startRotation, 2000);
+
+['click','touchstart','keydown'].forEach(evt=>{
+  document.addEventListener(evt, ()=>{if(!userInteracted)stopRotation();},{once:true});
+});
+
+document.getElementById('ref-input').addEventListener('keydown',function(e){if(e.key==='Enter')saveRef();});
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.onclick = function(){
+    stopRotation();
+    switchTab(this.dataset.tab, false);
+  };
+});
+</script>
+</body>
+</html>
