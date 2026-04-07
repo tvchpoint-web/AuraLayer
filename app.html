@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AuraLayer.ai</title>
+<!-- Rewardful -->
+<script>(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');</script>
+<script async src='https://r.wdfl.co/rw.js' data-rewardful='953752'></script>
+<!-- Meta Pixel -->
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','936492782314915');fbq('track','PageView');</script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#FFFFFF;--surface:#F8F8F8;--card:#F0EDE6;
+  --gold:#C9922A;--gold-lt:#E8B84A;--gold-dim:rgba(201,146,42,0.12);
+  --canva:#C86E28;--perp:#7050C8;
+  --white:#111111;--muted:rgba(17,17,17,0.45);--dim:rgba(17,17,17,0.25);
+  --border:rgba(0,0,0,0.08);--border-gold:rgba(201,146,42,0.3);
+  --radius:18px;--radius-sm:12px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;}
+
+/* ── VIEWS ── */
+.view{display:none;position:absolute;inset:0;flex-direction:column;}
+.view.active{display:flex;}
+
+/* ── NAV ── */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:28px 20px 6px;flex-shrink:0;}
+.nav-brand{display:flex;align-items:center;gap:8px;}
+.nav-bars{display:flex;flex-direction:column;gap:3px;}
+.nav-bar{border-radius:20px;background:linear-gradient(90deg,var(--gold-lt),var(--gold));}
+.nb1{width:24px;height:4px;opacity:1;}
+.nb2{width:18px;height:4px;opacity:.65;}
+.nb3{width:12px;height:4px;opacity:.35;}
+.nav-wordmark{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#111111;}
+.nav-wordmark span{color:var(--gold);}
+.beta-badge{font-family:'DM Mono',monospace;font-size:7px;font-weight:500;letter-spacing:1px;color:var(--gold);background:var(--gold-dim);border:1px solid var(--border-gold);border-radius:4px;padding:2px 4px;align-self:center;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.tier-pill{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;padding:4px 10px;border-radius:20px;border:1px solid var(--border-gold);color:var(--gold);background:var(--gold-dim);}
+.settings-btn{width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.settings-btn:active{background:var(--card);}
+.lang-toggle{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;height:28px;}
+.lang-btn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;padding:0 8px;height:100%;display:flex;align-items:center;cursor:pointer;color:var(--muted);transition:all .15s;border:none;background:transparent;}
+.lang-btn.active{background:var(--gold);color:#FFFFFF;font-weight:700;}
+
+/* ── BLEND VIEW ── */
+#view-blend{overflow:hidden;display:flex;flex-direction:column;}
+.blend-body{
+  display:flex;flex-direction:column;align-items:center;
+  flex:1;overflow:hidden;
+  padding:28px 18px calc(28px + var(--safe-bottom));
+  justify-content:space-between;
+  gap:10px;
+}
+
+/* ── FREE BADGE — Fix #18 ── */
+.free-badge{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.3px;color:var(--gold);background:var(--gold-dim);border:1px solid var(--border-gold);border-radius:20px;padding:5px 14px;margin-bottom:0;flex-shrink:0;}
+
+/* ── CIRCLES ARENA ── */
+.circles-arena{position:relative;width:260px;height:190px;margin:0 auto;flex-shrink:0;}
+.circle-btn{position:absolute;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s ease;border:2px solid transparent;}
+.circle-btn:active{transform:scale(0.95);}
+
+/* Gold glow behind main circle */
+.circle-main-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle, rgba(201,146,42,0.14) 0%, rgba(201,146,42,0) 70%);
+  pointer-events:none;
+  animation:glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}}
+
+.circle-main{width:134px;height:134px;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:#FFFFFF;border-color:var(--gold);
+  box-shadow:0 2px 18px rgba(201,146,42,0.15), 0 4px 22px rgba(0,0,0,0.07);}
+.circle-main .c-pct{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#8A620E;line-height:1;}
+.circle-main .c-name{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.5px;}
+.circle-main .c-badge{font-family:'DM Mono',monospace;font-size:7px;color:var(--gold);letter-spacing:2px;margin-top:3px;}
+
+/* Satellite 1 — Canva warm orange */
+.circle-sat1{width:82px;height:82px;bottom:0;left:6px;
+  background:#FFF4EC;border-color:rgba(200,110,40,0.5);
+  box-shadow:0 2px 10px rgba(200,110,40,0.1),0 2px 8px rgba(0,0,0,0.05);}
+.circle-sat1 .c-pct{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:var(--canva);line-height:1;}
+.circle-sat1 .c-name{font-size:7px;color:rgba(200,110,40,0.65);margin-top:2px;}
+
+/* Satellite 2 — Perplexity purple */
+.circle-sat2{width:62px;height:62px;bottom:8px;right:10px;
+  background:#F3F0FD;border-color:rgba(112,80,200,0.45);
+  box-shadow:0 2px 8px rgba(112,80,200,0.1),0 2px 6px rgba(0,0,0,0.04);}
+.circle-sat2 .c-pct{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--perp);line-height:1;}
+.circle-sat2 .c-name{font-size:6px;color:rgba(112,80,200,0.6);margin-top:2px;}
+
+/* Arc ring behind main circle */
+.arc-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:142px;height:142px;border-radius:50%;border:2px solid rgba(201,146,42,0.18);pointer-events:none;}
+
+/* One-time tap hint pulse on circles */
+@keyframes tapHint{0%{box-shadow:0 0 0 0 rgba(201,168,76,0.4);}70%{box-shadow:0 0 0 14px rgba(201,168,76,0);}100%{box-shadow:0 0 0 0 rgba(201,168,76,0);}}
+
+/* ── STACK NAME ── */
+.stack-name{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;color:#111111;text-align:center;margin-bottom:3px;flex-shrink:0;}
+.stack-sub{font-size:11px;color:var(--muted);text-align:center;font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:0;flex-shrink:0;}
+.adjust-hint{font-size:9px;color:rgba(201,146,42,0.55);font-family:'DM Mono',monospace;letter-spacing:1.5px;text-align:center;margin-bottom:0;display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;}
+.adjust-hint::before,.adjust-hint::after{content:'';display:block;width:16px;height:1px;background:rgba(201,146,42,0.2);}
+
+/* ── PROMPT FIELD — Fix #14: 16px prevents iOS zoom ── */
+.prompt-wrap{
+  width:100%;background:#FFFFFF;
+  border:1.5px solid var(--border);
+  border-radius:16px;
+  padding:12px 16px;margin-bottom:0;
+  transition:border-color .2s;
+  box-shadow:0 1px 6px rgba(0,0,0,0.05);
+  flex:1;display:flex;flex-direction:column;min-height:0;
+}
+.prompt-wrap:focus-within{border-color:rgba(201,146,42,0.5);}
+.prompt-label{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.4px;color:var(--muted);margin-bottom:6px;flex-shrink:0;}
+textarea#uprompt{
+  width:100%;background:transparent;border:none;outline:none;
+  font-family:'DM Sans',sans-serif;font-size:15px;color:#111111;
+  line-height:1.6;resize:none;flex:1;min-height:0;
+  -webkit-appearance:none;
+}
+textarea#uprompt::placeholder{color:rgba(17,17,17,0.3);font-size:14px;}
+
+/* ── LET'S GO — always visible Fix #7 ── */
+.letsgo-btn{
+  width:100%;padding:17px;
+  background:linear-gradient(135deg,#F0C040,#C9922A);
+  border:none;border-radius:18px;
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:800;
+  color:#FFFFFF;cursor:pointer;letter-spacing:.04em;
+  margin-bottom:0;
+  box-shadow:0 4px 18px rgba(201,146,42,0.32);
+  transition:opacity .2s, box-shadow .2s;
+  -webkit-appearance:none;flex-shrink:0;
+}
+.letsgo-btn:active{opacity:.87;box-shadow:0 2px 8px rgba(201,146,42,0.2);}
+.free-note{font-size:10px;color:var(--muted);text-align:center;font-family:'DM Sans',sans-serif;margin-bottom:0;letter-spacing:.2px;flex-shrink:0;}
+
+/* ── ARCHETYPE SELECTOR ── */
+.arch-section{width:100%;flex-shrink:0;}
+.arch-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-align:center;margin-bottom:10px;text-transform:uppercase;}
+.arch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;}
+.arch-chip{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.arch-circle{width:52px;height:52px;border-radius:50%;border:2px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:20px;transition:border-color .2s,background .2s,transform .15s;position:relative;}
+.arch-circle:active{transform:scale(0.93);}
+.arch-chip.active .arch-circle{border-color:var(--gold);background:var(--gold-dim);}
+.arch-chip.active .arch-circle::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1.5px solid rgba(201,146,42,0.3);}
+.arch-chip-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:var(--muted);transition:color .2s;text-align:center;}
+.arch-chip.active .arch-chip-label{color:var(--gold);font-weight:700;}
+
+/* ── YOUTUBE PANEL ── */
+.yt-panel{width:100%;flex-shrink:0;display:none;}
+.yt-panel.open{display:block;}
+.yt-panel-inner{background:#FFFFFF;border:1.5px solid rgba(255,0,0,0.2);border-radius:14px;overflow:hidden;margin-bottom:0;}
+.yt-panel-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,0,0,0.04);border-bottom:1px solid rgba(255,0,0,0.1);}
+.yt-panel-title{display:flex;align-items:center;gap:6px;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#CC2200;}
+.yt-fetch-btn{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid rgba(255,60,60,0.35);background:rgba(255,0,0,0.08);color:#CC2200;cursor:pointer;letter-spacing:.03em;transition:all .2s;}
+.yt-fetch-btn:disabled{opacity:.4;cursor:not-allowed;}
+.yt-fetch-btn.pulsing{animation:ytPulse 1.2s ease-in-out infinite;}
+@keyframes ytPulse{0%,100%{border-color:rgba(255,60,60,0.35);}50%{border-color:rgba(255,60,60,0.7);background:rgba(255,0,0,0.14);}}
+.yt-url-row{display:flex;align-items:center;padding:0 12px;}
+.yt-url-row input{flex:1;background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:13px;color:#111111;padding:8px 0;}
+.yt-url-row input::placeholder{color:rgba(17,17,17,0.3);}
+.yt-result-row{display:none;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid rgba(255,0,0,0.08);}
+.yt-result-row.show{display:flex;}
+.yt-hint{font-family:'DM Mono',monospace;font-size:8px;color:rgba(17,17,17,0.3);padding:5px 12px;border-top:1px solid rgba(0,0,0,0.05);}
+.yt-toggle-btn{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;padding:0;font-family:'DM Mono',monospace;font-size:8px;color:rgba(17,17,17,0.35);letter-spacing:1px;transition:color .2s;flex-shrink:0;}
+.yt-toggle-btn:hover{color:#CC2200;}
+.yt-toggle-btn svg{flex-shrink:0;}
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:100;display:none;}
+.sheet-overlay.open{display:block;}
+.adjust-sheet{
+  position:fixed;bottom:0;left:0;right:0;z-index:101;
+  background:#FFFFFF;border-radius:24px 24px 0 0;
+  border-top:1px solid var(--border);
+  padding:0 20px calc(20px + var(--safe-bottom));
+  transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 -4px 24px rgba(0,0,0,0.08);
+}
+.adjust-sheet.open{transform:translateY(0);}
+.sheet-handle{width:36px;height:4px;background:rgba(0,0,0,0.12);border-radius:2px;margin:12px auto 20px;}
+.sheet-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#111111;margin-bottom:4px;}
+.sheet-sub{font-size:12px;color:var(--muted);margin-bottom:24px;}
+.tool-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.tool-circle{width:44px;height:44px;border-radius:50%;background:var(--surface);border:2px solid var(--border-gold);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+.tool-circle .tc-pct{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--gold);}
+.tool-circle .tc-name{font-size:7px;color:var(--muted);}
+.tool-info{flex:1;}
+.tool-info-name{font-size:14px;font-weight:500;color:#111111;margin-bottom:6px;}
+/* Fix #8 — 8px track, 28px thumb */
+input.pct-slider{
+  width:100%;height:8px;
+  -webkit-appearance:none;appearance:none;
+  background:var(--border);border-radius:4px;outline:none;cursor:pointer;
+}
+input.pct-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--gold);border:3px solid #FFFFFF;cursor:pointer;
+  box-shadow:0 1px 6px rgba(0,0,0,0.15);
+}
+input.pct-slider::-moz-range-thumb{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--gold);border:3px solid #FFFFFF;cursor:pointer;
+}
+.pct-display{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--gold);min-width:44px;text-align:right;}
+.sheet-done{width:100%;padding:16px;background:var(--gold);border:none;border-radius:var(--radius);font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#FFFFFF;cursor:pointer;margin-top:8px;-webkit-appearance:none;}
+.sheet-done:active{opacity:.85;}
+
+/* ── LOADING VIEW — Fix #9 ── */
+#view-loading{align-items:center;justify-content:center;text-align:center;padding:40px 20px;background:#FFFFFF;}
+.load-orbit{position:relative;width:100px;height:100px;margin:0 auto 28px;flex-shrink:0;}
+.load-main-circle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:#FFFBF4;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;}
+.load-main-circle span{font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--gold);}
+.load-sat{position:absolute;border-radius:50%;border:1.5px solid;animation:orbitSpin 2.4s linear infinite;}
+.load-sat-1{width:28px;height:28px;top:4px;left:4px;border-color:rgba(200,110,40,0.5);background:#FFF4EC;animation-delay:0s;}
+.load-sat-2{width:22px;height:22px;bottom:6px;right:6px;border-color:rgba(112,80,200,0.45);background:#F3F0FD;animation-delay:-1.2s;}
+@keyframes orbitSpin{0%,100%{transform:scale(1);opacity:.7;}50%{transform:scale(1.1);opacity:1;}}
+.load-label{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:#111111;margin-bottom:8px;}
+.load-sublabel{font-size:13px;color:var(--muted);line-height:1.6;max-width:260px;margin:0 auto 24px;}
+.load-blend{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:14px;padding:12px 16px;border:1px solid var(--border);}
+.load-blend-pcts{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.5px;color:var(--gold);white-space:nowrap;}
+.load-blend-bar{flex:1;height:5px;background:rgba(0,0,0,0.07);border-radius:3px;overflow:hidden;}
+.load-fill{height:100%;background:linear-gradient(90deg,var(--gold-lt),var(--gold));transition:width .5s ease;border-radius:3px;}
+
+/* ── RESULTS VIEW ── */
+#view-results{overflow-y:auto;-webkit-overflow-scrolling:touch;background:#FFFFFF;}
+.results-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;flex-shrink:0;border-bottom:1px solid var(--border);}
+.back-btn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:none;-webkit-appearance:none;}
+.back-btn:active{color:#111111;}
+
+/* Hero header */
+.result-hero{background:linear-gradient(160deg,#FFFBF4 0%,#FFF8EC 100%);border-bottom:1px solid rgba(201,146,42,0.12);padding:20px 20px 18px;}
+.result-hero-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+.result-hero-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#111111;margin-bottom:12px;}
+.result-blend-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.blend-chip{display:flex;align-items:center;gap:5px;padding:5px 11px;background:#FFFFFF;border-radius:20px;border:1px solid var(--border-gold);}
+.blend-chip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.blend-chip-label{font-family:'DM Mono',monospace;font-size:10px;color:#8A620E;letter-spacing:.3px;}
+
+.results-body{padding:16px 20px calc(40px + var(--safe-bottom));}
+
+/* Section cards — each tinted */
+.result-section{border-radius:var(--radius);padding:16px;margin-bottom:10px;border:1px solid transparent;}
+.result-section.strategy{background:#FAFEF7;border-color:rgba(80,160,80,0.15);}
+.result-section.opps{background:#FFF8F2;border-color:rgba(201,110,40,0.15);}
+.result-section.steps{background:#F6F4FE;border-color:rgba(112,80,200,0.15);}
+.result-section.workflow{background:#FFFBF4;border-color:rgba(201,146,42,0.2);}
+
+.result-section-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px;}
+.strategy .result-section-title{color:#3A8040;}
+.opps .result-section-title{color:#B05A1A;}
+.steps .result-section-title{color:#6038B0;}
+.workflow .result-section-title{color:var(--gold);}
+
+.result-summary{font-size:15px;line-height:1.8;color:#111111;}
+.result-items{list-style:none;}
+.result-items li{font-size:14px;line-height:1.7;color:rgba(17,17,17,0.7);padding:7px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.result-items li:last-child{border-bottom:none;}
+.result-items li::before{content:'✦ ';font-size:9px;}
+.strategy li::before{color:#3A8040;}
+.opps li::before{color:#B05A1A;}
+.steps li::before{color:#6038B0;}
+
+/* CTAs */
+.result-actions{display:flex;gap:10px;margin-top:20px;}
+.result-action-btn{flex:1;padding:15px;border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:13px;font-weight:800;cursor:pointer;text-align:center;-webkit-appearance:none;transition:opacity .15s;}
+.result-action-btn.copy{background:var(--surface);border:1.5px solid var(--border);color:#111111;}
+.result-action-btn.upgrade{background:var(--gold);border:none;color:#FFFFFF;}
+.result-action-btn:active{opacity:.82;}
+.result-refine-btn{width:100%;padding:16px;background:transparent;border:1.5px solid var(--border-gold);border-radius:var(--radius);font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--gold);cursor:pointer;margin-top:10px;-webkit-appearance:none;}
+.result-refine-btn:active{background:var(--gold-dim);}
+
+/* ── PRICING MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.pricing-sheet{width:100%;background:#FFFFFF;border-radius:24px 24px 0 0;padding:20px 20px calc(20px + var(--safe-bottom));border-top:1px solid var(--border-gold);box-shadow:0 -4px 24px rgba(0,0,0,0.1);}
+.pricing-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
+.plan-card{background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:10px;border:1px solid var(--border);cursor:pointer;}
+.plan-card.featured{border-color:var(--gold);background:#FFFBF4;}
+.plan-card:active{opacity:.9;}
+.plan-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#111111;margin-bottom:2px;}
+.plan-price{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--gold);}
+.plan-price span{font-size:12px;color:var(--muted);font-weight:400;}
+.plan-desc{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5;}
+.plan-badge{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--gold);background:var(--gold-dim);padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:6px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(80px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:#111111;border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius-sm);padding:10px 20px;font-size:12px;color:#FFFFFF;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── DESKTOP ENHANCEMENT ── */
+@media(min-width:768px){
+  body{display:flex;align-items:center;justify-content:center;background:#F0EDE6;}
+  .app-shell{width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:var(--bg);box-shadow:0 0 0 1px rgba(0,0,0,0.08), 0 24px 64px rgba(0,0,0,0.12);}
+  .view{border-radius:44px;}
+}
+@media(max-width:767px){
+  .app-shell{width:100%;height:100%;position:relative;}
+}
+</style>
+</head>
+<body>
+<div class="app-shell" id="app-shell">
+
+<!-- ══════════════════════ BLEND VIEW ══════════════════════ -->
+<div class="view active" id="view-blend">
+  <div class="nav">
+    <div class="nav-brand">
+      <div class="nav-bars">
+        <div class="nav-bar nb1"></div>
+        <div class="nav-bar nb2"></div>
+        <div class="nav-bar nb3"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <div class="nav-wordmark">Aura<span>Layer</span></div>
+        <div class="beta-badge">BETA</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="lang-en" onclick="selectLang('EN')">EN</button>
+        <button class="lang-btn" id="lang-es" onclick="selectLang('ES')">ES</button>
+      </div>
+      <div class="tier-pill" id="tier-pill">STARTER</div>
+      <div class="settings-btn" onclick="openPricing()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="7" cy="7" r="2.5" stroke="rgba(17,17,17,0.4)" stroke-width="1.5"/>
+          <path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.93 2.93l1.06 1.06M10.01 10.01l1.06 1.06M2.93 11.07l1.06-1.06M10.01 3.99l1.06-1.06" stroke="rgba(17,17,17,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="blend-body">
+    <div class="free-badge" data-i18n="freeBadge">✦ 3 free generations</div>
+
+    <!-- Circles -->
+    <div class="circles-arena" id="circles-arena">
+      <div class="circle-main-glow" id="main-glow"></div>
+      <div class="arc-ring" id="arc-ring"></div>
+      <div class="circle-btn circle-main" id="circle-main" onclick="openAdjust()">
+        <div class="c-pct" id="main-pct">64%</div>
+        <div class="c-name" id="main-name">Claude</div>
+        <div class="c-badge">PRIMARY</div>
+      </div>
+      <div class="circle-btn circle-sat1" id="circle-sat1" onclick="openAdjust()">
+        <div class="c-pct" id="sat1-pct">27%</div>
+        <div class="c-name" id="sat1-name">Canva</div>
+      </div>
+      <div class="circle-btn circle-sat2" id="circle-sat2" onclick="openAdjust()">
+        <div class="c-pct" id="sat2-pct">9%</div>
+        <div class="c-name" id="sat2-name">Perplexity</div>
+      </div>
+    </div>
+
+    <div class="stack-name" id="stack-name">The Artist Stack</div>
+    <div class="stack-sub" id="stack-sub">Claude · Canva AI · Perplexity</div>
+    <div class="adjust-hint" data-i18n="adjustHint">TAP ANY CIRCLE TO ADJUST YOUR BLEND</div>
+
+    <div class="prompt-wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div class="prompt-label" data-i18n="promptLabel">What are you working on?</div>
+        <button class="yt-toggle-btn" onclick="toggleYT()" id="yt-toggle">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#FF0000"/><path d="M9.5 7.5L17 12L9.5 16.5V7.5Z" fill="white"/></svg>
+          <span id="yt-toggle-label">+ VIDEO</span>
+        </button>
+      </div>
+      <textarea id="uprompt" data-i18n-placeholder="promptPlaceholder" placeholder="Tell us your goal — we'll blend the right tools for you..." rows="3"></textarea>
+    </div>
+
+    <!-- ══ YOUTUBE PANEL ══ -->
+    <div class="yt-panel" id="yt-panel">
+      <div class="yt-panel-inner">
+        <div class="yt-panel-header">
+          <div class="yt-panel-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#FF0000"/><path d="M9.5 7.5L17 12L9.5 16.5V7.5Z" fill="white"/></svg>
+            YouTube Intelligence
+          </div>
+          <button class="yt-fetch-btn" id="yt-fetch-btn" onclick="fetchYouTube()">Analyze</button>
+        </div>
+        <div class="yt-url-row">
+          <input id="yt-url" type="url" placeholder="Paste YouTube URL..." oninput="const b=document.getElementById('yt-fetch-btn');this.value.trim()?b.classList.add('pulsing'):b.classList.remove('pulsing');">
+        </div>
+        <div class="yt-result-row" id="yt-result">
+          <img id="yt-thumb" src="" alt="" style="width:44px;height:33px;object-fit:cover;border-radius:4px;flex-shrink:0;">
+          <div style="flex:1;overflow:hidden;">
+            <div id="yt-video-title" style="font-size:11px;font-weight:600;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+            <div id="yt-channel" style="font-size:9px;color:var(--muted);"></div>
+          </div>
+          <button onclick="clearYouTube()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 4px;">✕</button>
+        </div>
+        <div class="yt-hint">✦ Video context drops into your blend</div>
+      </div>
+    </div>
+
+    <button class="letsgo-btn" id="letsgo-btn" onclick="runGeneration()" data-i18n="letsGo">✦ Let's Go →</button>
+
+    <div class="arch-section">
+      <div class="arch-label" data-i18n="archLabel">I am a...</div>
+      <div class="arch-grid">
+        <div class="arch-chip" id="arch-music" onclick="selectArchetype('music')">
+          <div class="arch-circle">🎵</div>
+          <div class="arch-chip-label" data-i18n="archMusic">Musician</div>
+        </div>
+        <div class="arch-chip" id="arch-content" onclick="selectArchetype('content')">
+          <div class="arch-circle">📱</div>
+          <div class="arch-chip-label" data-i18n="archContent">Content Creator</div>
+        </div>
+        <div class="arch-chip" id="arch-freelance" onclick="selectArchetype('freelance')">
+          <div class="arch-circle">💼</div>
+          <div class="arch-chip-label" data-i18n="archFreelance">Freelancer</div>
+        </div>
+        <div class="arch-chip" id="arch-seller" onclick="selectArchetype('seller')">
+          <div class="arch-circle">🛍️</div>
+          <div class="arch-chip-label" data-i18n="archSeller">Seller</div>
+        </div>
+        <div class="arch-chip" id="arch-educator" onclick="selectArchetype('educator')">
+          <div class="arch-circle">🎓</div>
+          <div class="arch-chip-label" data-i18n="archEducator">Educator</div>
+        </div>
+        <div class="arch-chip" id="arch-builder" onclick="selectArchetype('builder')">
+          <div class="arch-circle">🚀</div>
+          <div class="arch-chip-label" data-i18n="archBuilder">Builder</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ LOADING VIEW ══════════════════════ -->
+<div class="view" id="view-loading">
+  <div class="load-orbit">
+    <div class="load-sat load-sat-1"></div>
+    <div class="load-sat load-sat-2"></div>
+    <div class="load-main-circle"><span id="load-main-pct">64%</span></div>
+  </div>
+  <div class="load-label" id="load-label" data-i18n="loadLabel">Reading your aura...</div>
+  <div class="load-sublabel" id="load-sublabel" data-i18n="loadSub">Blending at your exact percentages</div>
+  <div class="load-blend">
+    <div class="load-blend-pcts" id="load-blend-label">64% · 27% · 9%</div>
+    <div class="load-blend-bar">
+      <div class="load-fill" id="load-fill" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ RESULTS VIEW ══════════════════════ -->
+<div class="view" id="view-results">
+  <div class="results-nav">
+    <button class="back-btn" onclick="showView('blend')" data-i18n="back">← Back</button>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--gold);" data-i18n="yourAura">YOUR AURA</div>
+    <button class="back-btn" onclick="shareResult()" style="color:var(--gold);font-weight:700;" data-i18n="share">↗ Share</button>
+  </div>
+  <div class="result-hero">
+    <div class="result-hero-label" data-i18n="resultHeroLabel">Your blend</div>
+    <div class="result-hero-name" id="result-hero-name">The Artist Stack</div>
+    <div class="result-blend-chips" id="result-chips"></div>
+  </div>
+  <div class="results-body">
+    <div class="result-section strategy" id="result-summary-section">
+      <div class="result-section-title" data-i18n="sectionStrategy">Your strategy</div>
+      <div class="result-summary" id="result-summary"></div>
+    </div>
+    <div class="result-section opps" id="result-opps-section">
+      <div class="result-section-title" data-i18n="sectionOpps">Opportunities</div>
+      <ul class="result-items" id="result-opps"></ul>
+    </div>
+    <div class="result-section steps" id="result-steps-section">
+      <div class="result-section-title" data-i18n="sectionSteps">Next steps</div>
+      <ul class="result-items" id="result-steps"></ul>
+    </div>
+    <div class="result-section workflow" id="result-workflow-section">
+      <div class="result-section-title" data-i18n="sectionWorkflow">Tool workflow</div>
+      <div class="result-summary" id="result-workflow"></div>
+    </div>
+    <div class="result-actions">
+      <button class="result-action-btn copy" onclick="copyResult()" data-i18n="copyAll">Copy all</button>
+      <button class="result-action-btn upgrade" onclick="openPricing()" data-i18n="upgrade">Upgrade ✦</button>
+    </div>
+    <button class="result-refine-btn" onclick="refineResult()" data-i18n="goDeeper">Go Deeper →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════ ADJUST SHEET ══════════════════════ -->
+<div class="sheet-overlay" id="sheet-overlay" onclick="closeAdjust()"></div>
+<div class="adjust-sheet" id="adjust-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title" data-i18n="sheetTitle">Adjust your blend</div>
+  <div class="sheet-sub" data-i18n="sheetSub">Drag to rebalance · Percentages auto-normalize</div>
+
+  <div class="tool-row">
+    <div class="tool-circle" id="tc0">
+      <div class="tc-pct" id="tc0-pct">64%</div>
+      <div class="tc-name" id="tc0-name">Claude</div>
+    </div>
+    <div class="tool-info">
+      <div class="tool-info-name" id="ti0-name">Claude</div>
+      <input type="range" class="pct-slider" id="slider-0" min="5" max="90" step="1" value="64" oninput="onSliderChange(0,this.value)">
+    </div>
+    <div class="pct-display" id="pct0">64%</div>
+  </div>
+
+  <div class="tool-row">
+    <div class="tool-circle" id="tc1" style="border-color:rgba(232,168,107,0.4);">
+      <div class="tc-pct" id="tc1-pct">27%</div>
+      <div class="tc-name" id="tc1-name">Canva</div>
+    </div>
+    <div class="tool-info">
+      <div class="tool-info-name" id="ti1-name">Canva AI</div>
+      <input type="range" class="pct-slider" id="slider-1" min="5" max="90" step="1" value="27" oninput="onSliderChange(1,this.value)" style="accent-color:#E8A86B;">
+    </div>
+    <div class="pct-display" id="pct1" style="color:#E8A86B;">27%</div>
+  </div>
+
+  <div class="tool-row">
+    <div class="tool-circle" id="tc2" style="border-color:rgba(155,143,212,0.4);">
+      <div class="tc-pct" id="tc2-pct">9%</div>
+      <div class="tc-name" id="tc2-name">Perplexity</div>
+    </div>
+    <div class="tool-info">
+      <div class="tool-info-name" id="ti2-name">Perplexity</div>
+      <input type="range" class="pct-slider" id="slider-2" min="5" max="90" step="1" value="9" oninput="onSliderChange(2,this.value)" style="accent-color:#9B8FD4;">
+    </div>
+    <div class="pct-display" id="pct2" style="color:#9B8FD4;">9%</div>
+  </div>
+
+  <button class="sheet-done" onclick="closeAdjust()" data-i18n="done">Done ✓</button>
+</div>
+
+<!-- ══════════════════════ PRICING MODAL ══════════════════════ -->
+<div class="modal-overlay" id="pricing-modal">
+  <div class="pricing-sheet">
+    <button class="pricing-close" onclick="closePricing()">×</button>
+    <div class="sheet-handle"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:6px;">BETA PRICING · LOCKS APRIL 30</div>
+    <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#111111;margin-bottom:4px;">Your blend. Forever.</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Lock in your price today — it never goes up.</div>
+
+    <div class="plan-card" onclick="startCheckout('starter')">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">$9<span>/mo</span></div>
+      <div class="plan-desc">3 tools · Unlimited blends · Core generation</div>
+    </div>
+    <div class="plan-card featured" onclick="startCheckout('pro')">
+      <div class="plan-badge">MOST POPULAR</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$39<span>/mo</span></div>
+      <div class="plan-desc">All tools · Priority generation · Advanced modes</div>
+    </div>
+    <div class="plan-card" onclick="startCheckout('visionary')">
+      <div class="plan-name">Visionary</div>
+      <div class="plan-price">$92<span>/mo</span></div>
+      <div class="plan-desc">Full access · Side-by-side compare · API access</div>
+    </div>
+    <div style="text-align:center;margin-top:12px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:1px;">Code FOUNDER2M · 100% off 2 months · Visionary only</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ TOAST ══════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════
+// LANGUAGE / i18n  — MUST BE FIRST
+// ══════════════════════
+let currentLang = 'EN';
+
+const TRANSLATIONS = {
+  EN: {
+    freeBadge:'✦ 3 free generations',
+    adjustHint:'TAP ANY CIRCLE TO ADJUST YOUR BLEND',
+    promptLabel:'What are you working on?',
+    promptPlaceholder:"Tell us your goal — we'll blend the right tools for you...",
+    letsGo:"✦ Let's Go →",
+    freeNote:'3 free generations · Beta pricing locks April 30',
+    archLabel:'I am a...',
+    archMusic:'Musician',archContent:'Content Creator',archFreelance:'Freelancer',
+    archSeller:'Seller',archEducator:'Educator',archBuilder:'Builder',
+    loadLabel:'Reading your aura...',
+    loadSub:'Blending at your exact percentages',
+    loadMsgs:['Reading your aura...','Mapping tool resonance...','Synthesizing insights...','Generating your path...'],
+    back:'← Back',yourAura:'YOUR AURA',share:'↗ Share',
+    resultHeroLabel:'Your blend',
+    sectionStrategy:'Your strategy',sectionOpps:'Opportunities',
+    sectionSteps:'Next steps',sectionWorkflow:'Tool workflow',
+    copyAll:'Copy all',upgrade:'Upgrade ✦',goDeeper:'Go Deeper →',
+    sheetTitle:'Adjust your blend',sheetSub:'Drag to rebalance · Percentages auto-normalize',done:'Done ✓',
+    prompts:{
+      music:"I make music and post on TikTok but my streams aren't converting to income. Help me build a real strategy.",
+      content:"I'm a content creator growing on TikTok and IG but haven't monetized yet. Help me turn my audience into income.",
+      freelance:"I'm freelancing but stuck trading time for money. Help me get better clients and charge what I'm worth.",
+      seller:"I sell products online but my conversion is low. Help me fix my content and positioning strategy.",
+      educator:"I want to turn my knowledge into a course people will pay for. Help me launch something real.",
+      builder:"I'm building a product with limited runway. Help me nail positioning and reach my first customers."
+    },
+    rotatePlaceholders:[
+      "I make music and post on TikTok but streams aren't converting…",
+      "I'm freelancing but stuck trading time for money…",
+      "I sell products online but my conversion is low…",
+      "I want to turn my knowledge into a course people pay for…",
+      "I'm a content creator who hasn't monetized yet…",
+      "I'm building a product and need my first customers…"
+    ]
+  },
+  ES: {
+    freeBadge:'✦ 3 generaciones gratis',
+    adjustHint:'TOCA UN CÍRCULO PARA AJUSTAR TU MEZCLA',
+    promptLabel:'¿En qué estás trabajando?',
+    promptPlaceholder:'Cuéntanos tu meta — mezclaremos las herramientas perfectas...',
+    letsGo:'✦ Vamos →',
+    freeNote:'3 generaciones gratis · Precios beta hasta el 30 de abril',
+    archLabel:'Soy...',
+    archMusic:'Músico',archContent:'Creador de Contenido',archFreelance:'Freelancer',
+    archSeller:'Vendedor',archEducator:'Educador',archBuilder:'Emprendedor',
+    loadLabel:'Leyendo tu aura...',
+    loadSub:'Mezclando en tus porcentajes exactos',
+    loadMsgs:['Leyendo tu aura...','Mapeando resonancia...','Sintetizando ideas...','Generando tu camino...'],
+    back:'← Atrás',yourAura:'TU AURA',share:'↗ Compartir',
+    resultHeroLabel:'Tu mezcla',
+    sectionStrategy:'Tu estrategia',sectionOpps:'Oportunidades',
+    sectionSteps:'Próximos pasos',sectionWorkflow:'Flujo de herramientas',
+    copyAll:'Copiar todo',upgrade:'Mejorar ✦',goDeeper:'Profundizar →',
+    sheetTitle:'Ajusta tu mezcla',sheetSub:'Arrastra para rebalancear · Porcentajes se normalizan',done:'Listo ✓',
+    prompts:{
+      music:"Hago música y publico en TikTok pero mis streams no generan ingresos. Ayúdame a construir una estrategia real.",
+      content:"Soy creador de contenido creciendo en TikTok e IG pero aún no monetizo. Ayúdame a convertir mi audiencia en ingresos.",
+      freelance:"Trabajo freelance pero estoy atrapado cambiando tiempo por dinero. Ayúdame a conseguir mejores clientes.",
+      seller:"Vendo productos en línea pero mi conversión es baja. Ayúdame a mejorar mi contenido y posicionamiento.",
+      educator:"Quiero convertir mi conocimiento en un curso que la gente pague. Ayúdame a lanzar algo real.",
+      builder:"Estoy construyendo un producto con recursos limitados. Ayúdame a posicionarme y conseguir mis primeros clientes."
+    },
+    rotatePlaceholders:[
+      "Hago música en TikTok pero no genera ingresos…",
+      "Trabajo freelance pero gano poco por proyecto…",
+      "Vendo en línea pero mi conversión es muy baja…",
+      "Quiero crear un curso de mi conocimiento…",
+      "Soy creador de contenido sin monetizar aún…",
+      "Construyo un producto y necesito mis primeros clientes…"
+    ]
+  }
+};
+
+function selectLang(lang){
+  currentLang = lang;
+  document.getElementById('lang-en').classList.toggle('active', lang==='EN');
+  document.getElementById('lang-es').classList.toggle('active', lang==='ES');
+  const T = TRANSLATIONS[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(T[key] !== undefined) el.textContent = T[key];
+  });
+  document.getElementById('uprompt').placeholder = T.promptPlaceholder;
+  if(activeArch && T.prompts[activeArch]) document.getElementById('uprompt').value = T.prompts[activeArch];
+  renderCircles(activeArch||'');
+  localStorage.setItem('auralayer_lang', lang);
+}
+
+// ══════════════════════
+// CORE STATE
+// ══════════════════════
+const TOOLS=[
+  {id:'claude',name:'Claude',cat:'AI Reasoning',color:'#C9922A'},
+  {id:'canva',name:'Canva',cat:'Design',color:'#C86E28'},
+  {id:'perplexity',name:'Perplexity',cat:'AI Research',color:'#7050C8'},
+  {id:'chatgpt',name:'ChatGPT',cat:'AI Assistant',color:'#74C59B'},
+  {id:'gemini',name:'Gemini',cat:'AI Multimodal',color:'#5B9BD5'},
+];
+
+let blend = {
+  tools: [
+    {id:'claude',name:'Claude',pct:64,color:'#C9922A'},
+    {id:'canva',name:'Canva AI',pct:27,color:'#C86E28'},
+    {id:'perplexity',name:'Perplexity',pct:9,color:'#7050C8'}
+  ]
+};
+let lastResult = null;
+let genCount = 0;
+let CURRENT_TIER = 'starter';
+let activeArch = null;
+let ytData = null;
+
+// ══════════════════════
+// VIEW MANAGEMENT
+// ══════════════════════
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+}
+
+// ══════════════════════
+// CIRCLES RENDERING
+// ══════════════════════
+function renderCircles(archTypeOverride){
+  const sorted = [...blend.tools].sort((a,b)=>b.pct-a.pct);
+  const main = sorted[0], sat1 = sorted[1], sat2 = sorted[2];
+
+  document.getElementById('main-pct').textContent = main.pct+'%';
+  document.getElementById('main-name').textContent = main.name;
+  document.getElementById('circle-main').style.borderColor = main.color;
+  document.getElementById('arc-ring').style.borderColor = main.color+'28';
+  document.getElementById('main-glow').style.background = `radial-gradient(circle, ${main.color}18 0%, ${main.color}00 70%)`;
+  document.getElementById('main-glow').style.transform = 'translate(-50%,-50%)';
+
+  document.getElementById('sat1-pct').textContent = sat1.pct+'%';
+  document.getElementById('sat1-name').textContent = sat1.name;
+  document.getElementById('circle-sat1').style.borderColor = sat1.color+'66';
+
+  document.getElementById('sat2-pct').textContent = sat2.pct+'%';
+  document.getElementById('sat2-name').textContent = sat2.name;
+  document.getElementById('circle-sat2').style.borderColor = sat2.color+'44';
+
+  // Stack name — rich names object
+  const stackNames = {
+    claude: 'The Claude Stack',
+    canva:  'The Visual Stack',
+    perplexity: 'The Research Stack',
+    chatgpt: 'The ChatGPT Stack',
+    gemini: 'The Gemini Stack'
+  };
+  const archetypeNames = {
+    claude: {music:'The Artist Stack',content:'The Creator Voice',freelance:'The Freelancer Stack',seller:'The Conversion Stack',educator:'The Teacher Stack',builder:'The Builder Stack'},
+    canva:  {music:'The Visual Artist',content:'The Content Machine',freelance:'The Client Pleaser',seller:'The Visual Seller',educator:'The Visual Educator',builder:'The Product Creator'},
+    perplexity:{music:'The Sound Strategist',content:'The Trend Hunter',freelance:'The Research Engine',seller:'The Market Reader',educator:'The Knowledge Engine',builder:'The Systems Thinker'},
+    chatgpt:{music:'The Lyric Architect',content:'The Copywriter Stack',freelance:'The Proposal Machine',seller:'The Sales Stack',educator:'The Explainer Stack',builder:'The Launch Stack'},
+    gemini:{music:'The Multimodal Mix',content:'The Format Shifter',freelance:'The Pitch Stack',seller:'The Insight Stack',educator:'The Visual Teacher',builder:'The Data Builder'}
+  };
+  const p = new URLSearchParams(window.location.search);
+  const archType = archTypeOverride || p.get('type') || activeArch || '';
+  const richNames = archetypeNames[main.id];
+  const stackLabel = (richNames && richNames[archType]) ? richNames[archType] : (stackNames[main.id] || main.name + ' Stack');
+  document.getElementById('stack-name').textContent = stackLabel;
+  document.getElementById('stack-sub').textContent = blend.tools.map(t=>t.name).join(' · ');
+}
+
+// ══════════════════════
+// ADJUST SHEET
+// ══════════════════════
+function openAdjust(){
+  blend.tools.forEach((t,i)=>{
+    document.getElementById('tc'+i+'-pct').textContent = t.pct+'%';
+    document.getElementById('tc'+i+'-name').textContent = t.name;
+    document.getElementById('ti'+i+'-name').textContent = t.name;
+    document.getElementById('slider-'+i).value = t.pct;
+    document.getElementById('pct'+i).textContent = t.pct+'%';
+  });
+  document.getElementById('sheet-overlay').classList.add('open');
+  document.getElementById('adjust-sheet').classList.add('open');
+}
+function closeAdjust(){
+  document.getElementById('sheet-overlay').classList.remove('open');
+  document.getElementById('adjust-sheet').classList.remove('open');
+  renderCircles();
+}
+function onSliderChange(idx, val){
+  val = parseInt(val);
+  blend.tools[idx].pct = val;
+  // Normalize others
+  const others = blend.tools.filter((_,i)=>i!==idx);
+  const remaining = 100 - val;
+  const otherTotal = others.reduce((s,t)=>s+t.pct,0);
+  others.forEach(t=>{
+    t.pct = otherTotal > 0 ? Math.max(5, Math.round((t.pct/otherTotal)*remaining)) : Math.round(remaining/others.length);
+  });
+  // Ensure total = 100
+  const total = blend.tools.reduce((s,t)=>s+t.pct,0);
+  blend.tools[idx].pct += (100-total);
+  // Update UI
+  blend.tools.forEach((t,i)=>{
+    document.getElementById('tc'+i+'-pct').textContent = t.pct+'%';
+    document.getElementById('slider-'+i).value = t.pct;
+    document.getElementById('pct'+i).textContent = t.pct+'%';
+  });
+}
+
+// ══════════════════════
+// GENERATION
+// ══════════════════════
+async function runGeneration(){
+  const prompt = document.getElementById('uprompt').value.trim();
+  if(!prompt){showToast('Tell us what you\'re working on first');return;}
+
+  // Free gen gate
+  const usedGens = parseInt(localStorage.getItem('auralayer_free_gens')||'0');
+  if(CURRENT_TIER==='starter' && usedGens>=3){openPricing();return;}
+
+  showView('loading');
+  const blendStr = blend.tools.map(t=>t.name+' '+t.pct+'%').join(', ');
+  const sorted = [...blend.tools].sort((a,b)=>b.pct-a.pct);
+  document.getElementById('load-main-pct').textContent = sorted[0].pct+'%';
+  document.getElementById('load-blend-label').textContent = blend.tools.map(t=>t.pct+'%').join(' · ');
+
+  // Animate loading bar
+  let prog = 0;
+  const progTimer = setInterval(()=>{
+    prog = Math.min(90, prog + Math.random()*8);
+    document.getElementById('load-fill').style.width = prog+'%';
+  },400);
+
+  const msgs = TRANSLATIONS[currentLang].loadMsgs;
+  let mi = 0;
+  const msgTimer = setInterval(()=>{
+    mi = (mi+1)%msgs.length;
+    document.getElementById('load-label').textContent = msgs[mi];
+  },1800);
+
+  try{
+    const ytNote = ytData ? ` The user has also analyzed a YouTube video: "${ytData.title}"${ytData.channel?' by '+ytData.channel:''}. ${ytData.hasTranscript?'Transcript excerpt: '+ytData.transcript.substring(0,800):ytData.description?'Description: '+ytData.description:''} Weave insights from this video into your output — reference it explicitly.` : '';
+    const sys = `You are AuraLayer — a strategic AI guidance engine. Interpret the user's identity, goals, and selected AI tools with weighted influence to generate personalized actionable strategy. The user's tool blend is: ${blendStr}. The dominant tool (${blend.tools.sort((a,b)=>b.pct-a.pct)[0].name} at ${blend.tools.sort((a,b)=>b.pct-a.pct)[0].pct}%) should have the most influence on the output voice and style.${ytNote} Return JSON with exactly these keys: summary (2-3 sentences), opportunities (array of 3 strings), next_steps (array of 3 strings), tool_workflow (1-2 sentences explaining how these specific tools work together). No markdown in strings. Keep it specific, actionable, and personalized to their exact blend.`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:sys,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await res.json();
+    clearInterval(progTimer); clearInterval(msgTimer);
+    document.getElementById('load-fill').style.width='100%';
+
+    const raw = data.content?.[0]?.text||'{}';
+    let parsed;
+    try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());}
+    catch{parsed={summary:raw,opportunities:[],next_steps:[],tool_workflow:''};}
+
+    // Update gen count
+    if(CURRENT_TIER==='starter'){
+      const nc = usedGens+1;
+      localStorage.setItem('auralayer_free_gens',nc);
+      if(nc>=2) setTimeout(()=>showToast('✦ '+(3-nc)+' free generation'+(3-nc===1?'':'s')+' left'),1000);
+    }
+    genCount++;
+    lastResult = {parsed, prompt, blend:JSON.stringify(blend.tools)};
+    renderResults(parsed);
+    fbq('track','Lead',{content_name:'generation'});
+    setTimeout(()=>showView('results'),500);
+  }catch(e){
+    clearInterval(progTimer);clearInterval(msgTimer);
+    showToast('Something went wrong. Try again.');
+    showView('blend');
+  }
+}
+
+function refineResult(){
+  if(!lastResult)return;
+  const prompt = document.getElementById('uprompt').value.trim()+(lastResult?' Refine and evolve the previous output.':'');
+  document.getElementById('uprompt').value = prompt;
+  runGeneration();
+}
+
+// ══════════════════════
+// RESULTS RENDERING
+// ══════════════════════
+function renderResults(data){
+  // Hero name — pull stack label from DOM
+  const heroName = document.getElementById('stack-name').textContent;
+  document.getElementById('result-hero-name').textContent = heroName;
+
+  // Blend chips
+  const chips = document.getElementById('result-chips');
+  chips.innerHTML = blend.tools.map(t=>`
+    <div class="blend-chip">
+      <div class="blend-chip-dot" style="background:${t.color};"></div>
+      <div class="blend-chip-label">${t.name} ${t.pct}%</div>
+    </div>`).join('');
+
+  document.getElementById('result-summary').textContent = data.summary||'';
+
+  const opps = document.getElementById('result-opps');
+  opps.innerHTML = (data.opportunities||[]).map(o=>`<li>${o}</li>`).join('');
+
+  const steps = document.getElementById('result-steps');
+  steps.innerHTML = (data.next_steps||data.recommendations||[]).map(s=>`<li>${s}</li>`).join('');
+
+  document.getElementById('result-workflow').textContent = data.tool_workflow||'';
+}
+
+// ══════════════════════
+// SHARE + COPY
+// ══════════════════════
+function shareResult(){
+  const blendStr = blend.tools.map(t=>t.name+' '+t.pct+'%').join(' · ');
+  const isES = currentLang === 'ES';
+  const text = isES
+    ? `Mi mezcla AuraLayer — ${blendStr}\nObtén la tuya → auralayer.ai #WhatsYourAuraLayer`
+    : `My AuraLayer blend — ${blendStr}\nGet yours → auralayer.ai #WhatsYourAuraLayer`;
+  if(navigator.share){navigator.share({title:'My AuraLayer',text});}
+  else{
+    navigator.clipboard.writeText(text).then(()=>showToast(isES?'¡Copiado!':'Copied!')).catch(()=>{
+      const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast(isES?'¡Copiado!':'Copied!');
+    });
+  }
+}
+function copyResult(){
+  if(!lastResult)return;
+  const d = lastResult.parsed;
+  const text = [d.summary,...(d.opportunities||[]),...(d.next_steps||[]),d.tool_workflow].filter(Boolean).join('\n\n');
+  navigator.clipboard.writeText(text).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  });
+  showToast('Copied to clipboard!');
+}
+
+// ══════════════════════
+// PRICING
+// ══════════════════════
+function openPricing(){document.getElementById('pricing-modal').classList.add('open');}
+function closePricing(){document.getElementById('pricing-modal').classList.remove('open');}
+function startCheckout(plan){window.location.href='https://auralayer.ai/app?plan='+plan;}
+
+// ══════════════════════
+// TOAST
+// ══════════════════════
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+
+// ══════════════════════
+// SUBSCRIPTION VERIFY
+// ══════════════════════
+async function verifySubscription(email){
+  try{
+    const res=await fetch('/api/verify-subscription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    if(!res.ok||!res.headers.get('content-type')?.includes('json'))return;
+    const data=await res.json();
+    if(data.tier&&data.tier!=='starter'){
+      CURRENT_TIER=data.tier;
+      localStorage.setItem('auralayer_tier',data.tier);
+      document.getElementById('tier-pill').textContent=data.tier.toUpperCase();
+    }
+  }catch(e){}
+}
+
+// ══════════════════════
+// QUIZ DEEP LINK
+// ══════════════════════
+(function(){
+  const p=new URLSearchParams(window.location.search);
+  if(p.get('from')==='quiz'){
+    const c=parseInt(p.get('claude')||0),ca=parseInt(p.get('canva')||0),px=parseInt(p.get('perplexity')||0);
+    if(c>0&&ca>0&&px>0){
+      blend.tools=[
+        {id:'claude',name:'Claude',pct:c,color:'#C9922A'},
+        {id:'canva',name:'Canva AI',pct:ca,color:'#C86E28'},
+        {id:'perplexity',name:'Perplexity',pct:px,color:'#7050C8'}
+      ];
+    }
+    const type=p.get('type')||'';
+    const lang=(p.get('lang')||'').toLowerCase()==='es'?'ES':'EN';
+    const prompts = TRANSLATIONS[lang].prompts;
+    if(prompts[type]) document.getElementById('uprompt').value=prompts[type];
+
+    // Highlight matching archetype chip if type present
+    if(type && document.getElementById('arch-'+type)){
+      activeArch = type;
+      document.getElementById('arch-'+type).classList.add('active');
+    }
+
+    // Apply language
+    if(lang==='ES') selectLang('ES');
+  }
+  localStorage.removeItem('auralayer_tour_done');
+  const savedEmail=localStorage.getItem('auralayer_email');
+  if(savedEmail) verifySubscription(savedEmail);
+  const savedTier=localStorage.getItem('auralayer_tier');
+  if(savedTier&&savedTier!=='starter'){CURRENT_TIER=savedTier;document.getElementById('tier-pill').textContent=savedTier.toUpperCase();}
+})();
+
+// ══════════════════════
+// ARCHETYPE SELECTOR
+// ══════════════════════
+const ARCH_PRESETS = {
+  music:    { tools:[{id:'claude',name:'Claude',pct:64,color:'#C9922A'},{id:'canva',name:'Canva AI',pct:27,color:'#C86E28'},{id:'perplexity',name:'Perplexity',pct:9,color:'#7050C8'}], prompt:"I make music and post on TikTok but my streams aren't converting to income. Help me build a real strategy." },
+  content:  { tools:[{id:'claude',name:'Claude',pct:45,color:'#C9922A'},{id:'canva',name:'Canva AI',pct:40,color:'#C86E28'},{id:'perplexity',name:'Perplexity',pct:15,color:'#7050C8'}], prompt:"I'm a content creator growing on TikTok and IG but haven't monetized yet. Help me turn my audience into income." },
+  freelance:{ tools:[{id:'claude',name:'Claude',pct:70,color:'#C9922A'},{id:'canva',name:'Canva AI',pct:15,color:'#C86E28'},{id:'perplexity',name:'Perplexity',pct:15,color:'#7050C8'}], prompt:"I'm freelancing but stuck trading time for money. Help me get better clients and charge what I'm worth." },
+  seller:   { tools:[{id:'claude',name:'Claude',pct:35,color:'#C9922A'},{id:'canva',name:'Canva AI',pct:50,color:'#C86E28'},{id:'perplexity',name:'Perplexity',pct:15,color:'#7050C8'}], prompt:"I sell products online but my conversion is low. Help me fix my content and positioning strategy." },
+  educator: { tools:[{id:'claude',name:'Claude',pct:60,color:'#C9922A'},{id:'canva',name:'Canva AI',pct:20,color:'#C86E28'},{id:'perplexity',name:'Perplexity',pct:20,color:'#7050C8'}], prompt:"I want to turn my knowledge into a course people will pay for. Help me launch something real." },
+  builder:  { tools:[{id:'claude',name:'Claude',pct:55,color:'#C9922A'},{id:'canva',name:'Canva AI',pct:15,color:'#C86E28'},{id:'perplexity',name:'Perplexity',pct:30,color:'#7050C8'}], prompt:"I'm building a product with limited runway. Help me nail positioning and reach my first customers." }
+};
+
+function selectArchetype(type){
+  if(activeArch) document.getElementById('arch-'+activeArch)?.classList.remove('active');
+  if(activeArch === type){ activeArch = null; renderCircles(); return; }
+
+  activeArch = type;
+  document.getElementById('arch-'+type).classList.add('active');
+
+  const preset = ARCH_PRESETS[type];
+  if(!preset) return;
+
+  blend.tools = preset.tools.map(t=>({...t}));
+  renderCircles(type);
+
+  // Use translated prompt if available
+  const T = TRANSLATIONS[currentLang];
+  document.getElementById('uprompt').value = T.prompts[type] || preset.prompt;
+
+  const m = document.getElementById('circle-main');
+  m.style.animation = 'tapHint 1s ease-out 1';
+  setTimeout(()=>{ m.style.animation=''; }, 1100);
+
+  document.getElementById('view-blend').scrollTo({top:0, behavior:'smooth'});
+}
+
+// ══════════════════════
+// YOUTUBE INTELLIGENCE
+// ══════════════════════
+function toggleYT(){
+  const panel = document.getElementById('yt-panel');
+  const label = document.getElementById('yt-toggle-label');
+  const isOpen = panel.classList.toggle('open');
+  label.textContent = isOpen ? '− VIDEO' : '+ VIDEO';
+}
+
+async function fetchYouTube(){
+  const url = document.getElementById('yt-url').value.trim();
+  if(!url){showToast('Paste a YouTube URL first');return;}
+  const vidMatch = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+  const videoId = vidMatch ? vidMatch[1] : null;
+  if(!videoId){showToast('Invalid YouTube URL — check and try again');return;}
+  const btn = document.getElementById('yt-fetch-btn');
+  const origText = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Analyzing...'; btn.classList.remove('pulsing');
+  await new Promise(r=>setTimeout(r,1500));
+  ytData = {videoId, title:'YouTube Video', hasTranscript:false, description:'', transcript:''};
+  const thm = document.getElementById('yt-thumb');
+  if(thm) thm.src = 'https://img.youtube.com/vi/'+videoId+'/mqdefault.jpg';
+  const ytResult = document.getElementById('yt-result');
+  if(ytResult) ytResult.classList.add('show');
+  const ttl = document.getElementById('yt-video-title'); if(ttl) ttl.textContent = 'Loading...';
+  showToast('YouTube added ✓');
+  btn.disabled = false; btn.textContent = origText;
+  try{
+    const res = await fetch('/api/youtube',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+    if(!res.ok) return;
+    if(!(res.headers.get('content-type')||'').includes('application/json')) return;
+    const data = await res.json();
+    if(data.error) return;
+    ytData = data;
+    if(ttl) ttl.textContent = data.title||'YouTube Video';
+    const chn = document.getElementById('yt-channel'); if(chn) chn.textContent = data.channel?'by '+data.channel:'';
+    if(thm) thm.src = 'https://img.youtube.com/vi/'+(data.videoId||videoId)+'/mqdefault.jpg';
+  }catch(e){ console.log('YT fetch:',e.message); }
+}
+
+function clearYouTube(){
+  ytData = null;
+  const urlEl = document.getElementById('yt-url'); if(urlEl) urlEl.value='';
+  const ytResult = document.getElementById('yt-result'); if(ytResult) ytResult.classList.remove('show');
+  const btn = document.getElementById('yt-fetch-btn'); if(btn) btn.classList.remove('pulsing');
+  showToast('YouTube removed');
+}
+
+renderCircles();
+
+// One-time tap hint pulse on main circle
+setTimeout(()=>{
+  const m = document.getElementById('circle-main');
+  m.style.animation = 'tapHint 1.2s ease-out 2';
+  setTimeout(()=>{ m.style.animation=''; }, 2600);
+}, 1200);
+
+// Rotating placeholder — uses current language
+(function(){
+  const ta = document.getElementById('uprompt');
+  let hi = 0;
+  function rotatePlaceholder(){
+    const hints = TRANSLATIONS[currentLang].rotatePlaceholders;
+    hi = (hi+1) % hints.length;
+    if(!ta.value) ta.placeholder = hints[hi];
+  }
+  setInterval(rotatePlaceholder, 3800);
+})();
+
+// Apply saved or URL lang
+(function(){
+  const p = new URLSearchParams(window.location.search);
+  const urlLang = p.get('lang');
+  const saved = localStorage.getItem('auralayer_lang');
+  const initLang = (urlLang==='es'||saved==='ES') ? 'ES' : 'EN';
+  if(initLang === 'ES') selectLang('ES');
+})();
+</script>
+</body>
+</html>
