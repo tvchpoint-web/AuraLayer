@@ -115,8 +115,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--white);fo
 /* ── STACK NAME ── */
 .stack-name{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;color:#111111;text-align:center;margin-bottom:3px;flex-shrink:0;}
 .stack-sub{font-size:11px;color:var(--muted);text-align:center;font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:0;flex-shrink:0;}
-.adjust-hint{font-size:10px;color:rgba(201,146,42,0.82);font-family:'DM Mono',monospace;letter-spacing:1.5px;text-align:center;margin-bottom:0;display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;}
-.adjust-hint::before,.adjust-hint::after{content:'';display:block;width:16px;height:1px;background:rgba(201,146,42,0.2);}
+/* .adjust-hint replaced by .circles-tap-hint — see blend-left */
 
 /* ── PROMPT FIELD — Fix #14: 16px prevents iOS zoom ── */
 .prompt-wrap{
@@ -640,13 +639,15 @@ input.pct-slider::-moz-range-thumb{
   .app-shell{width:100%;height:100%;border-radius:0;box-shadow:none;background:#FFFFFF;position:relative;}
 
   /* --- Views: position:fixed, full-screen toggle --- */
-  .view{position:fixed;inset:0;overflow:hidden;}
+  .view{position:fixed;inset:0;overflow:hidden;z-index:1;}
   .view.active{display:flex;}
 
   /* --- Results: right panel only on desktop (left col stays visible) --- */
-  #view-results{overflow-y:auto;left:420px;background:#FFFFFF;}
+  #view-results{overflow-y:auto;left:420px;background:#FFFFFF;z-index:2;}
+  /* Loading always covers everything --- */
+  #view-loading{z-index:3;}
   /* Blend view always visible on desktop — results overlay right side only */
-  #view-blend{display:flex !important;}
+  #view-blend{display:flex !important;z-index:1;}
 
   /* --- Nav --- */
   .nav{padding:18px 52px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
@@ -702,7 +703,7 @@ input.pct-slider::-moz-range-thumb{
   /* --- Typography --- */
   .stack-name{font-size:26px;}
   .stack-sub{font-size:12px;}
-  .adjust-hint{font-size:11px;}
+  /* .adjust-hint desktop override removed */
 
   /* --- Archetype: single row --- */
   .arch-section{width:100%;}
@@ -917,6 +918,21 @@ input.pct-slider::-moz-range-thumb{
   font-family:'DM Mono',monospace;font-size:7px;color:rgba(17,17,17,0.3);
   margin-top:4px;letter-spacing:.3px;
 }
+
+/* ── SHARE POPUP CLASSES ── */
+.share-popup-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.share-popup-hashtag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2.5px;color:var(--gold);margin-bottom:4px;}
+.share-popup-title{margin:0 !important;}
+.share-popup-close{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;padding:4px;line-height:1;}
+.share-popup-chips{display:flex;flex-wrap:wrap;gap:0;margin-bottom:20px;}
+.share-popup-text-box{background:var(--surface);border-radius:12px;padding:14px 16px;margin-bottom:16px;border:1px solid var(--border);}
+.share-popup-text-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:8px;}
+.share-popup-text-body{font-family:'DM Sans',sans-serif;font-size:13px;color:#111;line-height:1.6;}
+.share-popup-actions{display:flex;gap:10px;}
+.share-popup-copy-btn{flex:1;padding:13px;background:var(--gold-dim);border:1px solid var(--border-gold);border-radius:14px;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--gold);cursor:pointer;-webkit-appearance:none;transition:all .2s;}
+.share-popup-copy-btn:active{opacity:.85;}
+.share-popup-tweet-btn{padding:13px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-appearance:none;letter-spacing:.5px;transition:background .15s;}
+.share-popup-tweet-btn:active{background:var(--card);}
 
 </style>
 </head>
@@ -1622,11 +1638,14 @@ function addToolSlot(){
   // Default new tool — first unused one
   const usedIds = blend.tools.map(t=>t.id);
   const newTool = TOOLS.find(t=>!usedIds.includes(t.id)) || TOOLS[0];
-  // Take 10% from each existing tool
-  const take = Math.floor(10 / blend.tools.length);
-  blend.tools.forEach(t=>{ t.pct = Math.max(5, t.pct - take); });
-  const total = blend.tools.reduce((s,t)=>s+t.pct,0);
-  blend.tools.push({...newTool, pct: Math.max(5, 100-total), locked:false});
+  // Give new tool 15%, reduce others proportionally
+  const newPct = 15;
+  const scale = (100 - newPct) / 100;
+  blend.tools.forEach(t=>{ t.pct = Math.max(5, Math.round(t.pct * scale)); });
+  // Fix rounding: adjust first tool so total = 100 - newPct exactly
+  const runningTotal = blend.tools.reduce((s,t)=>s+t.pct,0);
+  blend.tools[0].pct += (100 - newPct - runningTotal);
+  blend.tools.push({...newTool, pct: newPct, locked:false});
   // Show 4th row + remove btn, hide add btn
   document.getElementById('tr3').style.display='';
   document.getElementById('add-tool-btn').style.display='none';
@@ -2651,6 +2670,9 @@ function selectArchetype(type){
 
   activeArch = type;
   document.getElementById('arch-'+type).classList.add('active');
+  // Reset tap pulse ring so it re-pulses for new selection
+  const ring = document.getElementById('tap-pulse-ring');
+  if(ring){ ring.classList.remove('hint-done'); }
 
   const preset = ARCH_PRESETS[type];
   if(!preset) return;
@@ -3279,27 +3301,21 @@ setTimeout(()=>{
 <div class="sheet-overlay share-overlay" id="share-overlay" onclick="closeSharePopup()"></div>
 <div class="share-popup" id="share-popup">
   <div class="sheet-handle"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+  <div class="share-popup-header">
     <div>
-      <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2.5px;color:var(--gold);margin-bottom:4px;">#WHATSYOURAURALAYER</div>
-      <div class="sheet-title" style="margin:0;" id="share-popup-stack">My AuraLayer</div>
+      <div class="share-popup-hashtag">#WHATSYOURAURALAYER</div>
+      <div class="sheet-title share-popup-title" id="share-popup-stack">My AuraLayer</div>
     </div>
-    <button onclick="closeSharePopup()" style="background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;padding:4px;">✕</button>
+    <button class="share-popup-close" onclick="closeSharePopup()">✕</button>
   </div>
-  <div id="share-popup-chips" style="display:flex;flex-wrap:wrap;gap:0;margin-bottom:20px;"></div>
-  <div style="background:var(--surface);border-radius:12px;padding:14px 16px;margin-bottom:16px;border:1px solid var(--border);">
-    <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:8px;">SHARE TEXT</div>
-    <div id="share-popup-text" style="font-size:13px;color:#111;line-height:1.6;font-family:'DM Sans',sans-serif;"></div>
+  <div class="share-popup-chips" id="share-popup-chips"></div>
+  <div class="share-popup-text-box">
+    <div class="share-popup-text-label">SHARE TEXT</div>
+    <div class="share-popup-text-body" id="share-popup-text"></div>
   </div>
-  <div style="display:flex;gap:10px;">
-    <button id="share-popup-copy-btn" onclick="copyShareText()" data-text=""
-      style="flex:1;padding:13px;background:var(--gold-dim);border:1px solid var(--border-gold);border-radius:14px;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--gold);cursor:pointer;-webkit-appearance:none;transition:all .2s;">
-      ⎘ Copy
-    </button>
-    <button onclick="closeSharePopup();window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.getElementById('share-popup-text').textContent),'_blank')"
-      style="padding:13px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-appearance:none;letter-spacing:.5px;">
-      𝕏 Tweet
-    </button>
+  <div class="share-popup-actions">
+    <button class="share-popup-copy-btn" id="share-popup-copy-btn" onclick="copyShareText()" data-text="">⎘ Copy</button>
+    <button class="share-popup-tweet-btn" onclick="closeSharePopup();window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.getElementById('share-popup-text').textContent),'_blank')">𝕏 Tweet</button>
   </div>
 </div>
 </body>
