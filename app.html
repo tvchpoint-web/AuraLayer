@@ -828,6 +828,96 @@ input.pct-slider::-moz-range-thumb{
   .share-popup.open{transform:translateX(-50%) translateY(0);}
 }
 
+/* ── YOUTUBE REFINE STRIP (above Go Deeper) ── */
+.yt-refine-strip{
+  margin-top:10px;
+  border-radius:14px;
+  border:1px solid rgba(255,0,0,0.15);
+  background:#FFFFFF;
+  overflow:hidden;
+  transition:all .25s ease;
+}
+.yt-refine-trigger{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 14px;cursor:pointer;
+  background:rgba(255,0,0,0.03);
+  -webkit-tap-highlight-color:transparent;
+}
+.yt-refine-trigger-left{
+  display:flex;align-items:center;gap:8px;
+}
+.yt-refine-icon{
+  width:22px;height:22px;border-radius:4px;background:#FF0000;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.yt-refine-icon svg{ display:block; }
+.yt-refine-label{
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#CC2200;
+}
+.yt-refine-sublabel{
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.5px;
+  color:rgba(17,17,17,0.35);margin-top:1px;
+}
+.yt-refine-chevron{
+  font-size:10px;color:rgba(17,17,17,0.3);
+  transition:transform .2s;
+}
+.yt-refine-strip.open .yt-refine-chevron{transform:rotate(180deg);}
+
+/* Loaded state — show video info inline in trigger */
+.yt-refine-loaded-badge{
+  display:none;align-items:center;gap:5px;
+  background:rgba(255,0,0,0.08);border-radius:20px;
+  padding:3px 8px;
+}
+.yt-refine-loaded-badge.show{display:flex;}
+.yt-refine-loaded-badge span{
+  font-family:'DM Mono',monospace;font-size:8px;
+  color:#CC2200;letter-spacing:.3px;max-width:120px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+.yt-refine-body{
+  display:none;padding:0 14px 12px;
+  border-top:1px solid rgba(255,0,0,0.08);
+}
+.yt-refine-strip.open .yt-refine-body{display:block;}
+.yt-refine-input-row{
+  display:flex;align-items:center;gap:8px;padding:8px 0 4px;
+}
+.yt-refine-input{
+  flex:1;background:var(--surface);border:1px solid rgba(0,0,0,0.08);
+  border-radius:10px;padding:8px 10px;
+  font-family:'DM Sans',sans-serif;font-size:13px;color:#111;
+  outline:none;
+}
+.yt-refine-input::placeholder{color:rgba(17,17,17,0.3);}
+.yt-refine-analyze-btn{
+  padding:8px 12px;border-radius:10px;
+  background:rgba(255,0,0,0.08);border:1px solid rgba(255,60,60,0.3);
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:800;
+  color:#CC2200;cursor:pointer;white-space:nowrap;-webkit-appearance:none;
+  transition:all .15s;
+}
+.yt-refine-analyze-btn:disabled{opacity:.4;cursor:not-allowed;}
+.yt-refine-result{
+  display:none;align-items:center;gap:8px;
+  padding:6px 0 2px;
+}
+.yt-refine-result.show{display:flex;}
+.yt-refine-thumb{
+  width:40px;height:30px;object-fit:cover;border-radius:4px;flex-shrink:0;
+}
+.yt-refine-video-info{flex:1;overflow:hidden;}
+.yt-refine-video-title{
+  font-size:10px;font-weight:600;color:#111;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.yt-refine-hint{
+  font-family:'DM Mono',monospace;font-size:7px;color:rgba(17,17,17,0.3);
+  margin-top:4px;letter-spacing:.3px;
+}
+
 </style>
 </head>
 <body>
@@ -1072,6 +1162,42 @@ input.pct-slider::-moz-range-thumb{
       </div>
       <button class="result-action-btn upgrade" id="upgrade-btn" onclick="openPricing()" data-i18n="upgrade" style="width:100%;margin-bottom:10px;display:none;">Upgrade ✦</button>
     </div>
+    <!-- ══ YOUTUBE REFINE STRIP ══ -->
+    <div class="yt-refine-strip" id="yt-refine-strip">
+      <div class="yt-refine-trigger" onclick="toggleYTRefine()">
+        <div class="yt-refine-trigger-left">
+          <div class="yt-refine-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M9.5 7.5L17 12L9.5 16.5V7.5Z" fill="white"/></svg>
+          </div>
+          <div>
+            <div class="yt-refine-label">Add video context</div>
+            <div class="yt-refine-sublabel">Feeds into Go Deeper ↓</div>
+          </div>
+          <div class="yt-refine-loaded-badge" id="yt-refine-badge">
+            <span id="yt-refine-badge-title">Video loaded</span>
+            <span style="color:rgba(204,34,0,0.5);">✓</span>
+          </div>
+        </div>
+        <span class="yt-refine-chevron">▾</span>
+      </div>
+      <div class="yt-refine-body">
+        <div class="yt-refine-input-row">
+          <input class="yt-refine-input" id="yt-refine-url" type="url"
+            placeholder="Paste a YouTube URL..."
+            oninput="const b=document.getElementById('yt-refine-btn');this.value.trim()?b.removeAttribute('disabled'):b.setAttribute('disabled','');">
+          <button class="yt-refine-analyze-btn" id="yt-refine-btn" onclick="analyzeYTRefine()" disabled>Analyze</button>
+        </div>
+        <div class="yt-refine-result" id="yt-refine-result">
+          <img class="yt-refine-thumb" id="yt-refine-thumb" src="" alt="">
+          <div class="yt-refine-video-info">
+            <div class="yt-refine-video-title" id="yt-refine-title">Loading...</div>
+          </div>
+          <button onclick="clearYTRefine()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 4px;flex-shrink:0;">✕</button>
+        </div>
+        <div class="yt-refine-hint">✦ Video analysis included in next Go Deeper</div>
+      </div>
+    </div>
+
     <button class="result-refine-btn" onclick="refineResult()" data-i18n="goDeeper">✦ Go Deeper →</button>
     <div class="challenger-vs" id="challenger-vs">
       <div class="challenger-vs-tabs">
@@ -1767,12 +1893,86 @@ Return ONLY valid JSON with exactly these keys (no markdown, no extra text):
       lastResult = {parsed, prompt, blend:JSON.stringify(blend.tools)};
       renderResults(parsed);
       fbq('track','Lead',{content_name:'generation'});
-      setTimeout(()=>{showView('results'); maybeShowAffNudge();},500);
+      setTimeout(()=>{showView('results'); maybeShowAffNudge(); syncYTRefineState();},500);
     }
   }catch(e){
     clearInterval(msgTimer);
     showToast('Something went wrong. Try again.');
     showView('blend');
+  }
+}
+
+function toggleYTRefine(){
+  const strip = document.getElementById('yt-refine-strip');
+  strip.classList.toggle('open');
+}
+
+async function analyzeYTRefine(){
+  const urlEl = document.getElementById('yt-refine-url');
+  const url = urlEl.value.trim();
+  if(!url) return;
+  const vidMatch = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+  const videoId = vidMatch ? vidMatch[1] : null;
+  if(!videoId){ showToast('Invalid YouTube URL'); return; }
+
+  const btn = document.getElementById('yt-refine-btn');
+  btn.disabled = true; btn.textContent = 'Analyzing...';
+
+  // Set thumb immediately
+  const thumb = document.getElementById('yt-refine-thumb');
+  thumb.src = 'https://img.youtube.com/vi/'+videoId+'/mqdefault.jpg';
+  document.getElementById('yt-refine-result').classList.add('show');
+  document.getElementById('yt-refine-title').textContent = 'Loading...';
+
+  // Share ytData with blend view — same state
+  ytData = {videoId, title:'YouTube Video', hasTranscript:false, description:'', transcript:''};
+
+  try{
+    const res = await fetch('/api/youtube',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+    if(res.ok && (res.headers.get('content-type')||'').includes('json')){
+      const data = await res.json();
+      if(!data.error){
+        ytData = data;
+        document.getElementById('yt-refine-title').textContent = data.title||'YouTube Video';
+        thumb.src = 'https://img.youtube.com/vi/'+(data.videoId||videoId)+'/mqdefault.jpg';
+      }
+    }
+  }catch(e){ console.log('YT refine fetch:', e.message); }
+
+  // Show loaded badge in trigger
+  const badge = document.getElementById('yt-refine-badge');
+  const badgeTitle = document.getElementById('yt-refine-badge-title');
+  badgeTitle.textContent = ytData.title && ytData.title !== 'YouTube Video'
+    ? ytData.title.substring(0,22)+(ytData.title.length>22?'…':'') : 'Video loaded';
+  badge.classList.add('show');
+
+  btn.disabled = false; btn.textContent = 'Analyze';
+  showToast('Video context ready — hit Go Deeper ↓');
+}
+
+function clearYTRefine(){
+  ytData = null;
+  document.getElementById('yt-refine-url').value = '';
+  document.getElementById('yt-refine-result').classList.remove('show');
+  document.getElementById('yt-refine-badge').classList.remove('show');
+  document.getElementById('yt-refine-btn').setAttribute('disabled','');
+}
+
+// Sync strip state when results view opens — if ytData already loaded in blend view
+function syncYTRefineState(){
+  if(!ytData) return;
+  const badge = document.getElementById('yt-refine-badge');
+  const badgeTitle = document.getElementById('yt-refine-badge-title');
+  if(!badge) return;
+  const title = ytData.title && ytData.title !== 'YouTube Video'
+    ? ytData.title.substring(0,22)+(ytData.title.length>22?'…':'') : 'Video loaded';
+  badgeTitle.textContent = title;
+  badge.classList.add('show');
+  // Pre-fill URL if possible
+  if(ytData.videoId){
+    const urlEl = document.getElementById('yt-refine-url');
+    if(urlEl && !urlEl.value) urlEl.value = 'https://youtu.be/'+ytData.videoId;
+    document.getElementById('yt-refine-btn').removeAttribute('disabled');
   }
 }
 
