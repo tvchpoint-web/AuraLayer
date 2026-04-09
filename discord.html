@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraLayer Community · Coming Soon</title>
+<meta name="description" content="The AuraLayer creator community on Discord is coming. Get notified when we launch.">
+<meta property="og:title" content="AuraLayer Creator Community · Coming Soon">
+<meta property="og:description" content="We're building the home base for AuraLayer creators. Join the waitlist.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://auralayer.ai/discord">
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','26750033267923397');fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=26750033267923397&ev=PageView&noscript=1"/></noscript>
+<!-- Rewardful -->
+<script>(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}}(window,'rewardful'));</script>
+<script async src='https://r.wdfl.co/rw.js' data-rewardful='953752'></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0A0A0F;
+  --gold: #C9922A;
+  --gold-lt: #E8B04B;
+  --gold-dim: #7A5818;
+  --gold-g: rgba(201,146,42,0.12);
+  --white: #F5F3EE;
+  --white-d: #A8A49A;
+  --white-m: #5A5750;
+  --border: rgba(201,146,42,0.18);
+  --border-d: rgba(255,255,255,0.055);
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background:var(--black);
+  color:var(--white);
+  font-family:'DM Sans',sans-serif;
+  font-weight:300;
+  line-height:1.7;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow-x:hidden;
+  text-align:center;
+  padding:60px 24px;
+}
+body::after {
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;opacity:.5;
+}
+.glow {
+  position:fixed;top:30%;left:50%;transform:translateX(-50%);
+  width:600px;height:400px;
+  background:radial-gradient(ellipse,rgba(201,146,42,0.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+.logo {
+  display:inline-flex;align-items:center;gap:12px;
+  text-decoration:none;margin-bottom:60px;
+}
+.logo-bars {
+  display:flex;flex-direction:column;gap:4px;
+  align-items:flex-start;flex-shrink:0;
+}
+.logo-wordmark {
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:300;
+  letter-spacing:-0.5px;line-height:1;
+}
+.eyebrow {
+  font-family:'DM Mono',monospace;
+  font-size:11px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--gold);
+  border:1px solid var(--border);
+  padding:8px 20px;background:rgba(201,146,42,0.06);
+  display:inline-flex;align-items:center;gap:8px;
+  margin-bottom:32px;
+}
+.eyebrow .dot {
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold);
+  animation:pulse 2s ease infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+h1 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(40px,6vw,72px);
+  font-weight:600;line-height:1.05;
+  letter-spacing:-1px;margin-bottom:20px;
+}
+h1 em { color:var(--gold);font-style:italic; }
+.sub {
+  font-size:16px;color:var(--white-d);
+  max-width:480px;margin:0 auto 48px;
+  line-height:1.8;
+}
+.features {
+  display:flex;gap:32px;justify-content:center;
+  flex-wrap:wrap;margin-bottom:56px;
+  max-width:640px;
+}
+.feature {
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  flex:1;min-width:140px;
+}
+.feature-icon {
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(201,146,42,0.08);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+}
+.feature p {
+  font-size:13px;color:var(--white-d);
+  text-align:center;line-height:1.5;
+}
+.form-wrap {
+  display:flex;gap:0;max-width:420px;
+  margin:0 auto 16px;width:100%;
+}
+.form-input {
+  flex:1;background:rgba(17,17,24,0.9);
+  border:1px solid var(--border);border-right:none;
+  padding:14px 18px;font-size:14px;
+  color:var(--white);font-family:'DM Sans',sans-serif;
+  outline:none;
+}
+.form-input::placeholder{color:var(--white-m);}
+.form-input:focus{border-color:var(--gold);}
+.form-btn {
+  background:var(--gold);color:#0A0A0F;
+  border:none;padding:14px 24px;
+  font-size:12px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;transition:background .2s;
+  font-family:'DM Sans',sans-serif;white-space:nowrap;
+}
+.form-btn:hover{background:var(--gold-lt);}
+.form-fine {
+  font-size:12px;color:var(--white-m);
+  margin-bottom:64px;
+}
+.back-link {
+  font-size:13px;color:var(--white-m);
+  text-decoration:none;letter-spacing:.5px;
+  transition:color .2s;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.back-link:hover{color:var(--gold);}
+.success-msg {
+  display:none;
+  font-size:15px;color:var(--gold);
+  margin-bottom:16px;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-size:18px;
+}
+@media(max-width:600px){
+  .form-wrap{flex-direction:column;}
+  .form-input{border-right:1px solid var(--border);border-bottom:none;}
+  .features{gap:20px;}
+}
+</style>
+</head>
+<body>
+
+<div class="glow"></div>
+
+<!-- LOGO -->
+<a href="https://auralayer.ai" class="logo">
+  <span class="logo-bars">
+    <span style="display:block;width:44px;height:5px;border-radius:20px;background:linear-gradient(90deg,#E8C96B,#C9922A);opacity:1;"></span>
+    <span style="display:block;width:32px;height:5px;border-radius:20px;background:linear-gradient(90deg,#E8C96B,#C9922A);opacity:0.65;"></span>
+    <span style="display:block;width:20px;height:5px;border-radius:20px;background:#A07518;opacity:0.35;"></span>
+  </span>
+  <span class="logo-wordmark">
+    <span style="color:#F5F3EE;">Aura</span><span style="color:#C9922A;">Layer</span><span style="color:#C9922A;font-size:15px;font-weight:300;letter-spacing:0;margin-left:1px;">.ai</span>
+  </span>
+</a>
+
+<!-- EYEBROW -->
+<div class="eyebrow">
+  <span class="dot"></span>
+  Coming Soon
+</div>
+
+<!-- HEADLINE -->
+<h1>The creator community<br>is <em>almost ready.</em></h1>
+
+<p class="sub">We're building the AuraLayer Discord — a home base where creators share blend tips, post video stats, earn together, and get early access to everything we're building next.</p>
+
+<!-- FEATURES -->
+<div class="features">
+  <div class="feature">
+    <div class="feature-icon">🎬</div>
+    <p>Video tips from creators earning weekly</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">💰</div>
+    <p>Affiliate earnings screenshots and strategies</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">⚡</div>
+    <p>Early access to every new AuraLayer feature</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">🏆</div>
+    <p>Creator leaderboards and monthly highlights</p>
+  </div>
+</div>
+
+<!-- EMAIL FORM -->
+<div id="success-msg" class="success-msg">You're on the list. We'll ping you the moment we open the doors. 🔥</div>
+<div class="form-wrap" id="form-wrap">
+  <input type="email" class="form-input" id="email-input" placeholder="your@email.com" />
+  <button class="form-btn" onclick="handleSubmit()">Notify Me →</button>
+</div>
+<p class="form-fine">No spam. Just one message when we launch.</p>
+
+<!-- BACK LINK -->
+<a href="https://auralayer.ai/sideshift" class="back-link">
+  ← Back to the UGC brief
+</a>
+
+<script>
+async function handleSubmit(){
+  var emailEl = document.getElementById('email-input');
+  var email = emailEl.value.trim();
+  if(!email || !email.includes('@')) {
+    emailEl.style.borderColor = '#C9922A';
+    emailEl.focus();
+    return;
+  }
+  var btn = document.querySelector('.form-btn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  try {
+    var res = await fetch('/api/discord-waitlist', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ email: email })
+    });
+    if(res.ok){
+      document.getElementById('form-wrap').style.display = 'none';
+      document.getElementById('success-msg').style.display = 'block';
+      // Fire Meta Pixel Lead event
+      if(typeof fbq !== 'undefined') fbq('track','Lead');
+    } else {
+      btn.textContent = 'Try again →';
+      btn.disabled = false;
+    }
+  } catch(err){
+    btn.textContent = 'Try again →';
+    btn.disabled = false;
+  }
+}
+document.getElementById('email-input').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') handleSubmit();
+});
+</script>
+
+</body>
+</html>
