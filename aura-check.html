@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Your AI Blend? — Find Your Perfect AI Stack</title>
+<meta name="description" content="5 questions. Find out exactly which AI tools you should be using — and in what percentages.">
+<script>(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');</script>
+<script async src='https://r.wdfl.co/rw.js' data-rewardful='953752'></script>
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','936492782314915');fbq('track','PageView');</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=936492782314915&ev=PageView&noscript=1"/></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F6F2;--bg2:#EEECEA;--bg3:#E5E3DE;--ink:#1A1916;--ink2:#4A4843;--ink3:#9A9690;--pop:#FF5C00;--border:rgba(26,25,22,0.14);--border2:rgba(26,25,22,0.06);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border2);background:var(--bg);}
+.site-brand{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--ink);}
+.header-right{display:flex;align-items:center;gap:12px;}
+.site-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--ink3);}
+/* Language toggle */
+.lang-toggle{display:flex;align-items:center;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2px;gap:2px;}
+.lang-btn{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:1.5px;padding:4px 10px;border-radius:16px;border:none;background:transparent;color:var(--ink3);cursor:pointer;transition:all .2s;}
+.lang-btn.active{background:var(--ink);color:#fff;}
+/* Progress */
+.prog-wrap{width:100%;max-width:660px;padding:24px 28px 0;}
+.prog-bar{width:100%;height:3px;background:var(--border2);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--pop);border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.prog-meta{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--ink3);margin-top:6px;display:flex;justify-content:space-between;}
+main{width:100%;max-width:660px;padding:40px 28px 80px;flex:1;}
+.screen{display:none;opacity:0;transform:translateY(20px);transition:opacity .4s ease,transform .4s ease;}
+.screen.active{display:block;opacity:1;transform:translateY(0);}
+.screen.exit{opacity:0;transform:translateY(-16px);}
+/* Intro */
+.kicker{font-size:10px;letter-spacing:3px;color:var(--pop);margin-bottom:18px;text-transform:uppercase;font-family:'DM Mono',monospace;}
+.h1{font-family:'Syne',sans-serif;font-size:clamp(32px,6vw,56px);font-weight:800;line-height:1.05;letter-spacing:-1.5px;margin-bottom:20px;}
+.h1 em{font-style:normal;color:var(--pop);}
+.sub{font-size:15px;color:var(--ink2);line-height:1.75;max-width:480px;margin-bottom:36px;}
+.sub strong{color:var(--ink);font-weight:500;}
+.meta-line{font-size:10px;letter-spacing:1px;color:var(--ink3);margin-top:12px;font-family:'DM Mono',monospace;}
+.start-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:var(--ink);color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;border-radius:3px;transition:background .2s;}
+.start-btn:hover{background:var(--pop);}
+/* Questions */
+.q-num{font-size:10px;letter-spacing:3px;color:var(--ink3);margin-bottom:12px;font-family:'DM Mono',monospace;text-transform:uppercase;}
+.q-text{font-family:'Syne',sans-serif;font-size:clamp(22px,4.5vw,34px);font-weight:800;line-height:1.15;letter-spacing:-.8px;margin-bottom:24px;}
+.q-text em{font-style:normal;color:var(--pop);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;}
+.chip{display:flex;align-items:center;gap:6px;padding:10px 18px;border:1.5px solid var(--border);background:#fff;color:var(--ink);font-size:13px;cursor:pointer;border-radius:40px;transition:all .15s;user-select:none;}
+.chip:hover{border-color:var(--ink);}
+.chip.selected{border-color:var(--pop);background:var(--pop);color:#fff;}
+.chip-icon{font-size:14px;}
+.next-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:var(--ink);color:#fff;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;border-radius:3px;opacity:.25;pointer-events:none;transition:all .2s;}
+.next-btn.ready{opacity:1;pointer-events:all;}
+.next-btn.ready:hover{background:var(--pop);}
+/* Result */
+.result-label{font-size:10px;letter-spacing:3px;color:var(--pop);margin-bottom:6px;font-family:'DM Mono',monospace;text-transform:uppercase;}
+.result-name{font-family:'Syne',sans-serif;font-size:clamp(26px,5.5vw,48px);font-weight:800;letter-spacing:-1px;margin-bottom:6px;line-height:1.1;}
+.result-sub{font-size:14px;color:var(--ink2);margin-bottom:24px;}
+.result-sub .pct{color:var(--pop);font-weight:700;}
+.blend-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:20px;}
+.blend-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.blend-row:last-child{margin-bottom:0;}
+.blend-lbl{font-size:10px;letter-spacing:1px;color:var(--ink3);width:72px;flex-shrink:0;font-family:'DM Mono',monospace;}
+.blend-track{flex:1;height:6px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.blend-fill{height:100%;background:var(--pop);border-radius:4px;width:0%;transition:width 1s cubic-bezier(.4,0,.2,1);}
+.blend-num{font-size:14px;font-weight:800;color:var(--ink);width:36px;text-align:right;flex-shrink:0;}
+.cta-card{background:var(--ink);border-radius:14px;padding:24px 22px;margin-bottom:16px;}
+.cta-lbl{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.4);margin-bottom:8px;font-family:'DM Mono',monospace;text-transform:uppercase;}
+.cta-h{font-size:18px;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.2;font-family:'Syne',sans-serif;}
+.cta-sub{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:18px;line-height:1.6;}
+.cta-sub .pct-cta{color:#ffffff;font-weight:700;}
+.cta-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;background:var(--pop);color:#fff;font-size:13px;font-weight:800;border:none;border-radius:8px;cursor:pointer;transition:background .2s;text-decoration:none;font-family:'Syne',sans-serif;}
+.cta-btn:hover{background:#FF3D00;}
+.share-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;border:1.5px solid var(--border);color:var(--ink2);font-size:10px;letter-spacing:1px;cursor:pointer;border-radius:40px;transition:all .15s;font-family:'DM Mono',monospace;}
+.share-btn:hover{border-color:var(--ink);}
+.share-btn.copied{border-color:var(--pop);color:var(--pop);}
+.retake-btn{font-size:10px;letter-spacing:2px;color:var(--ink3);cursor:pointer;background:none;border:none;font-family:'DM Mono',monospace;margin-top:14px;display:block;text-transform:uppercase;}
+.retake-btn:hover{color:var(--ink);}
+@media(max-width:520px){header{padding:14px 18px;}.site-tag{display:none;}main{padding:28px 18px 60px;}.prog-wrap{padding:18px 18px 0;}.chips{gap:6px;}.chip{padding:9px 14px;font-size:12px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="site-brand" id="hdr-brand">AI Blend Finder</span>
+  <div class="header-right">
+    <span class="site-tag" id="hdr-tag">#WhatsYourBlend</span>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-es" onclick="setLang('es')">ES</button>
+    </div>
+  </div>
+</header>
+
+<div class="prog-wrap" id="progWrap" style="display:none">
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="prog-meta"><span id="progLabel">Question 1 of 5</span><span id="progPct">0%</span></div>
+</div>
+
+<main>
+  <!-- INTRO -->
+  <div class="screen active" id="s-intro">
+    <div class="kicker" id="intro-kicker">Your AI stack, calculated</div>
+    <div class="h1" id="intro-h1">What's your<br><em>AI blend?</em></div>
+    <div class="sub" id="intro-sub">Most creators are using AI wrong — too many tools, wrong mix, generic output.<br><br>Answer 5 questions and get your <strong>personalized AI blend</strong> — Claude, Canva AI, and Perplexity weighted exactly for how you create.</div>
+    <button class="start-btn" onclick="startQuiz()" id="intro-btn">Find my blend &nbsp;→</button>
+    <div class="meta-line" id="intro-meta">60 seconds &nbsp;·&nbsp; Free &nbsp;·&nbsp; Personalized to you</div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="screen" id="s-q1">
+    <div class="q-num" id="q1-num">Question 1 of 5</div>
+    <div class="q-text" id="q1-text">What kind of<br><em>creator are you?</em></div>
+    <div class="chips" id="chips-q1">
+      <div class="chip" data-q="1" data-val="music" onclick="selectChip(this)"><span class="chip-icon">🎵</span> <span data-i18n="music"></span></div>
+      <div class="chip" data-q="1" data-val="content" onclick="selectChip(this)"><span class="chip-icon">🎬</span> <span data-i18n="content"></span></div>
+      <div class="chip" data-q="1" data-val="freelance" onclick="selectChip(this)"><span class="chip-icon">💼</span> <span data-i18n="freelance"></span></div>
+      <div class="chip" data-q="1" data-val="seller" onclick="selectChip(this)"><span class="chip-icon">🛒</span> <span data-i18n="seller"></span></div>
+      <div class="chip" data-q="1" data-val="educator" onclick="selectChip(this)"><span class="chip-icon">📚</span> <span data-i18n="educator"></span></div>
+      <div class="chip" data-q="1" data-val="builder" onclick="selectChip(this)"><span class="chip-icon">🔧</span> <span data-i18n="builder"></span></div>
+    </div>
+    <button class="next-btn" id="nb1" onclick="goNext(2)" data-i18n-btn="next"></button>
+  </div>
+
+  <!-- Q2 -->
+  <div class="screen" id="s-q2">
+    <div class="q-num" id="q2-num">Question 2 of 5</div>
+    <div class="q-text" id="q2-text">What do you<br><em>create most?</em></div>
+    <div class="chips" id="chips-q2">
+      <div class="chip" data-q="2" data-val="videos" onclick="selectChip(this)"><span class="chip-icon">📹</span> <span data-i18n="videos"></span></div>
+      <div class="chip" data-q="2" data-val="writing" onclick="selectChip(this)"><span class="chip-icon">✍️</span> <span data-i18n="writing"></span></div>
+      <div class="chip" data-q="2" data-val="visuals" onclick="selectChip(this)"><span class="chip-icon">🎨</span> <span data-i18n="visuals"></span></div>
+      <div class="chip" data-q="2" data-val="strategy" onclick="selectChip(this)"><span class="chip-icon">📊</span> <span data-i18n="strategy"></span></div>
+      <div class="chip" data-q="2" data-val="code" onclick="selectChip(this)"><span class="chip-icon">💻</span> <span data-i18n="code"></span></div>
+      <div class="chip" data-q="2" data-val="mixed" onclick="selectChip(this)"><span class="chip-icon">🔀</span> <span data-i18n="mixed"></span></div>
+    </div>
+    <button class="next-btn" id="nb2" onclick="goNext(3)" data-i18n-btn="next"></button>
+  </div>
+
+  <!-- Q3 -->
+  <div class="screen" id="s-q3">
+    <div class="q-num" id="q3-num">Question 3 of 5</div>
+    <div class="q-text" id="q3-text">How many AI tools<br>do you <em>use right now?</em></div>
+    <div class="chips" id="chips-q3">
+      <div class="chip" data-q="3" data-val="none" onclick="selectChip(this)"><span class="chip-icon">🙅</span> <span data-i18n="none"></span></div>
+      <div class="chip" data-q="3" data-val="few" onclick="selectChip(this)"><span class="chip-icon">✌️</span> <span data-i18n="few"></span></div>
+      <div class="chip" data-q="3" data-val="some" onclick="selectChip(this)"><span class="chip-icon">🖐</span> <span data-i18n="some"></span></div>
+      <div class="chip" data-q="3" data-val="many" onclick="selectChip(this)"><span class="chip-icon">💥</span> <span data-i18n="many"></span></div>
+    </div>
+    <button class="next-btn" id="nb3" onclick="goNext(4)" data-i18n-btn="next"></button>
+  </div>
+
+  <!-- Q4 -->
+  <div class="screen" id="s-q4">
+    <div class="q-num" id="q4-num">Question 4 of 5</div>
+    <div class="q-text" id="q4-text">What's your<br><em>biggest workflow pain?</em></div>
+    <div class="chips" id="chips-q4">
+      <div class="chip" data-q="4" data-val="speed" onclick="selectChip(this)"><span class="chip-icon">⚡</span> <span data-i18n="speed"></span></div>
+      <div class="chip" data-q="4" data-val="quality" onclick="selectChip(this)"><span class="chip-icon">✨</span> <span data-i18n="quality"></span></div>
+      <div class="chip" data-q="4" data-val="consistency" onclick="selectChip(this)"><span class="chip-icon">🔄</span> <span data-i18n="consistency"></span></div>
+      <div class="chip" data-q="4" data-val="voice" onclick="selectChip(this)"><span class="chip-icon">🎤</span> <span data-i18n="voice"></span></div>
+      <div class="chip" data-q="4" data-val="juggling" onclick="selectChip(this)"><span class="chip-icon">🤯</span> <span data-i18n="juggling"></span></div>
+    </div>
+    <button class="next-btn" id="nb4" onclick="goNext(5)" data-i18n-btn="next"></button>
+  </div>
+
+  <!-- Q5 -->
+  <div class="screen" id="s-q5">
+    <div class="q-num" id="q5-num">Question 5 of 5</div>
+    <div class="q-text" id="q5-text">What matters most<br>in your <em>output?</em></div>
+    <div class="chips" id="chips-q5">
+      <div class="chip" data-q="5" data-val="sounds_me" onclick="selectChip(this)"><span class="chip-icon">🗣️</span> <span data-i18n="sounds_me"></span></div>
+      <div class="chip" data-q="5" data-val="saves_time" onclick="selectChip(this)"><span class="chip-icon">⏱️</span> <span data-i18n="saves_time"></span></div>
+      <div class="chip" data-q="5" data-val="high_quality" onclick="selectChip(this)"><span class="chip-icon">🏆</span> <span data-i18n="high_quality"></span></div>
+      <div class="chip" data-q="5" data-val="easy" onclick="selectChip(this)"><span class="chip-icon">😌</span> <span data-i18n="easy"></span></div>
+      <div class="chip" data-q="5" data-val="all" onclick="selectChip(this)"><span class="chip-icon">🌟</span> <span data-i18n="all"></span></div>
+    </div>
+    <button class="next-btn" id="nb5" onclick="calculateBlend()" data-i18n-btn="getblend"></button>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="s-result">
+    <div class="result-label" id="result-label">Your AI Blend</div>
+    <div class="result-name" id="result-name"></div>
+    <div class="result-sub" id="result-sub"></div>
+    <div class="blend-card">
+      <div class="blend-row"><div class="blend-lbl">Claude</div><div class="blend-track"><div class="blend-fill" id="bc"></div></div><div class="blend-num" id="nc">—</div></div>
+      <div class="blend-row"><div class="blend-lbl">Canva AI</div><div class="blend-track"><div class="blend-fill" id="bca"></div></div><div class="blend-num" id="nca">—</div></div>
+      <div class="blend-row"><div class="blend-lbl">Perplexity</div><div class="blend-track"><div class="blend-fill" id="bp"></div></div><div class="blend-num" id="np">—</div></div>
+    </div>
+    <div class="cta-card">
+      <div class="cta-lbl" id="cta-lbl">Try it free</div>
+      <div class="cta-h" id="cta-h">Now try your exact blend.</div>
+      <div class="cta-sub" id="cta-sub"></div>
+      <a class="cta-btn" id="cta-link" href="https://www.auralayer.ai/app" target="_blank">Try my blend free &nbsp;→</a>
+    </div>
+    <div class="share-row">
+      <button class="share-btn" id="copyBtn" onclick="copyBlend()"><span id="copy-lbl">Copy my blend</span></button>
+      <button class="share-btn" onclick="shareX()"><span id="share-x-lbl">Share on X</span></button>
+    </div>
+    <button class="retake-btn" id="retake-btn" onclick="retake()">← Retake the quiz</button>
+  </div>
+</main>
+
+<script>
+// ── TRANSLATIONS ──
+const T = {
+  en: {
+    // Header
+    brand: 'AI Blend Finder', tag: '#WhatsYourBlend',
+    // Intro
+    kicker: 'Your AI stack, calculated',
+    h1: "What's your<br><em>AI blend?</em>",
+    sub: "Most creators are using AI wrong — too many tools, wrong mix, generic output.<br><br>Answer 5 questions and get your <strong>personalized AI blend</strong> — Claude, Canva AI, and Perplexity weighted exactly for how you create.",
+    startBtn: 'Find my blend &nbsp;→',
+    meta: '60 seconds &nbsp;·&nbsp; Free &nbsp;·&nbsp; Personalized to you',
+    // Progress
+    qOf: 'Question {n} of 5', pctDone: '{n}%',
+    blendReady: 'Your blend is ready',
+    // Q labels
+    q1: "What kind of<br><em>creator are you?</em>",
+    q2: "What do you<br><em>create most?</em>",
+    q3: "How many AI tools<br>do you <em>use right now?</em>",
+    q4: "What's your<br><em>biggest workflow pain?</em>",
+    q5: "What matters most<br>in your <em>output?</em>",
+    // Chips
+    music:'Music', content:'Content', freelance:'Freelance', seller:'Seller', educator:'Educator', builder:'Builder',
+    videos:'Videos', writing:'Writing', visuals:'Visuals', strategy:'Strategy', code:'Code', mixed:'All of it',
+    none:'None yet', few:'1–2 tools', some:'3–5 tools', many:'6 or more',
+    speed:'Not fast enough', quality:"Quality isn't there", consistency:'Hard to stay consistent', voice:"Doesn't sound like me", juggling:'Too many apps',
+    sounds_me:'Sounds like me', saves_time:'Saves time', high_quality:'Top quality', easy:'Easy to use', all:'All of the above',
+    // Buttons
+    next: 'Next &nbsp;→', getblend: 'Get my blend &nbsp;→',
+    // Result
+    resultLabel: 'Your AI Blend',
+    ctaLbl: 'Try it free',
+    ctaH: 'Now try your exact blend.',
+    ctaBtn: 'Try my blend free &nbsp;→',
+    copyBtn: 'Copy my blend', shareX: 'Share on X',
+    retake: '← Retake the quiz',
+    // Stack names
+    stacks: {
+      music:    {claude:'The Artist Stack',     canva:'The Visual Artist',   perplexity:'The Sound Strategist'},
+      content:  {claude:'The Creator Voice',    canva:'The Content Machine', perplexity:'The Trend Hunter'},
+      freelance:{claude:'The Freelancer Stack', canva:'The Client Pleaser',  perplexity:'The Research Engine'},
+      seller:   {claude:'The Conversion Stack', canva:'The Visual Seller',   perplexity:'The Market Reader'},
+      educator: {claude:'The Teacher Stack',    canva:'The Visual Educator', perplexity:'The Knowledge Engine'},
+      builder:  {claude:'The Builder Stack',    canva:'The Product Creator', perplexity:'The Systems Thinker'}
+    },
+    // CTA sub
+    ctaSub: (c,ca,px) => `AuraLayer lets you run this exact blend — <span class="pct-cta">Claude ${c}% · Canva ${ca}% · Perplexity ${px}%</span> — as one input. Your percentages load automatically. First generation free.`,
+    // Copy text
+    copyText: (name,c,ca,px) => `My AI blend — ${name}\nClaude ${c}% · Canva ${ca}% · Perplexity ${px}%\nFind yours → auralayer.ai/aura-check #WhatsYourBlend`,
+    shareText: (name,c,ca,px) => `My AI blend — ${name}\nClaude ${c}% · Canva ${ca}% · Perplexity ${px}%\nFind yours → auralayer.ai/aura-check #WhatsYourBlend`,
+  },
+  es: {
+    brand: 'Calculadora de Blend IA', tag: '#CuálEsTuBlend',
+    kicker: 'Tu stack de IA, calculado',
+    h1: "¿Cuál es tu<br><em>blend de IA?</em>",
+    sub: "La mayoría usa la IA mal — demasiadas herramientas, mezcla incorrecta, resultados genéricos.<br><br>Responde 5 preguntas y obtén tu <strong>blend de IA personalizado</strong> — Claude, Canva AI y Perplexity ponderados exactamente para cómo creas.",
+    startBtn: 'Encontrar mi blend &nbsp;→',
+    meta: '60 segundos &nbsp;·&nbsp; Gratis &nbsp;·&nbsp; Personalizado para ti',
+    qOf: 'Pregunta {n} de 5', pctDone: '{n}%',
+    blendReady: 'Tu blend está listo',
+    q1: "¿Qué tipo de<br><em>creador eres?</em>",
+    q2: "¿Qué<br><em>creas más?</em>",
+    q3: "¿Cuántas herramientas de IA<br><em>usas ahora mismo?</em>",
+    q4: "¿Cuál es tu<br><em>mayor problema de flujo?</em>",
+    q5: "¿Qué importa más<br>en tu <em>resultado?</em>",
+    music:'Música', content:'Contenido', freelance:'Freelance', seller:'Vendedor', educator:'Educador', builder:'Constructor',
+    videos:'Videos', writing:'Escritura', visuals:'Visuales', strategy:'Estrategia', code:'Código', mixed:'Todo',
+    none:'Ninguna', few:'1–2 herramientas', some:'3–5 herramientas', many:'6 o más',
+    speed:'No es suficientemente rápido', quality:'La calidad no es suficiente', consistency:'Difícil ser consistente', voice:'No suena como yo', juggling:'Demasiadas apps',
+    sounds_me:'Suena como yo', saves_time:'Ahorra tiempo', high_quality:'Alta calidad', easy:'Fácil de usar', all:'Todo lo anterior',
+    next: 'Siguiente &nbsp;→', getblend: 'Ver mi blend &nbsp;→',
+    resultLabel: 'Tu Blend de IA',
+    ctaLbl: 'Pruébalo gratis',
+    ctaH: 'Prueba tu blend exacto ahora.',
+    ctaBtn: 'Probar mi blend gratis &nbsp;→',
+    copyBtn: 'Copiar mi blend', shareX: 'Compartir en X',
+    retake: '← Volver a empezar',
+    stacks: {
+      music:    {claude:'El Stack del Artista',      canva:'El Artista Visual',       perplexity:'El Estratega del Sonido'},
+      content:  {claude:'La Voz del Creador',        canva:'La Máquina de Contenido', perplexity:'El Cazador de Tendencias'},
+      freelance:{claude:'El Stack del Freelancer',   canva:'El Agradador de Clientes',perplexity:'El Motor de Investigación'},
+      seller:   {claude:'El Stack de Conversión',    canva:'El Vendedor Visual',      perplexity:'El Lector del Mercado'},
+      educator: {claude:'El Stack del Maestro',      canva:'El Educador Visual',      perplexity:'El Motor del Conocimiento'},
+      builder:  {claude:'El Stack del Constructor',  canva:'El Creador de Productos', perplexity:'El Pensador de Sistemas'}
+    },
+    ctaSub: (c,ca,px) => `AuraLayer te permite ejecutar este blend exacto — <span class="pct-cta">Claude ${c}% · Canva ${ca}% · Perplexity ${px}%</span> — como una sola entrada. Tus porcentajes se cargan automáticamente. Primera generación gratis.`,
+    copyText: (name,c,ca,px) => `Mi blend de IA — ${name}\nClaude ${c}% · Canva ${ca}% · Perplexity ${px}%\nEncuéntra el tuyo → auralayer.ai/aura-check #CuálEsTuBlend`,
+    shareText: (name,c,ca,px) => `Mi blend de IA — ${name}\nClaude ${c}% · Canva ${ca}% · Perplexity ${px}%\nEncuéntra el tuyo → auralayer.ai/aura-check #CuálEsTuBlend`,
+  }
+};
+
+let lang = 'en';
+const answers = {};
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('btn-es').classList.toggle('active', l==='es');
+  const t = T[l];
+  // Header
+  document.getElementById('hdr-brand').textContent = t.brand;
+  document.getElementById('hdr-tag').textContent = t.tag;
+  // Intro
+  document.getElementById('intro-kicker').textContent = t.kicker;
+  document.getElementById('intro-h1').innerHTML = t.h1;
+  document.getElementById('intro-sub').innerHTML = t.sub;
+  document.getElementById('intro-btn').innerHTML = t.startBtn;
+  document.getElementById('intro-meta').innerHTML = t.meta;
+  // Q texts
+  for(var i=1;i<=5;i++){
+    var qEl=document.getElementById('q'+i+'-text');
+    if(qEl) qEl.innerHTML = t['q'+i];
+  }
+  // Progress (re-render current step label)
+  var curQ = getCurrentQ();
+  if(curQ > 0) {
+    document.getElementById('progLabel').textContent = t.qOf.replace('{n}', curQ);
+  }
+  // All data-i18n spans
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    if(t[key]) el.textContent = t[key];
+  });
+  // Next buttons
+  document.querySelectorAll('[data-i18n-btn]').forEach(function(el){
+    var key = el.getAttribute('data-i18n-btn');
+    if(t[key]) el.innerHTML = t[key];
+  });
+  // Q nums
+  for(var i=1;i<=5;i++){
+    var nEl=document.getElementById('q'+i+'-num');
+    if(nEl) nEl.textContent = t.qOf.replace('{n}',i);
+  }
+  // Result screen static labels
+  document.getElementById('result-label').textContent = t.resultLabel;
+  document.getElementById('cta-lbl').textContent = t.ctaLbl;
+  document.getElementById('cta-h').textContent = t.ctaH;
+  document.getElementById('cta-link').innerHTML = t.ctaBtn;
+  document.getElementById('copy-lbl').textContent = t.copyBtn;
+  document.getElementById('share-x-lbl').textContent = t.shareX;
+  document.getElementById('retake-btn').textContent = t.retake;
+  // Re-render result if showing
+  if(window._blend) renderResult(window._blend, window._stackName);
+}
+
+function getCurrentQ() {
+  for(var i=1;i<=5;i++){
+    var el = document.getElementById('s-q'+i);
+    if(el && el.classList.contains('active')) return i;
+  }
+  return 0;
+}
+
+function startQuiz(){
+  document.getElementById('progWrap').style.display='block';
+  showScreen('s-q1'); updateProgress(1);
+  fbq('track','InitiateCheckout');
+}
+
+function selectChip(el){
+  var q=el.dataset.q;
+  document.querySelectorAll('.chip[data-q="'+q+'"]').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[q]=el.dataset.val;
+  var nb=document.getElementById('nb'+q);
+  if(nb) nb.classList.add('ready');
+}
+
+function goNext(n){ showScreen('s-q'+n); updateProgress(n); }
+
+function updateProgress(q){
+  var pct=Math.round(((q-1)/5)*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progLabel').textContent=T[lang].qOf.replace('{n}',q);
+  document.getElementById('progPct').textContent=pct+'%';
+}
+
+function showScreen(id){
+  var cur=document.querySelector('.screen.active');
+  if(cur){cur.classList.add('exit');setTimeout(()=>{cur.classList.remove('active','exit');cur.style.display='none';},350);}
+  setTimeout(()=>{var next=document.getElementById(id);next.style.display='block';requestAnimationFrame(()=>requestAnimationFrame(()=>next.classList.add('active')));},200);
+}
+
+function calculateBlend(){
+  // ── OPINIONATED BASE SCORES ── each type has a clear dominant tool
+  const base={
+    music:    {c:52,ca:28,p:20},
+    content:  {c:28,ca:55,p:17},
+    freelance:{c:60,ca:20,p:20},
+    seller:   {c:22,ca:62,p:16},
+    educator: {c:65,ca:20,p:15},
+    builder:  {c:70,ca:12,p:18}
+  };
+  let b={...(base[answers['1']]||{c:45,ca:33,p:22})};
+
+  // ── MODIFIERS ── larger shifts for more extreme results
+  const mods=[
+    // Q2 — what you create
+    {videos:{c:-12,ca:18,p:-6},writing:{c:22,ca:-16,p:-6},visuals:{c:-15,ca:22,p:-7},
+     strategy:{c:-8,ca:-14,p:22},code:{c:18,ca:-22,p:4},mixed:{c:0,ca:0,p:0}},
+    // Q3 — how many tools
+    {none:{c:10,ca:2,p:-12},few:{c:7,ca:2,p:-9},some:{c:-4,ca:-2,p:6},many:{c:-10,ca:-4,p:14}},
+    // Q4 — biggest pain
+    {speed:{c:18,ca:-10,p:-8},quality:{c:12,ca:10,p:-22},consistency:{c:-10,ca:18,p:-8},
+     voice:{c:25,ca:-14,p:-11},juggling:{c:0,ca:0,p:0}},
+    // Q5 — what matters most
+    {sounds_me:{c:24,ca:-14,p:-10},saves_time:{c:-10,ca:-8,p:18},
+     high_quality:{c:10,ca:16,p:-26},easy:{c:-12,ca:16,p:-4},all:{c:0,ca:0,p:0}}
+  ];
+
+  const shifts = [{c:0,ca:0,p:0},{c:0,ca:0,p:0},{c:0,ca:0,p:0},{c:0,ca:0,p:0}];
+  [answers['2'],answers['3'],answers['4'],answers['5']].forEach((v,i)=>{
+    shifts[i] = (mods[i][v])||{c:0,ca:0,p:0};
+  });
+
+  // ── AMPLIFICATION ── if 2+ answers push same tool same direction, amplify by 1.35x
+  ['c','ca','p'].forEach(tool=>{
+    const pushing = shifts.filter(s=>s[tool]>8).length;
+    const pulling = shifts.filter(s=>s[tool]<-8).length;
+    if(pushing>=2){
+      shifts.forEach(s=>{if(s[tool]>8)s[tool]=Math.round(s[tool]*1.35);});
+    }
+    if(pulling>=2){
+      shifts.forEach(s=>{if(s[tool]<-8)s[tool]=Math.round(s[tool]*1.35);});
+    }
+  });
+
+  shifts.forEach(s=>{b.c+=s.c;b.ca+=s.ca;b.p+=s.p;});
+
+  // ── FLOOR at 5%, no maximum cap — let dominance happen
+  b.c=Math.max(8,b.c);b.ca=Math.max(8,b.ca);b.p=Math.max(8,b.p);
+
+  // ── NORMALIZE to 100%
+  const total=b.c+b.ca+b.p;
+  b.c=Math.round((b.c/total)*100);
+  b.ca=Math.round((b.ca/total)*100);
+  b.p=100-b.c-b.ca;
+
+  window._blend=b;
+  const name=getStackName(answers['1'],b);window._stackName=name;
+  renderResult(b,name);
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progLabel').textContent=T[lang].blendReady;
+  document.getElementById('progPct').textContent='100%';
+  fbq('track','Lead',{content_name:name});
+  showScreen('s-result');
+}
+
+function getStackName(type,b){
+  const dom=b.c>=b.ca&&b.c>=b.p?'claude':b.ca>=b.c&&b.ca>=b.p?'canva':'perplexity';
+  return(T[lang].stacks[type]||{})[dom]||'The Creator Stack';
+}
+
+function renderResult(b,name){
+  var t=T[lang];
+  document.getElementById('result-name').textContent=name;
+  document.getElementById('result-sub').innerHTML='Claude <span class="pct">'+b.c+'%</span> &nbsp;·&nbsp; Canva <span class="pct">'+b.ca+'%</span> &nbsp;·&nbsp; Perplexity <span class="pct">'+b.p+'%</span>';
+  setTimeout(()=>{
+    document.getElementById('bc').style.width=b.c+'%';
+    document.getElementById('bca').style.width=b.ca+'%';
+    document.getElementById('bp').style.width=b.p+'%';
+    document.getElementById('nc').textContent=b.c+'%';
+    document.getElementById('nca').textContent=b.ca+'%';
+    document.getElementById('np').textContent=b.p+'%';
+  },500);
+  document.getElementById('cta-sub').innerHTML=t.ctaSub(b.c,b.ca,b.p);
+  document.getElementById('cta-link').href='https://www.auralayer.ai/app?claude='+b.c+'&canva='+b.ca+'&perplexity='+b.p+'&tutorial=1&from=quiz&type='+(answers['1']||'')+'&lang='+lang;
+}
+
+function copyBlend(){
+  var b=window._blend;
+  navigator.clipboard.writeText(T[lang].copyText(window._stackName,b.c,b.ca,b.p)).then(()=>{
+    var btn=document.getElementById('copyBtn');
+    btn.querySelector('#copy-lbl').textContent=lang==='es'?'¡Copiado! ✓':'Copied! ✓';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.querySelector('#copy-lbl').textContent=T[lang].copyBtn;btn.classList.remove('copied');},2000);
+  });
+}
+
+function shareX(){
+  var b=window._blend;
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(T[lang].shareText(window._stackName,b.c,b.ca,b.p)),'_blank');
+}
+
+function retake(){
+  Object.keys(answers).forEach(k=>delete answers[k]);
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.next-btn').forEach(b=>b.classList.remove('ready'));
+  ['bc','bca','bp'].forEach(id=>document.getElementById(id).style.width='0%');
+  window._blend=null; window._stackName=null;
+  document.getElementById('progWrap').style.display='none';
+  showScreen('s-intro');
+}
+
+// Init — populate all i18n on load
+setLang('en');
+</script>
+</body>
+</html>
