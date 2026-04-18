@@ -1,0 +1,7 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/deck", "destination": "/auralayer_pitch_deck.html" }
+  ]
+}
