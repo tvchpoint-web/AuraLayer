@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Badminton Fundraiser</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #00c853 0%, #0091ff 100%);
+      min-height: 100vh;
+      color: black;
+      padding: 1rem 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .header p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .photo-section {
+      text-align: center;
+      margin-bottom: 2rem;
+      background: white;
+      border-radius: 12px;
+      border: 3px solid white;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .photo-section img {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 300px;
+      object-fit: cover;
+    }
+
+    .message-box {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .message-box p {
+      font-size: 16px;
+      color: black;
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
+    .message-box p strong {
+      font-weight: 600;
+      color: #0091ff;
+    }
+
+    .input-section {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .input-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: black;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+    }
+
+    .display-box {
+      background: #f9f9f9;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .lap-info {
+      text-align: right;
+      margin-bottom: 0.75rem;
+    }
+
+    .lap-label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    #lap-display {
+      font-size: 32px;
+      font-weight: 600;
+      color: black;
+      margin-top: 0.5rem;
+    }
+
+    .donation-info {
+      border-top: 2px solid #e0e0e0;
+      padding-top: 1rem;
+      text-align: right;
+    }
+
+    .donation-label {
+      font-size: 12px;
+      color: #666;
+      margin-right: 0.5rem;
+    }
+
+    #total-display {
+      font-size: 28px;
+      font-weight: 600;
+      color: #0091ff;
+      margin-top: 0.25rem;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .keypad button {
+      padding: 16px;
+      background: white;
+      border: 2px solid #333;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+      color: black;
+      transition: all 0.1s;
+    }
+
+    .keypad button:hover {
+      background: #f5f5f5;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .keypad button:active {
+      transform: scale(0.98);
+    }
+
+    .keypad button.zero {
+      grid-column: 1 / 3;
+    }
+
+    .keypad button.clear {
+      background: black;
+      color: white;
+      border-color: black;
+    }
+
+    .keypad button.clear:hover {
+      background: #333;
+    }
+
+    .payment-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .payment-btn {
+      padding: 16px 14px;
+      color: white;
+      text-align: center;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      width: 100%;
+    }
+
+    .payment-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .paypal-btn {
+      background: #0070ba;
+    }
+
+    .cashapp-btn {
+      background: #00d54b;
+    }
+
+    .zelle-btn {
+      background: #003a87;
+    }
+
+    .zelle-modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .zelle-modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 2rem;
+      border: 1px solid #888;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      animation: slideIn 0.3s;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .zelle-modal-content h2 {
+      margin-bottom: 1rem;
+      color: black;
+    }
+
+    .zelle-info {
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border: 2px solid #003a87;
+    }
+
+    .zelle-info p {
+      margin: 0.5rem 0;
+      color: black;
+    }
+
+    .zelle-info .label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .zelle-info .value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #003a87;
+      word-break: break-all;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .modal-buttons button {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .modal-buttons .copy-btn {
+      background: #003a87;
+      color: white;
+    }
+
+    .modal-buttons .copy-btn:hover {
+      background: #002147;
+    }
+
+    .modal-buttons .close-btn {
+      background: #e0e0e0;
+      color: black;
+    }
+
+    .modal-buttons .close-btn:hover {
+      background: #d0d0d0;
+    }
+
+    .close-icon {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .close-icon:hover {
+      color: black;
+    }
+
+    .footer {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .footer p {
+      font-size: 13px;
+      color: black;
+      margin: 0;
+    }
+
+    .footer strong {
+      font-weight: 600;
+    }
+
+    .copy-confirmation {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      z-index: 2;
+      animation: slideUp 0.3s;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(30px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Badminton Fundraiser 🏸</h1>
+      <p>Help my school's sports department get better equipment!</p>
+    </div>
+
+    <div class="photo-section">
+      <img src="badminton-photo.jpg" alt="Badminton Player" onerror="this.style.display='none'">
+    </div>
+
+    <div class="message-box">
+      <p>I need you help...I'm doing a badminton fundraiser to help my school's sports department get better equipment. <strong>It's $5 per lap</strong>, and you can choose how many laps to support. Anything helps! 🙏</p>
+    </div>
+
+    <div class="input-section">
+      <label class="input-label">Enter number of laps</label>
+
+      <div class="display-box">
+        <div class="lap-info">
+          <span class="lap-label">Laps</span>
+          <div id="lap-display">0</div>
+        </div>
+        <div class="donation-info">
+          <span class="donation-label">Your donation:</span>
+          <div id="total-display">$0</div>
+        </div>
+      </div>
+
+      <div class="keypad">
+        <button onclick="addLap('1')">1</button>
+        <button onclick="addLap('2')">2</button>
+        <button onclick="addLap('3')">3</button>
+
+        <button onclick="addLap('4')">4</button>
+        <button onclick="addLap('5')">5</button>
+        <button onclick="addLap('6')">6</button>
+
+        <button onclick="addLap('7')">7</button>
+        <button onclick="addLap('8')">8</button>
+        <button onclick="addLap('9')">9</button>
+
+        <button onclick="addLap('0')" class="zero">0</button>
+        <button onclick="clearLaps()" class="clear">Clear</button>
+      </div>
+    </div>
+
+    <div class="payment-buttons">
+      <form id="paypal-form" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" style="margin: 0;">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value="EmmanuelAden@paypal.biz" id="paypal-email">
+        <input type="hidden" name="item_name" value="Badminton Fundraiser - School Sports Department">
+        <input type="hidden" name="item_number" value="lapathon">
+        <input type="hidden" name="amount" value="0" id="paypal-amount">
+        <input type="hidden" name="currency_code" value="USD">
+        <input type="hidden" name="no_note" value="1">
+        <input type="hidden" name="return" value="">
+        <input type="hidden" name="cancel_return" value="">
+
+        <button type="submit" class="payment-btn paypal-btn" onclick="submitPayPal()">💳 Pay with PayPal</button>
+      </form>
+
+      <button onclick="submitCashApp()" class="payment-btn cashapp-btn">💰 Donate via CashApp</button>
+
+      <button onclick="openZelleModal()" class="payment-btn zelle-btn">🏦 Donate via Zelle</button>
+    </div>
+
+    <div id="zelleModal" class="zelle-modal">
+      <div class="zelle-modal-content">
+        <span class="close-icon" onclick="closeZelleModal()">&times;</span>
+        <h2>Donate via Zelle</h2>
+        <div class="zelle-info">
+          <p class="label">Zelle Transfer Information</p>
+          <p><strong>Phone Number:</strong></p>
+          <p class="value" id="zelle-phone">215-279-0515</p>
+          <p style="margin-top: 1rem;"><strong>Amount:</strong></p>
+          <p class="value" id="zelle-amount">$0</p>
+        </div>
+        <p style="font-size: 12px; color: #666; margin: 1rem 0;">Open your bank's Zelle service and send a transfer to the phone number above. After you've sent the transfer, click "Copied" below to close this window.</p>
+        <div class="modal-buttons">
+          <button class="copy-btn" onclick="copyZelleInfo()">✓ Copied</button>
+          <button class="close-btn" onclick="closeZelleModal()">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p><strong>Thank you for supporting my school's sports department!</strong> Every donation brings us closer to our goal. 🎾</p>
+    </div>
+  </div>
+
+  <script>
+    let lapCount = 0;
+
+    const PAYPAL_EMAIL = 'EmmanuelAden@paypal.biz';
+    const CASHAPP_TAG = 'TvchPointMusic';
+    const ZELLE_PHONE = '215-279-0515';
+
+    function addLap(digit) {
+      lapCount = parseInt(lapCount.toString() + digit);
+      if (lapCount > 999) lapCount = 999;
+      updateDisplay();
+    }
+
+    function clearLaps() {
+      lapCount = 0;
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      const totalDonation = lapCount * 5;
+
+      document.getElementById('lap-display').textContent = lapCount;
+      document.getElementById('total-display').textContent = '$' + totalDonation;
+      document.getElementById('paypal-amount').value = totalDonation;
+      document.getElementById('zelle-amount').textContent = '$' + totalDonation;
+    }
+
+    function submitPayPal() {
+      if (lapCount === 0) {
+        alert('Please select at least 1 lap!');
+        return false;
+      }
+      document.getElementById('paypal-email').value = PAYPAL_EMAIL;
+    }
+
+    function submitCashApp() {
+      if (lapCount === 0) {
+        alert('Please select at least 1 lap!');
+        return false;
+      }
+      const totalDonation = lapCount * 5;
+      const cashappUrl = 'https://cash.app/$' + CASHAPP_TAG + '/' + totalDonation;
+      window.open(cashappUrl, '_blank');
+    }
+
+    function openZelleModal() {
+      if (lapCount === 0) {
+        alert('Please select at least 1 lap!');
+        return false;
+      }
+      document.getElementById('zelleModal').style.display = 'block';
+    }
+
+    function closeZelleModal() {
+      document.getElementById('zelleModal').style.display = 'none';
+    }
+
+    function copyZelleInfo() {
+      const zelleText = 'Zelle: ' + ZELLE_PHONE + ' - Amount: $' + (lapCount * 5);
+      navigator.clipboard.writeText(zelleText).then(() => {
+        const confirmation = document.createElement('div');
+        confirmation.className = 'copy-confirmation';
+        confirmation.textContent = '✓ Copied to clipboard!';
+        document.body.appendChild(confirmation);
+        setTimeout(() => confirmation.remove(), 2000);
+      });
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('zelleModal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>
